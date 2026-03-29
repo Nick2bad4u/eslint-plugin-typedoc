@@ -2,17 +2,21 @@
 sidebar_position: 1
 ---
 
-# eslint-plugin-typedoc
+# Developer docs overview
 
-`eslint-plugin-typedoc` brings TypeDoc documentation checks into ESLint so documentation issues are surfaced, reviewed, and fixed alongside code issues.
+This section documents the internal architecture and maintenance workflow for
+`eslint-plugin-typedoc`.
 
-## What you get
+## What lives here
 
-- rules for exported API documentation coverage,
-- rules for TypeDoc tags and inline link correctness,
-- rule for baseline TypeDoc config validation,
-- presets for gradual policy adoption.
+- TypeDoc integration architecture and data flow.
+- Rule metadata + docs URL generation contracts.
+- Inspector workflow outputs for ESLint and Stylelint.
+- Generated API reference docs produced from source.
 
-## Next step
+## Recommended read order
 
-Go to [Getting Started](./getting-started.md) to install and configure the plugin.
+1. [Local workflow](./getting-started.md)
+2. [TypeDoc pipeline](./typedoc-pipeline.md)
+3. [Inspector workflows](./inspectors.md)
+4. [API reference](./api-reference.md)

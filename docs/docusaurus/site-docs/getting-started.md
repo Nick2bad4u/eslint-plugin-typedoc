@@ -2,32 +2,34 @@
 sidebar_position: 2
 ---
 
-# Getting started
+# Local developer workflow
 
-## Install
+## Install dependencies
 
 ```bash
-npm install --save-dev eslint-plugin-typedoc typedoc
+npm install
 ```
 
-## Configure ESLint flat config
+## Core local validation loop
 
-```ts
-import typedocPlugin from "eslint-plugin-typedoc";
-
-export default [
-    typedocPlugin.configs.recommended,
-    {
-        rules: {
-            "typedoc/require-param-tags": "error",
-        },
-    },
-];
+```bash
+npm run build
+npm run typecheck
+npm test
+npm run lint:all:fix:quiet
 ```
 
-## Choose a preset
+## Docs workflow
 
-- `typedoc.configs.minimal` for baseline hygiene checks.
-- `typedoc.configs.recommended` for exported docs + tag/link validation.
-- `typedoc.configs.strict` for stronger API completeness enforcement.
-- `typedoc.configs.all` for complete rule coverage.
+```bash
+npm run docs:api
+npm run sync:readme-rules-table:write
+npm run sync:presets-rules-matrix -- --write
+npm run docs:docusaurus:build
+```
+
+## Inspector outputs
+
+- ESLint inspector build output: `docs/docusaurus/static/eslint-inspector/`
+- Stylelint inspector build output:
+  `docs/docusaurus/static/stylelint-inspector/`

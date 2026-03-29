@@ -1,13 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
-  <title id="title">eslint-plugin-typefest logo</title>
-  <desc id="desc">Stylized hexagon containing TF initials.</desc>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 256 256"
+  role="img"
+  aria-labelledby="logo-title logo-desc"
+>
+  <title id="logo-title">TypeDoc cube logo</title>
+  <desc id="logo-desc">
+    A three-face cube mark styled after the official TypeDoc logo.
+  </desc>
+
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4f46e5" />
-      <stop offset="100%" stop-color="#0ea5e9" />
+    <linearGradient id="cube-top" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d51dff" />
+      <stop offset="100%" stop-color="#8711ff" />
+    </linearGradient>
+    <linearGradient id="cube-left" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c56fff" />
+      <stop offset="100%" stop-color="#7d69ff" />
+    </linearGradient>
+    <linearGradient id="cube-right" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#12486a" />
+      <stop offset="100%" stop-color="#0f3c59" />
+    </linearGradient>
+    <linearGradient id="cube-bottom-left" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#95bfe7" />
+      <stop offset="100%" stop-color="#6d9fce" />
     </linearGradient>
   </defs>
-  <rect width="128" height="128" rx="20" fill="url(#g)" />
-  <path d="M23 30h82v14H70v54H56V44H23V30Z" fill="#fff" />
-  <path d="M70 52h35v12H82v34H70V52Z" fill="#fff" opacity="0.92" />
+
+  <path d="M128 15 16 79l112 64 112-64-112-64Z" fill="url(#cube-top)" />
+  <path d="M16 79v98l112 64v-98L16 79Z" fill="url(#cube-left)" />
+  <path d="M240 79v98l-112 64v-98l112-64Z" fill="url(#cube-right)" />
+  <path d="M16 177 128 241v-98L16 79v98Z" fill="url(#cube-bottom-left)" opacity="0.75" />
 </svg>

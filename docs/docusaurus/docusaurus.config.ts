@@ -9,7 +9,7 @@ const baseUrl = process.env["DOCUSAURUS_BASE_URL"] ?? `/${projectName}/`;
 
 const config: Config = {
     baseUrl,
-    favicon: "img/logo.svg",
+    favicon: "img/favicon.ico",
     i18n: {
         defaultLocale: "en",
         locales: ["en"],
@@ -26,9 +26,9 @@ const config: Config = {
             {
                 editUrl:
                     "https://github.com/Nick2bad4u/eslint-plugin-typedoc/tree/main/docs/docusaurus/",
-                id: "docs",
+                id: "developer",
                 path: "site-docs",
-                routeBasePath: "docs",
+                routeBasePath: "docs/developer",
                 sidebarPath: "./sidebars.ts",
             },
         ],
@@ -51,7 +51,9 @@ const config: Config = {
             {
                 blog: false,
                 docs: false,
-                pages: {},
+                pages: {
+                    exclude: ["**/*.d.ts"],
+                },
                 theme: {
                     customCss: "./src/css/custom.css",
                 },
@@ -71,29 +73,62 @@ const config: Config = {
                 {
                     items: [
                         {
-                            label: "Intro",
-                            to: "/docs/intro",
+                            label: "Rules overview",
+                            to: "/docs/rules/overview",
                         },
                         {
-                            label: "Rule overview",
-                            to: "/docs/rules/overview",
+                            label: "Rules getting started",
+                            to: "/docs/rules/getting-started",
                         },
                         {
                             label: "Presets",
                             to: "/docs/rules/presets",
                         },
+                        {
+                            label: "Rule catalog",
+                            to: "/docs/rules/overview#available-rules",
+                        },
                     ],
-                    title: "Docs",
+                    title: "Rules",
+                },
+                {
+                    items: [
+                        {
+                            label: "Developer overview",
+                            to: "/docs/developer/intro",
+                        },
+                        {
+                            label: "TypeDoc pipeline",
+                            to: "/docs/developer/typedoc-pipeline",
+                        },
+                        {
+                            href: "/eslint-inspector/",
+                            label: "ESLint Inspector",
+                        },
+                        {
+                            href: "/stylelint-inspector/",
+                            label: "Stylelint Inspector",
+                        },
+                    ],
+                    title: "Developer",
                 },
                 {
                     items: [
                         {
                             href: `https://github.com/Nick2bad4u/${projectName}`,
-                            label: "GitHub",
+                            label: "Repository",
                         },
                         {
                             href: `https://www.npmjs.com/package/${projectName}`,
                             label: "npm",
+                        },
+                        {
+                            href: `https://github.com/Nick2bad4u/${projectName}/releases`,
+                            label: "Releases",
+                        },
+                        {
+                            href: `https://github.com/Nick2bad4u/${projectName}/issues`,
+                            label: "Issues",
                         },
                     ],
                     title: "Project",
@@ -112,14 +147,28 @@ const config: Config = {
         navbar: {
             items: [
                 {
-                    label: "Docs",
-                    position: "left",
-                    to: "/docs/intro",
-                },
-                {
                     label: "Rules",
                     position: "left",
                     to: "/docs/rules/overview",
+                },
+                {
+                    label: "Developer",
+                    position: "left",
+                    to: "/docs/developer/intro",
+                },
+                {
+                    items: [
+                        {
+                            label: "ESLint Inspector",
+                            to: "/eslint-inspector/",
+                        },
+                        {
+                            label: "Stylelint Inspector",
+                            to: "/stylelint-inspector/",
+                        },
+                    ],
+                    label: "Inspectors",
+                    position: "left",
                 },
                 {
                     href: `https://github.com/Nick2bad4u/${projectName}`,
@@ -129,7 +178,7 @@ const config: Config = {
             ],
             logo: {
                 alt: "eslint-plugin-typedoc logo",
-                src: "img/logo.svg",
+                src: "img/typedoc-logo-mark.png",
             },
             title: projectName,
         },

@@ -12,7 +12,7 @@ const homepageDescription =
 const homepageKeywords =
     "eslint-plugin-typedoc, typedoc, eslint, documentation linting, typescript";
 const homepageSocialImageUrl =
-    "https://nick2bad4u.github.io/eslint-plugin-typedoc/img/logo.png";
+    "https://nick2bad4u.github.io/eslint-plugin-typedoc/img/logo_512x512.png";
 
 const homepageStructuredData = {
     "@context": "https://schema.org",
@@ -28,29 +28,61 @@ const homepageStructuredData = {
     url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/",
 } as const;
 
-const cards = [
+const surfaceCards = [
     {
         description:
-            "Install the plugin and start surfacing documentation diagnostics in ESLint.",
-        title: "Get Started",
-        to: "/docs/rules/getting-started",
-    },
-    {
-        description:
-            "Compare minimal, recommended, strict, and all presets for gradual adoption.",
-        title: "Presets",
-        to: "/docs/rules/presets",
-    },
-    {
-        description:
-            "Browse all TypeDoc-focused rules with examples, behavior notes, and migration guidance.",
-        title: "Rule Reference",
+            "Browse the full rule catalog, examples, and preset strategy for gradual policy adoption.",
+        title: "Rules reference",
         to: "/docs/rules/overview",
+    },
+    {
+        description:
+            "Review TypeDoc integration architecture, generation flow, and maintenance guidance.",
+        title: "Developer docs",
+        to: "/docs/developer/intro",
+    },
+    {
+        description:
+            "Inspect resolved ESLint configuration output and active rule layering in a dedicated UI.",
+        title: "ESLint Inspector",
+        to: "/eslint-inspector/",
+    },
+    {
+        description:
+            "Validate Stylelint configuration layering and output snapshots used by this repository.",
+        title: "Stylelint Inspector",
+        to: "/stylelint-inspector/",
     },
 ] as const;
 
+const quickLinks = [
+    {
+        label: "Rules getting started",
+        to: "/docs/rules/getting-started",
+    },
+    {
+        label: "Preset matrix",
+        to: "/docs/rules/presets",
+    },
+    {
+        label: "TypeDoc pipeline",
+        to: "/docs/developer/typedoc-pipeline",
+    },
+    {
+        label: "Inspector workflows",
+        to: "/docs/developer/inspectors",
+    },
+] as const;
+
+const qualityPillars = [
+    "TypeDoc-native lint rules",
+    "Autofix-first rule ergonomics",
+    "Synced README + preset matrices",
+    "Generated API docs",
+] as const;
+
 export default function Home() {
-    const logoSrc = useBaseUrl("/img/logo.svg");
+    const logoSrc = useBaseUrl("/img/typedoc-logo-wordmark.png");
 
     return (
         <Layout
@@ -71,38 +103,51 @@ export default function Home() {
                 <div className={`container ${styles.heroContent}`}>
                     <div className={styles.heroGrid}>
                         <div>
+                            <p className={styles.heroEyebrow}>
+                                TypeDoc + ESLint integration
+                            </p>
                             <Heading as="h1" className={styles.heroTitle}>
                                 eslint-plugin-typedoc
                             </Heading>
                             <p className={styles.heroSubtitle}>
-                                Integrate TypeDoc checks, reporting, and safe
-                                autofixes directly into ESLint workflows.
+                                Run documentation quality gates in the same lint
+                                workflow as your code quality checks.
                             </p>
+                            <ul className={styles.heroPillarList}>
+                                {qualityPillars.map((pillar) => (
+                                    <li
+                                        className={styles.heroPillarItem}
+                                        key={pillar}
+                                    >
+                                        {pillar}
+                                    </li>
+                                ))}
+                            </ul>
                             <div className={styles.heroActions}>
                                 <Link
                                     className={`button button--primary button--lg ${styles.heroActionButton}`}
-                                    to="/docs/rules/getting-started"
+                                    to="/docs/rules/overview"
                                 >
-                                    Get started
+                                    Explore rules
                                 </Link>
                                 <Link
                                     className={`button button--secondary button--lg ${styles.heroActionButton}`}
-                                    to="/docs/rules/overview"
+                                    to="/docs/developer/intro"
                                 >
-                                    Browse rules
+                                    Developer docs
                                 </Link>
                             </div>
                         </div>
 
                         <aside className={styles.heroPanel}>
                             <img
-                                alt="eslint-plugin-typedoc logo"
+                                alt="TypeDoc logo with eslint-plugin-typedoc wordmark"
                                 className={styles.heroPanelLogo}
                                 decoding="async"
-                                height="220"
+                                height="160"
                                 loading="eager"
                                 src={logoSrc}
-                                width="220"
+                                width="520"
                             />
                         </aside>
                     </div>
@@ -114,7 +159,7 @@ export default function Home() {
             <main className={styles.mainContent}>
                 <section className="container">
                     <div className={styles.cardGrid}>
-                        {cards.map((card) => (
+                        {surfaceCards.map((card) => (
                             <article key={card.title} className={styles.card}>
                                 <Heading as="h2" className={styles.cardTitle}>
                                     {card.title}
@@ -126,6 +171,22 @@ export default function Home() {
                                     Open section →
                                 </Link>
                             </article>
+                        ))}
+                    </div>
+                </section>
+                <section className={`container ${styles.quickLinksSection}`}>
+                    <Heading as="h2" className={styles.quickLinksTitle}>
+                        Quick paths
+                    </Heading>
+                    <div className={styles.quickLinksGrid}>
+                        {quickLinks.map((link) => (
+                            <Link
+                                className={styles.quickLinkCard}
+                                key={link.label}
+                                to={link.to}
+                            >
+                                {link.label}
+                            </Link>
                         ))}
                     </div>
                 </section>

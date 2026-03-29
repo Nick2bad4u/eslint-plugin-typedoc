@@ -1,5 +1,5 @@
 {
-    "background_color": "#2E2A33",
+    "background_color": "#2B134E",
     "description": "eslint-plugin-typedoc documentation, architecture notes, and API references.",
     "display": "standalone",
     "icons": [
@@ -18,5 +18,5 @@
     "scope": ".",
     "short_name": "Typedoc Docs",
     "start_url": ".",
-    "theme_color": "#2E2A33"
+    "theme_color": "#7C3AED"
 }

@@ -1,0 +1,21 @@
+declare const styles: {
+  readonly "footer": string;
+  readonly "main-wrapper": string;
+  readonly "menu__link": string;
+  readonly "menu__list-item-collapsible": string;
+  readonly "navbar": string;
+  readonly "sb-dev-api": string;
+  readonly "sb-dev-overview": string;
+  readonly "sb-dev-started": string;
+  readonly "sb-dev-tooling": string;
+  readonly "sb-dev-typedoc": string;
+  readonly "sb-rules-catalog": string;
+  readonly "sb-rules-overview": string;
+  readonly "sb-rules-presets": string;
+  readonly "sb-rules-started": string;
+  readonly "theme-doc-sidebar-item-category": string;
+  readonly "theme-doc-sidebar-item-link": string;
+  readonly "theme-doc-sidebar-item-link-level-1": string;
+  readonly "theme-doc-sidebar-menu": string;
+};
+export default styles;

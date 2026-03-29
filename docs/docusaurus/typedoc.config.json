@@ -14,7 +14,7 @@
     "excludePrivate": true,
     "excludeProtected": true,
     "includeVersion": false,
-    "out": "api",
+    "out": "site-docs/developer/api",
     "plugin": [
         "typedoc-plugin-markdown"
     ],

@@ -12,6 +12,16 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebarDirectoryPath = dirname(fileURLToPath(import.meta.url));
 const rulesDirectoryPath = join(sidebarDirectoryPath, "..", "rules");
 
+const formatRuleDocLabel = (docId: string): string =>
+    docId
+        .split("-")
+        .map((segment) =>
+            segment.length === 0
+                ? segment
+                : `${segment.charAt(0).toUpperCase()}${segment.slice(1)}`
+        )
+        .join(" ");
+
 const ruleDocIds = readdirSync(rulesDirectoryPath, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
     .map((entry) => entry.name.slice(0, -3))
@@ -28,15 +38,18 @@ const sidebars = {
         {
             id: "overview",
             label: "🏁 Overview",
+            className: "sb-rules-overview",
             type: "doc",
         },
         {
             id: "getting-started",
             label: "🚀 Getting Started",
+            className: "sb-rules-started",
             type: "doc",
         },
         {
             collapsed: true,
+            className: "sb-rules-presets",
             customProps: {
                 badge: "presets",
             },
@@ -71,15 +84,16 @@ const sidebars = {
         },
         {
             collapsed: true,
+            className: "sb-rules-catalog",
             customProps: {
                 badge: "rules",
             },
             items: ruleDocIds.map((docId: string) => ({
                 id: docId,
-                label: docId,
+                label: formatRuleDocLabel(docId),
                 type: "doc" as const,
             })),
-            label: "Rules",
+            label: "Rule catalog",
             type: "category",
         },
     ],

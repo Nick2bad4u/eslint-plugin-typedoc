@@ -1,24 +1,33 @@
 :root {
-    --ifm-color-primary: #4f46e5;
-    --ifm-color-primary-dark: #4338ca;
-    --ifm-color-primary-darker: #3730a3;
-    --ifm-color-primary-darkest: #312e81;
-    --ifm-color-primary-light: #6366f1;
-    --ifm-color-primary-lighter: #818cf8;
-    --ifm-color-primary-lightest: #a5b4fc;
+    --ifm-color-primary: #8b5cf6;
+    --ifm-color-primary-dark: #7c3aed;
+    --ifm-color-primary-darker: #6d28d9;
+    --ifm-color-primary-darkest: #5b21b6;
+    --ifm-color-primary-light: #a78bfa;
+    --ifm-color-primary-lighter: #c4b5fd;
+    --ifm-color-primary-lightest: #ddd6fe;
     --ifm-code-font-size: 95%;
-    --ifm-font-family-base:
-        "Inter var", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --ifm-font-family-base: "Inter var", "Inter", "Segoe UI", system-ui,
+        -apple-system, sans-serif;
+    --site-sb-rules: #8b5cf6;
+    --site-sb-dev: #2563eb;
+    --site-sb-tooling: #0d9488;
+    --site-sb-api: #ca8a04;
 }
 
 [data-theme="dark"] {
-    --ifm-color-primary: #818cf8;
-    --ifm-color-primary-dark: #6366f1;
-    --ifm-color-primary-darker: #4f46e5;
-    --ifm-color-primary-darkest: #4338ca;
-    --ifm-color-primary-light: #a5b4fc;
-    --ifm-color-primary-lighter: #c7d2fe;
-    --ifm-color-primary-lightest: #e0e7ff;
+    --ifm-color-primary: #c4b5fd;
+    --ifm-color-primary-dark: #a78bfa;
+    --ifm-color-primary-darker: #8b5cf6;
+    --ifm-color-primary-darkest: #7c3aed;
+    --ifm-color-primary-light: #ddd6fe;
+    --ifm-color-primary-lighter: #ede9fe;
+    --ifm-color-primary-lightest: #f5f3ff;
+}
+
+.navbar {
+    backdrop-filter: blur(8px);
+    border-block-end: 1px solid rgb(139 92 246 / 12%);
 }
 
 .theme-doc-sidebar-item-link-level-1 {
@@ -26,38 +35,56 @@
 }
 
 .theme-doc-sidebar-menu .menu__link {
-    border-radius: 0.4rem;
-    transition:
-        background-color 140ms ease-in-out,
-        color 140ms ease-in-out;
-
-    @media screen and (prefers-reduced-motion: reduce) {
-        border-radius: 0.4rem;
-        transition: none;
-    }
+    border-radius: 0.45rem;
 
     &:hover,
     &:focus {
-        background-color: rgb(79 70 229 / 10%);
+        background-color: rgb(139 92 246 / 10%);
         text-decoration: none;
+    }
+
+    [data-theme="dark"] & {
+        &:hover,
+        &:focus {
+            background-color: rgb(139 92 246 / 20%);
+        }
     }
 }
 
-[data-theme="dark"] .theme-doc-sidebar-menu .menu__link:hover,
-[data-theme="dark"] .theme-doc-sidebar-menu .menu__link:focus {
-    background-color: rgb(129 140 248 / 20%);
+.theme-doc-sidebar-item-category > .menu__list-item-collapsible {
+    border-radius: 0.5rem;
+}
+
+.theme-doc-sidebar-item-category.sb-rules-presets > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category.sb-rules-catalog > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-link.sb-rules-overview > .menu__link,
+.theme-doc-sidebar-item-link.sb-rules-started > .menu__link {
+    border-inline-start: 3px solid var(--site-sb-rules);
+}
+
+.theme-doc-sidebar-item-link.sb-dev-overview > .menu__link,
+.theme-doc-sidebar-item-link.sb-dev-started > .menu__link,
+.theme-doc-sidebar-item-category.sb-dev-typedoc > .menu__list-item-collapsible {
+    border-inline-start: 3px solid var(--site-sb-dev);
+}
+
+.theme-doc-sidebar-item-category.sb-dev-tooling > .menu__list-item-collapsible {
+    border-inline-start: 3px solid var(--site-sb-tooling);
+}
+
+.theme-doc-sidebar-item-category.sb-dev-api > .menu__list-item-collapsible {
+    border-inline-start: 3px solid var(--site-sb-api);
+}
+
+.footer {
+    border-block-start: 1px solid rgb(139 92 246 / 20%);
 }
 
 .main-wrapper {
-    background:
-        radial-gradient(
-            circle at 20% 0%,
-            rgb(129 140 248 / 10%),
-            transparent 48%
+    background: radial-gradient(
+            circle at 18% 0%,
+            rgb(139 92 246 / 10%),
+            transparent 46%
         ),
-        radial-gradient(
-            circle at 80% 0%,
-            rgb(99 102 241 / 10%),
-            transparent 42%
-        );
+        radial-gradient(circle at 82% 0%, rgb(76 29 149 / 8%), transparent 44%);
 }
