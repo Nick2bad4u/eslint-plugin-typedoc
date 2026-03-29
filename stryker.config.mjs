@@ -23,7 +23,7 @@ const config = {
     coverageAnalysis: "perTest",
     dashboard: {
         baseUrl: "https://dashboard.stryker-mutator.io/api/reports",
-        project: "github.com/Nick2bad4u/eslint-plugin-typefest",
+        project: "github.com/Nick2bad4u/eslint-plugin-typedoc",
         reportType:
             /** @type {import("@stryker-mutator/api/core").ReportType} */ (
                 "full"

@@ -78,7 +78,7 @@ jobs:
               uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
-                  slug: Nick2bad4u/eslint-plugin-typefest
+                  slug: Nick2bad4u/eslint-plugin-typedoc
                   files: test-report.junit.xml
                   flags: unit,${{ matrix.codecov_flag }}
                   name: vitest-junit-${{ matrix.codecov_flag }}
@@ -91,7 +91,7 @@ jobs:
               uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
-                  slug: Nick2bad4u/eslint-plugin-typefest
+                  slug: Nick2bad4u/eslint-plugin-typedoc
                   files: ./coverage/lcov.info
                   flags: unit,${{ matrix.codecov_flag }}
                   name: vitest-unit-coverage-${{ matrix.codecov_flag }}

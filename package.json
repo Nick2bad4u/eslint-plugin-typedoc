@@ -1,25 +1,25 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
-    "name": "eslint-plugin-typefest",
+    "name": "eslint-plugin-typedoc",
     "version": "1.0.8",
     "private": false,
-    "description": "ESLint rules for adopting type-fest and ts-extras conventions.",
+    "description": "ESLint rules for TypeDoc validation, reporting, and autofixing.",
     "keywords": [
         "eslint",
         "eslint-plugin",
         "eslintplugin",
-        "type-fest",
-        "ts-extras",
+        "typedoc",
+        "documentation",
         "typescript"
     ],
-    "homepage": "https://github.com/Nick2bad4u/eslint-plugin-typefest",
+    "homepage": "https://github.com/Nick2bad4u/eslint-plugin-typedoc",
     "bugs": {
-        "url": "https://github.com/Nick2bad4u/eslint-plugin-typefest/issues",
+        "url": "https://github.com/Nick2bad4u/eslint-plugin-typedoc/issues",
         "email": "20943337+Nick2bad4u@users.noreply.github.com"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Nick2bad4u/eslint-plugin-typefest.git"
+        "url": "git+https://github.com/Nick2bad4u/eslint-plugin-typedoc.git"
     },
     "license": "MIT",
     "author": "Nick2bad4u <20943337+Nick2bad4u@users.noreply.github.com> (https://github.com/Nick2bad4u)",
@@ -74,9 +74,9 @@
         "build": "tsc -p tsconfig.build.json && npm run build:types:cjs && npm run build:cjs",
         "build:cjs": "esbuild dist/plugin.js --bundle --format=cjs --platform=node --packages=external --sourcemap --outfile=dist/plugin.cjs --footer:js=\"module.exports = module.exports.default;\"",
         "build:clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
-        "build:eslint-inspector": "npx -y @eslint/config-inspector@1.4.2 build --outDir \"docs/docusaurus/static/eslint-inspector\" --base \"/eslint-plugin-typefest/eslint-inspector/\"",
+        "build:eslint-inspector": "npx -y @eslint/config-inspector@1.4.2 build --outDir \"docs/docusaurus/static/eslint-inspector\" --base \"/eslint-plugin-typedoc/eslint-inspector/\"",
         "build:eslint-inspector:local": "npx @eslint/config-inspector",
-        "build:stylelint-inspector": "npx -y stylelint-config-inspector@latest build --outDir \"docs/docusaurus/static/stylelint-inspector\" --base \"/eslint-plugin-typefest/stylelint-inspector/\"",
+        "build:stylelint-inspector": "npx -y stylelint-config-inspector@latest build --outDir \"docs/docusaurus/static/stylelint-inspector\" --base \"/eslint-plugin-typedoc/stylelint-inspector/\"",
         "build:stylelint-inspector:local": "npx stylelint-config-inspector@latest",
         "build:types:cjs": "node -e \"require('node:fs').copyFileSync('dist/plugin.d.ts','dist/plugin.d.cts')\"",
         "changelog:generate": "git-cliff --config cliff.toml --output CHANGELOG.md",
@@ -141,7 +141,7 @@
         "lint:exports": "ts-unused-exports tsconfig.json src/plugin.ts --excludePathsFromReport=plugin.ts",
         "lint:fix": "cross-env NODE_OPTIONS=--max_old_space_size=16384 eslint --cache --cache-strategy content --cache-location .cache/.eslintcache --fix",
         "lint:fix:quiet": "cross-env ESLINT_PROGRESS=off NODE_OPTIONS=--max_old_space_size=16384 eslint --cache --cache-strategy content --cache-location .cache/.eslintcache --fix && echo \"Eslint fix done!\"",
-        "lint:grype": "grype . -c .grype.yaml --name eslint-plugin-typefest",
+        "lint:grype": "grype . -c .grype.yaml --name eslint-plugin-typedoc",
         "lint:knip": "npm run knip",
         "lint:knip:exports": "npm run knip -- --include exports,nsExports,classMembers,types,nsTypes,enumMembers,duplicates",
         "lint:knip:unused:exports": "npm run knip -- --dependencies --exports",
@@ -181,12 +181,12 @@
         "sync:peer-eslint-range": "node scripts/sync-peer-eslint-range.mjs",
         "sync:presets-rules-matrix": "node scripts/sync-presets-rules-matrix.mjs",
         "sync:readme-rules-table": "node scripts/sync-readme-rules-table.mjs",
-        "sync:readme-rules-table:update": "npm run build && cross-env TYPEFEST_UPDATE_GENERATED_DOCS=1 vitest run test/readme-rules-table-sync.test.ts -u",
+        "sync:readme-rules-table:update": "npm run build && cross-env TYPEDOC_UPDATE_GENERATED_DOCS=1 vitest run test/docs-integrity.test.ts -u",
         "sync:readme-rules-table:write": "node scripts/sync-readme-rules-table.mjs --write",
         "pretest": "npm run build",
         "test": "vitest run",
-        "test:autofix:fixtures": "cross-env TYPEFEST_AUTOFIX_SMOKE=1 vitest run test/autofix-fixtures-all-rules-smoke.test.ts",
-        "test:autofix:fixtures:typed": "cross-env TYPEFEST_AUTOFIX_SMOKE=1 TYPEFEST_AUTOFIX_FIXTURE_DIR=test/fixtures/typed vitest run test/autofix-fixtures-all-rules-smoke.test.ts",
+        "test:autofix:fixtures": "cross-env TYPEDOC_AUTOFIX_SMOKE=1 vitest run test/enforce-typedoc-tags.test.ts",
+        "test:autofix:fixtures:typed": "cross-env TYPEDOC_AUTOFIX_SMOKE=1 TYPEDOC_AUTOFIX_FIXTURE_DIR=test/fixtures/typed vitest run test/enforce-typedoc-tags.test.ts",
         "test:ci": "cross-env CI=true vitest run --reporter=default",
         "test:coverage": "vitest run --coverage --reporter=default",
         "test:coverage:detailed": "vitest run --coverage --reporter=verbose",
@@ -218,8 +218,7 @@
         "@typescript-eslint/parser": "^8.57.2",
         "@typescript-eslint/type-utils": "^8.57.2",
         "@typescript-eslint/utils": "^8.57.2",
-        "ts-extras": "^0.19.0",
-        "type-fest": "^5.5.0"
+        "typedoc": "^0.28.18"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.2",
@@ -343,7 +342,6 @@
         "eslint-plugin-total-functions": "^7.1.0",
         "eslint-plugin-tsdoc": "^0.5.2",
         "eslint-plugin-tsdoc-require-2": "^1.0.6",
-        "eslint-plugin-typefest": "^1.0.7",
         "eslint-plugin-undefined-css-classes": "^0.1.5",
         "eslint-plugin-unicorn": "^63.0.0",
         "eslint-plugin-unused-imports": "^4.4.1",

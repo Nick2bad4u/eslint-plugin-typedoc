@@ -170,7 +170,7 @@ Do not assume all repos have the same structure.
 
 Use the repository's own assets and structure first, but inspect this reference site for concrete examples of the expected level of polish:
 
-- `https://nick2bad4u.github.io/eslint-plugin-typefest/`
+- `https://nick2bad4u.github.io/eslint-plugin-typedoc/`
 
 When reviewing that reference, pay attention to these patterns:
 - a balanced navbar with primary docs links on the left and developer/support/search surfaces on the right
@@ -183,7 +183,7 @@ When reviewing that reference, pay attention to these patterns:
 - logo and icon usage that improves scannability without clutter
 - a user-first docs entry route (avoid routing the main `Docs` navbar item to a developer-only landing page)
 - a presets navbar dropdown that links to the overview page and the individual preset pages when the repo has multiple preset docs
-- lightweight numbered rule sidebars with strong left-color accents, similar to the visual rhythm of the typefest site
+- lightweight numbered rule sidebars with strong left-color accents, similar to the visual rhythm of the typedoc site
 
 Do **not** copy branding or project-specific text from the reference site.
 Use it only as a quality and layout reference.

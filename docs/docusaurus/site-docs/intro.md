@@ -1,20 +1,16 @@
----
-sidebar_position: 1
----
+# Welcome
 
-# eslint-plugin-typefest
+`eslint-plugin-typedoc` helps teams lint documentation quality the same way they lint source quality.
 
-`eslint-plugin-typefest` helps TypeScript codebases adopt more explicit, safer patterns with:
+## What you get
 
-- [`type-fest`](https://github.com/sindresorhus/type-fest) utility types.
-- [`ts-extras`](https://github.com/sindresorhus/ts-extras) runtime helpers.
+- TypeDoc tag consistency checks.
+- Broken inline `{@link ...}` detection.
+- Exported API documentation enforcement.
+- TypeDoc config option validation.
 
-## What this documentation includes
+## Next steps
 
-- A complete **rule reference** with examples for every rule.
-- **Getting Started** guidance for Flat Config projects.
-- A small **Developer API** section generated with TypeDoc.
-
-## Next step
-
-Next, open the **Getting Started** page in the sidebar to enable the plugin in your project.
+- Read [Getting started](./getting-started.md).
+- Browse the [rule reference](../../rules/overview.md).
+- Choose a preset from [presets](../../rules/presets/index.md).

@@ -1,28 +1,18 @@
-import { defineConfig } from "eslint-rule-benchmark";
+export type BenchmarkCase = Readonly<{
+    code: string;
+    description: string;
+    name: string;
+}>;
 
-export default defineConfig({
-    iterations: 80,
-    tests: [
-        {
-            cases: [
-                {
-                    testPath: "./cases/prefer-ts-extras-is-defined/baseline.ts",
-                },
-                {
-                    testPath: "./cases/prefer-ts-extras-is-defined/complex.ts",
-                },
-            ],
-            name: "Rule: prefer-ts-extras-is-defined",
-            ruleId: "typefest/prefer-ts-extras-is-defined",
-            rulePath: "../src/rules/prefer-ts-extras-is-defined.ts",
-            warmup: {
-                iterations: 15,
-            },
-        },
-    ],
-    timeout: 3000,
-    warmup: {
-        enabled: true,
-        iterations: 20,
+export const typedocBenchmarkCases: readonly BenchmarkCase[] = [
+    {
+        code: `/**\n * @return Value.\n */\nexport function normalize(value: string): string {\n    return value.trim();\n}`,
+        description: "Alias-tag normalization baseline case",
+        name: "no-typedoc-tag-alias",
     },
-});
+    {
+        code: `/**\n * Parse input.\n */\nexport function parseInput(raw: string): string {\n    return raw.trim();\n}`,
+        description: "Missing required TypeDoc tags baseline case",
+        name: "enforce-typedoc-tags",
+    },
+];
