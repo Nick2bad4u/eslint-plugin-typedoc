@@ -1,19 +1,11 @@
 /**
  * @packageDocumentation
- * Public plugin entrypoint for eslint-plugin-typefest exports and preset wiring.
+ * Public plugin entrypoint for eslint-plugin-typedoc exports and preset wiring.
  */
+
 import type { ESLint, Linter } from "eslint";
-import type { Except } from "type-fest";
 
 import typeScriptParser from "@typescript-eslint/parser";
-import {
-    isDefined,
-    isEmpty,
-    objectEntries,
-    objectHasIn,
-    safeCastTo,
-    setHas,
-} from "ts-extras";
 
 import packageJson from "../package.json" with { type: "json" };
 import {
@@ -21,57 +13,30 @@ import {
     deriveRulePresetMembershipByRuleName,
     deriveTypeCheckedRuleNameSet,
 } from "./_internal/rule-docs-metadata.js";
-import { typefestRules } from "./_internal/rules-registry.js";
+import { typedocRules } from "./_internal/rules-registry.js";
 import {
-    type TypefestConfigName as InternalTypefestConfigName,
-    typefestConfigMetadataByName,
-    typefestConfigNames,
-} from "./_internal/typefest-config-references.js";
+    type TypedocConfigName as InternalTypedocConfigName,
+    typedocConfigMetadataByName,
+    typedocConfigNames,
+} from "./_internal/typedoc-config-references.js";
 
-/** ESLint severity used by generated preset rule maps. */
 const ERROR_SEVERITY = "error" as const;
-
-/** Default file globs targeted by plugin presets when `files` is omitted. */
 const TYPE_SCRIPT_FILES = ["**/*.{ts,tsx,mts,cts}"] as const;
 
-/**
- * Canonical flat-config preset keys exposed through `plugin.configs`.
- *
- * @remarks
- * These names are used by consumers when composing presets in ESLint flat
- * config arrays.
- */
-export type TypefestConfigName = InternalTypefestConfigName;
+export type TypedocConfigName = InternalTypedocConfigName;
 
-/**
- * Flat-config preset shape produced by this plugin.
- *
- * @remarks
- * The `rules` map is required so preset composition can always merge concrete
- * rule severity entries without additional null checks.
- */
-export type TypefestPresetConfig = Linter.Config & {
+export type TypedocPresetConfig = Linter.Config & {
     rules: NonNullable<Linter.Config["rules"]>;
 };
 
-/** Internal alias for flat config objects handled by preset builders. */
 type FlatConfig = Linter.Config;
-
-/** Normalized language-options shape for preset composition helpers. */
 type FlatLanguageOptions = NonNullable<FlatConfig["languageOptions"]>;
-
-/** Normalized parser-options shape for preset composition helpers. */
 type FlatParserOptions = NonNullable<FlatLanguageOptions["parserOptions"]>;
+type RulesConfig = TypedocPresetConfig["rules"];
+type TypedocConfigsContract = Record<TypedocConfigName, TypedocPresetConfig>;
 
-/** Rule-map type used by preset rule-list expansion helpers. */
-type RulesConfig = TypefestPresetConfig["rules"];
-
-/** Contract for the `configs` object exported by this plugin. */
-type TypefestConfigsContract = Record<TypefestConfigName, TypefestPresetConfig>;
-
-/** Fully assembled plugin contract used by the runtime default export. */
-type TypefestPluginContract = Except<ESLint.Plugin, "configs" | "rules"> & {
-    configs: TypefestConfigsContract;
+type TypedocPluginContract = Omit<ESLint.Plugin, "configs" | "rules"> & {
+    configs: TypedocConfigsContract;
     meta: {
         name: string;
         namespace: string;
@@ -81,14 +46,7 @@ type TypefestPluginContract = Except<ESLint.Plugin, "configs" | "rules"> & {
     rules: NonNullable<ESLint.Plugin["rules"]>;
 };
 
-/**
- * Resolve package version from package.json data.
- *
- * @param pkg - Parsed package metadata value.
- *
- * @returns The package version, or `0.0.0` when unavailable.
- */
-function getPackageVersion(pkg: unknown): string {
+const getPackageVersion = (pkg: unknown): string => {
     if (typeof pkg !== "object" || pkg === null) {
         return "0.0.0";
     }
@@ -96,23 +54,15 @@ function getPackageVersion(pkg: unknown): string {
     const version = Reflect.get(pkg, "version");
 
     return typeof version === "string" ? version : "0.0.0";
-}
+};
 
-/** Package metadata used to populate plugin runtime `meta.version`. */
-const packageJsonValue = safeCastTo<unknown>(packageJson);
-
-/** Parser module reused across preset construction. */
 const typeScriptParserValue: FlatLanguageOptions["parser"] = typeScriptParser;
 
-/** Default parser options applied when a preset omits parser options. */
 const defaultParserOptions = {
     ecmaVersion: "latest",
     sourceType: "module",
 } satisfies FlatParserOptions;
 
-/**
- * Normalize unknown parser options into a mutable parser-options object.
- */
 const normalizeParserOptions = (
     parserOptions: FlatLanguageOptions["parserOptions"]
 ): FlatParserOptions =>
@@ -122,58 +72,14 @@ const normalizeParserOptions = (
         ? { ...parserOptions }
         : { ...defaultParserOptions };
 
-/**
- * Fully-qualified ESLint rule id used by this plugin.
- *
- * @remarks
- * Consumers typically use this when building strongly typed rule maps or helper
- * utilities that require namespaced rule identifiers.
- */
-export type TypefestRuleId = `typefest/${TypefestRuleName}`;
+export type TypedocRuleName = keyof typeof typedocRules;
+export type TypedocRuleId = `typedoc/${TypedocRuleName}`;
 
-/** Unqualified rule name supported by `eslint-plugin-typefest`. */
-export type TypefestRuleName = keyof typeof typefestRules;
+const typedocEslintRules = typedocRules as NonNullable<ESLint.Plugin["rules"]> &
+    typeof typedocRules;
 
-/**
- * ESLint-compatible rule map view of the strongly typed internal rule record.
- */
-const typefestEslintRules: NonNullable<ESLint.Plugin["rules"]> &
-    typeof typefestRules = typefestRules as NonNullable<
-    ESLint.Plugin["rules"]
-> &
-    typeof typefestRules;
-
-const isTypefestRuleName = (value: string): value is TypefestRuleName =>
-    objectHasIn(typefestRules, value);
-
-const typefestRuleEntries: readonly (readonly [
-    TypefestRuleName,
-    (typeof typefestRules)[TypefestRuleName],
-])[] = (() => {
-    const entries: (readonly [
-        TypefestRuleName,
-        (typeof typefestRules)[TypefestRuleName],
-    ])[] = [];
-
-    for (const [ruleName] of objectEntries(typefestRules)) {
-        if (!isTypefestRuleName(ruleName)) {
-            continue;
-        }
-
-        const ruleDefinition = typefestRules[ruleName];
-
-        if (ruleDefinition === undefined) {
-            continue;
-        }
-
-        entries.push([ruleName, ruleDefinition]);
-    }
-
-    return entries;
-})();
-
-const ruleDocsMetadataByRuleName = deriveRuleDocsMetadataByName(typefestRules);
-const rulePresetMembership = deriveRulePresetMembershipByRuleName(
+const ruleDocsMetadataByRuleName = deriveRuleDocsMetadataByName(typedocRules);
+const rulePresetMembershipByRuleName = deriveRulePresetMembershipByRuleName(
     ruleDocsMetadataByRuleName
 );
 const typeCheckedRuleNames = deriveTypeCheckedRuleNameSet(
@@ -181,137 +87,68 @@ const typeCheckedRuleNames = deriveTypeCheckedRuleNameSet(
 );
 
 const createEmptyPresetRuleMap = (): Record<
-    TypefestConfigName,
-    TypefestRuleName[]
+    TypedocConfigName,
+    TypedocRuleName[]
 > => {
-    const presetRuleMap = {} as Record<TypefestConfigName, TypefestRuleName[]>;
+    const map = {} as Record<TypedocConfigName, TypedocRuleName[]>;
 
-    for (const configName of typefestConfigNames) {
-        presetRuleMap[configName] = [];
+    for (const configName of typedocConfigNames) {
+        map[configName] = [];
     }
 
-    return presetRuleMap;
+    return map;
 };
 
 const dedupeRuleNames = (
-    ruleNames: readonly TypefestRuleName[]
-): TypefestRuleName[] => [...new Set(ruleNames)];
+    ruleNames: readonly TypedocRuleName[]
+): TypedocRuleName[] => [...new Set(ruleNames)];
 
-const derivePresetRuleNamesByConfig = (): Readonly<
-    Record<TypefestConfigName, readonly TypefestRuleName[]>
-> => {
-    const presetRuleNamesByConfig = createEmptyPresetRuleMap();
+const presetRuleNamesByConfig = (() => {
+    const map = createEmptyPresetRuleMap();
 
-    for (const [ruleName] of typefestRuleEntries) {
-        const configNames = rulePresetMembership[ruleName];
-
-        if (!isDefined(configNames) || isEmpty(configNames)) {
-            throw new TypeError(
-                `Rule '${ruleName}' is missing preset membership metadata.`
-            );
-        }
-
+    for (const [ruleName, configNames] of Object.entries(
+        rulePresetMembershipByRuleName
+    ) as readonly (readonly [
+        TypedocRuleName,
+        readonly TypedocConfigName[],
+    ])[]) {
         for (const configName of configNames) {
-            presetRuleNamesByConfig[configName].push(ruleName);
+            map[configName].push(ruleName);
         }
     }
 
-    return {
-        all: dedupeRuleNames(presetRuleNamesByConfig.all),
-        experimental: dedupeRuleNames(presetRuleNamesByConfig.experimental),
-        minimal: dedupeRuleNames(presetRuleNamesByConfig.minimal),
-        recommended: dedupeRuleNames(presetRuleNamesByConfig.recommended),
-        "recommended-type-checked": dedupeRuleNames(
-            presetRuleNamesByConfig["recommended-type-checked"]
-        ),
-        strict: dedupeRuleNames(presetRuleNamesByConfig.strict),
-        "ts-extras/type-guards": dedupeRuleNames(
-            presetRuleNamesByConfig["ts-extras/type-guards"]
-        ),
-        "type-fest/types": dedupeRuleNames(
-            presetRuleNamesByConfig["type-fest/types"]
-        ),
-    };
-};
+    for (const configName of typedocConfigNames) {
+        map[configName] = dedupeRuleNames(map[configName]).toSorted(
+            (left, right) => left.localeCompare(right)
+        );
+    }
 
-/**
- * Build an ESLint rules map that enables each provided rule at error level.
- *
- * @param ruleNames - Rule names to enable.
- *
- * @returns Rules config object compatible with flat config.
- */
-function errorRulesFor(ruleNames: readonly TypefestRuleName[]): RulesConfig {
+    return map as Readonly<
+        Record<TypedocConfigName, readonly TypedocRuleName[]>
+    >;
+})();
+
+const errorRulesFor = (ruleNames: readonly TypedocRuleName[]): RulesConfig => {
     const rules: RulesConfig = {};
 
     for (const ruleName of ruleNames) {
-        rules[`typefest/${ruleName}`] = ERROR_SEVERITY;
+        rules[`typedoc/${ruleName}`] = ERROR_SEVERITY;
     }
 
     return rules;
-}
-
-/**
- * Remove duplicates while preserving first-seen ordering.
- *
- * @param ruleNames - Candidate rule list.
- *
- * @returns Deduplicated rule list.
- */
-const presetRuleNamesByConfig = derivePresetRuleNamesByConfig();
-
-/** Recommended preset rule list for zero-type-info usage. */
-const recommendedRuleNames: TypefestRuleName[] = [];
-
-for (const ruleName of presetRuleNamesByConfig.recommended) {
-    if (setHas(typeCheckedRuleNames, ruleName)) {
-        continue;
-    }
-
-    recommendedRuleNames.push(ruleName);
-}
-
-/** Type-aware recommended preset rule list. */
-const recommendedTypeCheckedRuleNames = dedupeRuleNames([
-    ...recommendedRuleNames,
-    ...presetRuleNamesByConfig["recommended-type-checked"],
-]);
-
-/** Effective per-preset rule lists after applying derived policy overlays. */
-const effectivePresetRuleNamesByConfig: Readonly<
-    Record<TypefestConfigName, readonly TypefestRuleName[]>
-> = {
-    ...presetRuleNamesByConfig,
-    experimental: dedupeRuleNames([
-        ...presetRuleNamesByConfig.all,
-        ...presetRuleNamesByConfig.experimental,
-    ]),
-    recommended: recommendedRuleNames,
-    "recommended-type-checked": recommendedTypeCheckedRuleNames,
 };
 
-/**
- * Apply parser and plugin metadata required by all plugin presets.
- *
- * @param config - Preset-specific config fragment.
- * @param plugin - Plugin object registered under the `typefest` namespace.
- * @param options - Preset-level wiring options.
- *
- * @returns Normalized preset config.
- */
-function withTypefestPlugin(
-    config: Readonly<TypefestPresetConfig>,
+const withTypedocPlugin = (
+    config: Readonly<TypedocPresetConfig>,
     plugin: Readonly<ESLint.Plugin>,
     options: Readonly<{ requiresTypeChecking: boolean }>
-): TypefestPresetConfig {
+): TypedocPresetConfig => {
     const existingLanguageOptions = config.languageOptions ?? {};
-    const existingParserOptions = existingLanguageOptions["parserOptions"];
-    const parserOptions = normalizeParserOptions(existingParserOptions);
+    const parserOptions = normalizeParserOptions(
+        existingLanguageOptions["parserOptions"]
+    );
 
-    if (
-        options.requiresTypeChecking &&
-        !objectHasIn(parserOptions, "projectService")
-    ) {
+    if (options.requiresTypeChecking && !("projectService" in parserOptions)) {
         Reflect.set(parserOptions, "projectService", true);
     }
 
@@ -327,35 +164,35 @@ function withTypefestPlugin(
         languageOptions,
         plugins: {
             ...config.plugins,
-            typefest: plugin,
+            typedoc: plugin,
         },
     };
-}
-
-/** Minimal plugin object used when assembling flat-config presets. */
-const pluginForConfigs: ESLint.Plugin = {
-    rules: typefestEslintRules,
 };
 
-/**
- * Flat config presets distributed by eslint-plugin-typefest.
- */
-const createTypefestConfigsDefinition = (): TypefestConfigsContract => {
-    const configs = {} as TypefestConfigsContract;
+const pluginForConfigs: ESLint.Plugin = {
+    rules: typedocEslintRules,
+};
 
-    for (const configName of typefestConfigNames) {
-        const configMetadata = typefestConfigMetadataByName[configName];
+const createTypedocConfigsDefinition = (): TypedocConfigsContract => {
+    const configs = {} as TypedocConfigsContract;
 
-        configs[configName] = withTypefestPlugin(
+    for (const configName of typedocConfigNames) {
+        const configMetadata = typedocConfigMetadataByName[configName];
+        const presetRuleNames = presetRuleNamesByConfig[configName];
+        const requiresTypeChecking =
+            configMetadata.requiresTypeChecking ||
+            presetRuleNames.some((ruleName) =>
+                typeCheckedRuleNames.has(ruleName)
+            );
+
+        configs[configName] = withTypedocPlugin(
             {
                 name: configMetadata.presetName,
-                rules: errorRulesFor(
-                    effectivePresetRuleNamesByConfig[configName]
-                ),
+                rules: errorRulesFor(presetRuleNames),
             },
             pluginForConfigs,
             {
-                requiresTypeChecking: configMetadata.requiresTypeChecking,
+                requiresTypeChecking,
             }
         );
     }
@@ -363,44 +200,21 @@ const createTypefestConfigsDefinition = (): TypefestConfigsContract => {
     return configs;
 };
 
-const typefestConfigsDefinition = createTypefestConfigsDefinition();
+const typedocConfigs = createTypedocConfigsDefinition();
 
-/** Finalized typed view of all exported preset configurations. */
-const typefestConfigs: TypefestConfigsContract = typefestConfigsDefinition;
+export type TypedocConfigs = typeof typedocConfigs;
 
-/**
- * Runtime type for the plugin's generated config presets.
- *
- * @remarks
- * Mirrors `plugin.configs` and is useful when composing typed preset-aware
- * tooling in external integrations.
- */
-export type TypefestConfigs = typeof typefestConfigs;
-
-/**
- * Main plugin object exported for ESLint consumption.
- */
-const typefestPlugin: TypefestPluginContract = {
-    configs: typefestConfigs,
+const typedocPlugin: TypedocPluginContract = {
+    configs: typedocConfigs,
     meta: {
-        name: "eslint-plugin-typefest",
-        namespace: "typefest",
-        version: getPackageVersion(packageJsonValue),
+        name: "eslint-plugin-typedoc",
+        namespace: "typedoc",
+        version: getPackageVersion(packageJson),
     },
     processors: {},
-    rules: typefestEslintRules,
+    rules: typedocEslintRules,
 };
 
-/**
- * Runtime type for the plugin object exported as default.
- *
- * @remarks
- * Includes resolved `meta`, `rules`, and `configs` contracts after plugin
- * assembly.
- */
-export type TypefestPlugin = typeof typefestPlugin;
+export type TypedocPlugin = typeof typedocPlugin;
 
-/**
- * Default plugin export consumed by ESLint flat config.
- */
-export default typefestPlugin;
+export default typedocPlugin;

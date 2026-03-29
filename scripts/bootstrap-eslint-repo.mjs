@@ -36,8 +36,8 @@ const dependencies = [
     "@typescript-eslint/parser",
     "@typescript-eslint/type-utils",
     "@typescript-eslint/utils",
-    "type-fest",
-    "ts-extras",
+    "typedoc",
+    "documentation",
 ];
 
 const devDependencies = [

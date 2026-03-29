@@ -6,15 +6,16 @@ export default defineConfig({
         {
             cases: [
                 {
-                    testPath: "./cases/prefer-ts-extras-is-defined/baseline.ts",
+                    testPath:
+                        "./cases/require-exported-doc-comment/baseline.ts",
                 },
                 {
-                    testPath: "./cases/prefer-ts-extras-is-defined/complex.ts",
+                    testPath: "./cases/require-exported-doc-comment/complex.ts",
                 },
             ],
-            name: "Rule: prefer-ts-extras-is-defined",
-            ruleId: "typefest/prefer-ts-extras-is-defined",
-            rulePath: "../src/rules/prefer-ts-extras-is-defined.ts",
+            name: "Rule: require-exported-doc-comment",
+            ruleId: "typedoc/require-exported-doc-comment",
+            rulePath: "../src/rules/require-exported-doc-comment.ts",
             warmup: {
                 iterations: 15,
             },

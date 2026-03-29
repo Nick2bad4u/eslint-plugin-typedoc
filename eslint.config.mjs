@@ -90,11 +90,11 @@ import * as yamlEslintParser from "yaml-eslint-parser";
  * @remarks
  * When bootstrapping a new ESLint plugin, do the following:
  *
- * 1. Import `typefest` from the npm package and add it above
- * 2. Change the `typefest` local import below to be the new plugin's name and path
- * 3. Setup the `🚢 Local Plugin Import` section below for new plugin
+ * 1. Import your plugin runtime entry above.
+ * 2. Wire the local import below to the plugin name/path.
+ * 3. Configure the `🚢 Local Plugin Import` section for your rule namespace.
  */
-import typefest from "./plugin.mjs";
+import typedoc from "./plugin.mjs";
 
 // NOTE: eslint-plugin-json-schema-validator may attempt to fetch remote schemas
 // at lint time. That makes linting flaky/offline-hostile.
@@ -710,28 +710,28 @@ export default defineConfig([
     //     ],
     //     name: "Local Plugin Rules from Source",
     //     plugins: {
-    //         typefest: typefest,
+    //         typedoc: typedoc,
     //     },
     //     rules: {
-    //         ...typefest.configs.all.rules,
+    //         ...typedoc.configs.all.rules,
     //     },
     // },
     // #endregion
-    // #region ⌨️ Typefest
+    // #region ⌨️ Typedoc
     // ═══════════════════════════════════════════════════════════════════════════════
-    // SECTION: ⌨️ Typefest (typefest/*)
+    // SECTION: ⌨️ Typedoc (typedoc/*)
     // ═══════════════════════════════════════════════════════════════════════════════
     {
         files: [
             "src/**/*.{ts,tsx,mts,cts}",
             //    "test/**/*.{ts,tsx,mts,cts}"
         ],
-        name: "Typefest Rules for Source",
+        name: "Typedoc Rules for Source",
         plugins: {
-            typefest: typefest,
+            typedoc: typedoc,
         },
         rules: {
-            ...typefest.configs.experimental.rules,
+            ...typedoc.configs.all.rules,
         },
     },
     // #endregion

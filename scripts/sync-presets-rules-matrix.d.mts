@@ -3,7 +3,7 @@ export interface PresetsRuleModule {
         | {
               readonly docs?:
                   | {
-                        readonly typefestConfigs?:
+                        readonly typedocConfigs?:
                             | readonly string[]
                             | string
                             | undefined;
@@ -19,3 +19,7 @@ export interface PresetsRuleModule {
 export function generatePresetsRulesMatrixSectionFromRules(
     rules: Readonly<Record<string, PresetsRuleModule>>
 ): string;
+
+export function syncPresetsRulesMatrix(input: {
+    readonly writeChanges: boolean;
+}): Promise<Readonly<{ changed: boolean; changedPaths: readonly string[] }>>;

@@ -2,19 +2,17 @@
 sidebar_position: 1
 ---
 
-# eslint-plugin-typefest
+# eslint-plugin-typedoc
 
-`eslint-plugin-typefest` helps TypeScript codebases adopt more explicit, safer patterns with:
+`eslint-plugin-typedoc` brings TypeDoc documentation checks into ESLint so documentation issues are surfaced, reviewed, and fixed alongside code issues.
 
-- [`type-fest`](https://github.com/sindresorhus/type-fest) utility types.
-- [`ts-extras`](https://github.com/sindresorhus/ts-extras) runtime helpers.
+## What you get
 
-## What this documentation includes
-
-- A complete **rule reference** with examples for every rule.
-- **Getting Started** guidance for Flat Config projects.
-- A small **Developer API** section generated with TypeDoc.
+- rules for exported API documentation coverage,
+- rules for TypeDoc tags and inline link correctness,
+- rule for baseline TypeDoc config validation,
+- presets for gradual policy adoption.
 
 ## Next step
 
-Next, open the **Getting Started** page in the sidebar to enable the plugin in your project.
+Go to [Getting Started](./getting-started.md) to install and configure the plugin.

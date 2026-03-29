@@ -1,0 +1,276 @@
+/**
+ * @packageDocumentation
+ * Require key options in TypeDoc configuration objects.
+ */
+
+import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+
+import { getPreferredLineEnding } from "../_internal/doc-comments.js";
+import { createTypedRule } from "../_internal/typed-rule.js";
+
+const defaultOptions = [] as const;
+
+type Options = typeof defaultOptions;
+type MessageIds = "missingTypedocConfigOptions";
+
+const typedocConfigFileExpression =
+    /(^|\\|\/)(typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
+
+const requiredOptionDefaultsByName = {
+    entryPoints: '["src/index.ts"]',
+    tsconfig: '"./tsconfig.json"',
+} as const;
+
+const requiredOptionNames = Object.keys(
+    requiredOptionDefaultsByName
+) as readonly (keyof typeof requiredOptionDefaultsByName)[];
+
+const normalizePathSeparators = (fileName: string): string =>
+    fileName.replaceAll("\\", "/");
+
+const isModuleExportsMemberExpression = (
+    memberExpression: TSESTree.MemberExpression
+): boolean => {
+    if (
+        memberExpression.object.type !== AST_NODE_TYPES.Identifier ||
+        memberExpression.object.name !== "module"
+    ) {
+        return false;
+    }
+
+    if (
+        memberExpression.computed ||
+        memberExpression.property.type !== AST_NODE_TYPES.Identifier
+    ) {
+        return false;
+    }
+
+    return memberExpression.property.name === "exports";
+};
+
+const extractObjectExpression = (
+    expression: TSESTree.Expression
+): null | TSESTree.ObjectExpression => {
+    if (expression.type === AST_NODE_TYPES.ObjectExpression) {
+        return expression;
+    }
+
+    if (expression.type !== AST_NODE_TYPES.CallExpression) {
+        return null;
+    }
+
+    const firstArgument = expression.arguments[0];
+
+    return firstArgument?.type === AST_NODE_TYPES.ObjectExpression
+        ? firstArgument
+        : null;
+};
+
+const getTypedocConfigObjectFromProgram = (
+    program: TSESTree.Program
+): null | TSESTree.ObjectExpression => {
+    for (const statement of program.body) {
+        if (statement.type === AST_NODE_TYPES.ExportDefaultDeclaration) {
+            const declaration = statement.declaration;
+
+            if (
+                declaration.type !== AST_NODE_TYPES.ObjectExpression &&
+                declaration.type !== AST_NODE_TYPES.CallExpression
+            ) {
+                continue;
+            }
+
+            const objectExpression = extractObjectExpression(declaration);
+
+            if (objectExpression !== null) {
+                return objectExpression;
+            }
+        }
+
+        if (statement.type !== AST_NODE_TYPES.ExpressionStatement) {
+            continue;
+        }
+
+        const { expression } = statement;
+
+        if (
+            expression.type !== AST_NODE_TYPES.AssignmentExpression ||
+            expression.operator !== "=" ||
+            expression.left.type !== AST_NODE_TYPES.MemberExpression ||
+            !isModuleExportsMemberExpression(expression.left)
+        ) {
+            continue;
+        }
+
+        const objectExpression = extractObjectExpression(expression.right);
+
+        if (objectExpression !== null) {
+            return objectExpression;
+        }
+    }
+
+    return null;
+};
+
+const getPropertyKeyName = (property: TSESTree.Property): null | string => {
+    if (property.computed) {
+        return null;
+    }
+
+    if (property.key.type === AST_NODE_TYPES.Identifier) {
+        return property.key.name;
+    }
+
+    if (property.key.type === AST_NODE_TYPES.Literal) {
+        return typeof property.key.value === "string"
+            ? property.key.value
+            : null;
+    }
+
+    return null;
+};
+
+const getMissingOptionNames = (
+    configObject: TSESTree.ObjectExpression
+): readonly (keyof typeof requiredOptionDefaultsByName)[] => {
+    const configuredOptionNames = new Set<string>();
+
+    for (const property of configObject.properties) {
+        if (
+            property.type !== AST_NODE_TYPES.Property ||
+            property.kind !== "init"
+        ) {
+            continue;
+        }
+
+        const keyName = getPropertyKeyName(property);
+
+        if (keyName !== null) {
+            configuredOptionNames.add(keyName);
+        }
+    }
+
+    return requiredOptionNames.filter(
+        (optionName) => !configuredOptionNames.has(optionName)
+    );
+};
+
+const supportsSafeAutofix = (
+    configObject: TSESTree.ObjectExpression
+): boolean =>
+    configObject.properties.every(
+        (property) =>
+            property.type === AST_NODE_TYPES.Property &&
+            property.kind === "init" &&
+            !property.computed
+    );
+
+const rule = createTypedRule<Options, MessageIds>({
+    create: (context) => {
+        const { sourceCode } = context;
+        const lineEnding = getPreferredLineEnding(sourceCode);
+
+        return {
+            Program: (node): void => {
+                const normalizedFileName = normalizePathSeparators(
+                    context.filename
+                );
+
+                if (!typedocConfigFileExpression.test(normalizedFileName)) {
+                    return;
+                }
+
+                const configObject = getTypedocConfigObjectFromProgram(node);
+
+                if (configObject === null) {
+                    return;
+                }
+
+                const missingOptionNames = getMissingOptionNames(configObject);
+
+                if (missingOptionNames.length === 0) {
+                    return;
+                }
+
+                const missingOptionsList = missingOptionNames
+                    .map((name) => `"${name}"`)
+                    .join(", ");
+
+                const baseReportDescriptor = {
+                    data: {
+                        options: missingOptionsList,
+                    },
+                    messageId: "missingTypedocConfigOptions" as const,
+                    node: configObject,
+                };
+
+                if (!supportsSafeAutofix(configObject)) {
+                    context.report(baseReportDescriptor);
+
+                    return;
+                }
+
+                context.report({
+                    ...baseReportDescriptor,
+                    fix: (fixer) => {
+                        const configObjectText =
+                            sourceCode.getText(configObject);
+                        const hasTrailingComma = /,\s*\}$/u.test(
+                            configObjectText
+                        );
+                        const startColumn = configObject.loc?.start.column;
+                        const indentation = " ".repeat(
+                            typeof startColumn === "number" ? startColumn : 0
+                        );
+                        const propertyIndentation = `${indentation}    `;
+                        const insertedProperties = missingOptionNames
+                            .map(
+                                (name) =>
+                                    `${propertyIndentation}${name}: ${requiredOptionDefaultsByName[name]}`
+                            )
+                            .join(`,${lineEnding}`);
+
+                        const insertionText =
+                            configObject.properties.length === 0
+                                ? `${lineEnding}${insertedProperties}${lineEnding}${indentation}`
+                                : `${hasTrailingComma ? "" : ","}${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
+
+                        return fixer.insertTextBeforeRange(
+                            [
+                                configObject.range[1] - 1,
+                                configObject.range[1] - 1,
+                            ],
+                            insertionText
+                        );
+                    },
+                });
+            },
+        };
+    },
+    defaultOptions,
+    meta: {
+        docs: {
+            description:
+                "Require essential options (entryPoints and tsconfig) in TypeDoc config objects.",
+            frozen: false,
+            recommended: true,
+            requiresTypeChecking: false,
+            typedocConfigs: [
+                "typedoc.configs.minimal",
+                "typedoc.configs.recommended",
+                "typedoc.configs.strict",
+                "typedoc.configs.all",
+            ],
+        },
+        fixable: "code",
+        messages: {
+            missingTypedocConfigOptions:
+                "TypeDoc config is missing required option(s): {{options}}.",
+        },
+        schema: [],
+        type: "problem",
+    },
+    name: "typedoc-config-requires-options",
+});
+
+export default rule;

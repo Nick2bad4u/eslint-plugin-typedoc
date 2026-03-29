@@ -1,18 +1,19 @@
 /**
  * @packageDocumentation
- * Canonical rule documentation URL helpers.
+ * Canonical rule-doc URL builder for eslint-plugin-typedoc.
  */
 
-/** Stable docs host/prefix for generated rule docs links. */
-export const RULE_DOCS_URL_BASE =
-    "https://nick2bad4u.github.io/eslint-plugin-typefest/docs/rules/" as const;
+const RULE_DOCS_BASE_URL =
+    "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules";
 
 /**
- * Build the canonical documentation URL for one rule id.
+ * Build the canonical documentation URL for a rule.
  *
- * @param ruleName - Rule id (for example `prefer-ts-extras-array-at`).
+ * @param ruleName - Unqualified rule name.
  *
- * @returns Canonical docs URL for the rule page.
+ * @returns Absolute docs URL.
  */
 export const createRuleDocsUrl = (ruleName: string): string =>
-    `${RULE_DOCS_URL_BASE}${ruleName}`;
+    `${RULE_DOCS_BASE_URL}/${ruleName}`;
+
+export default createRuleDocsUrl;

@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * Synchronize or validate the README rules matrix from canonical rule metadata.
+ * Synchronize or validate the README rules matrix from canonical plugin metadata.
  */
 // @ts-check
 
@@ -10,16 +10,16 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import builtPlugin from "../dist/plugin.js";
 import {
-    typefestConfigMetadataByName,
-    typefestConfigNamesByReadmeOrder,
-    typefestConfigReferenceToName,
-} from "../dist/_internal/typefest-config-references.js";
+    typedocConfigMetadataByName,
+    typedocConfigNamesByReadmeOrder,
+    typedocConfigReferenceToName,
+} from "../dist/_internal/typedoc-config-references.js";
 
 /**
  * @typedef {Readonly<{
  *     meta?: {
  *         docs?: {
- *             typefestConfigs?: readonly string[] | string;
+ *             typedocConfigs?: readonly string[] | string;
  *             url?: string;
  *         };
  *         fixable?: string;
@@ -29,15 +29,29 @@ import {
  */
 
 /** @typedef {Readonly<Record<string, ReadmeRuleModule>>} ReadmeRulesMap */
+/** @typedef {import("../dist/_internal/typedoc-config-references.js").TypedocConfigName} PresetName */
 
-/** @typedef {import("../dist/_internal/typefest-config-references.js").TypefestConfigName} PresetName */
-
-const presetOrder = [...typefestConfigNamesByReadmeOrder];
+const presetOrder = [...typedocConfigNamesByReadmeOrder];
 const presetNameSet = new Set(presetOrder);
-
 const rulesSectionHeading = "## Rules";
-const PRESET_DOCS_URL_BASE =
-    "https://nick2bad4u.github.io/eslint-plugin-typefest/docs/rules/presets";
+const presetDocsUrlBase =
+    "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets";
+
+/** @type {Readonly<Record<PresetName, string>>} */
+const presetDocSlugByName = {
+    all: "all",
+    minimal: "minimal",
+    recommended: "recommended",
+    strict: "strict",
+};
+
+/** @type {Readonly<Record<PresetName, string>>} */
+const presetConfigReferenceByName = {
+    all: "typedoc.configs.all",
+    minimal: "typedoc.configs.minimal",
+    recommended: "typedoc.configs.recommended",
+    strict: "typedoc.configs.strict",
+};
 
 /**
  * @param {string} markdown
@@ -57,8 +71,6 @@ const normalizeMarkdownLineEndings = (markdown, lineEnding) =>
     markdown.replace(/\r?\n/gv, lineEnding);
 
 /**
- * Locate the rules section bounds within README markdown.
- *
  * @param {string} markdown
  *
  * @returns {Readonly<{ endOffset: number; startOffset: number }>}
@@ -67,7 +79,7 @@ const getReadmeRulesSectionBounds = (markdown) => {
     const startOffset = markdown.indexOf(rulesSectionHeading);
 
     if (startOffset < 0) {
-        throw new Error("README.md is missing the '## Rules' section heading.");
+        throw new Error("README.md is missing the '## Rules' heading.");
     }
 
     const nextHeadingOffset = markdown.indexOf(
@@ -82,9 +94,6 @@ const getReadmeRulesSectionBounds = (markdown) => {
 };
 
 /**
- * Extract the README rules section without including the blank separator line
- * that belongs to the following section.
- *
  * @param {string} markdown
  *
  * @returns {string}
@@ -96,9 +105,6 @@ export const extractReadmeRulesSection = (markdown) => {
 };
 
 /**
- * Normalize markdown table row spacing so formatter-aligned columns compare
- * equivalently to compact generated rows.
- *
  * @param {string} markdown
  *
  * @returns {string}
@@ -147,37 +153,13 @@ export const normalizeRulesSectionMarkdown = (markdown) =>
         .join("\n")
         .trimEnd();
 
-/** @type {Readonly<Record<PresetName, string>>} */
-const presetDocsSlugByName = {
-    all: "all",
-    experimental: "experimental",
-    minimal: "minimal",
-    recommended: "recommended",
-    "recommended-type-checked": "recommended-type-checked",
-    strict: "strict",
-    "ts-extras/type-guards": "ts-extras-type-guards",
-    "type-fest/types": "type-fest-types",
-};
-
-/** @type {Readonly<Record<PresetName, string>>} */
-const presetConfigReferenceByName = {
-    all: "typefest.configs.all",
-    experimental: "typefest.configs.experimental",
-    minimal: "typefest.configs.minimal",
-    recommended: "typefest.configs.recommended",
-    "recommended-type-checked": 'typefest.configs["recommended-type-checked"]',
-    strict: "typefest.configs.strict",
-    "ts-extras/type-guards": 'typefest.configs["ts-extras/type-guards"]',
-    "type-fest/types": 'typefest.configs["type-fest/types"]',
-};
-
 /**
  * @param {PresetName} presetName
  *
  * @returns {string}
  */
 const createPresetDocsUrl = (presetName) =>
-    `${PRESET_DOCS_URL_BASE}/${presetDocsSlugByName[presetName]}`;
+    `${presetDocsUrlBase}/${presetDocSlugByName[presetName]}`;
 
 /**
  * @returns {readonly string[]}
@@ -185,10 +167,10 @@ const createPresetDocsUrl = (presetName) =>
 const createPresetLegendLines = () =>
     presetOrder.map((presetName) => {
         const docsUrl = createPresetDocsUrl(presetName);
-        const presetIcon = typefestConfigMetadataByName[presetName].icon;
+        const icon = typedocConfigMetadataByName[presetName].icon;
         const configReference = presetConfigReferenceByName[presetName];
 
-        return `  - [${presetIcon}](${docsUrl}) — [\`${configReference}\`](${docsUrl})`;
+        return `  - [${icon}](${docsUrl}) — [\`${configReference}\`](${docsUrl})`;
     });
 
 /**
@@ -196,30 +178,29 @@ const createPresetLegendLines = () =>
  *
  * @returns {null | PresetName}
  */
-const normalizeTypefestConfigName = (reference) => {
-    if (Object.hasOwn(typefestConfigReferenceToName, reference)) {
-        const referenceKey =
-            /** @type {keyof typeof typefestConfigReferenceToName} */ (
-                reference
-            );
+const normalizeTypedocConfigName = (reference) => {
+    if (Object.hasOwn(typedocConfigReferenceToName, reference)) {
+        const key = /** @type {keyof typeof typedocConfigReferenceToName} */ (
+            reference
+        );
 
-        return typefestConfigReferenceToName[referenceKey];
+        return typedocConfigReferenceToName[key];
     }
 
-    const presetName = /** @type {PresetName} */ (reference);
+    const asPresetName = /** @type {PresetName} */ (reference);
 
-    return presetNameSet.has(presetName) ? presetName : null;
+    return presetNameSet.has(asPresetName) ? asPresetName : null;
 };
 
 /**
- * @param {readonly string[] | string | undefined} typefestConfigs
+ * @param {readonly string[] | string | undefined} typedocConfigs
  *
  * @returns {readonly PresetName[]}
  */
-const normalizeTypefestConfigNames = (typefestConfigs) => {
-    const references = Array.isArray(typefestConfigs)
-        ? typefestConfigs
-        : [typefestConfigs];
+const normalizeTypedocConfigNames = (typedocConfigs) => {
+    const references = Array.isArray(typedocConfigs)
+        ? typedocConfigs
+        : [typedocConfigs];
 
     /** @type {PresetName[]} */
     const names = [];
@@ -231,20 +212,14 @@ const normalizeTypefestConfigNames = (typefestConfigs) => {
             continue;
         }
 
-        const configName = normalizeTypefestConfigName(reference);
+        const normalized = normalizeTypedocConfigName(reference);
 
-        if (configName === null) {
+        if (normalized === null || seenPresetNames.has(normalized)) {
             continue;
         }
 
-        if (!presetNameSet.has(configName)) {
-            continue;
-        }
-
-        if (!seenPresetNames.has(configName)) {
-            seenPresetNames.add(configName);
-            names.push(configName);
-        }
+        seenPresetNames.add(normalized);
+        names.push(normalized);
     }
 
     return names;
@@ -280,20 +255,23 @@ const getRuleFixIndicator = (ruleModule) => {
  * @returns {string}
  */
 const getPresetIndicator = (ruleModule) => {
-    const docsTypefestConfigs = ruleModule.meta?.docs?.typefestConfigs;
-    const presetNames = normalizeTypefestConfigNames(docsTypefestConfigs);
+    const presetNames = normalizeTypedocConfigNames(
+        ruleModule.meta?.docs?.typedocConfigs
+    );
     const presetNamesSet = new Set(presetNames);
 
     /** @type {string[]} */
     const icons = [];
 
     for (const presetName of presetOrder) {
-        if (presetNamesSet.has(presetName)) {
-            const docsUrl = createPresetDocsUrl(presetName);
-            const presetIcon = typefestConfigMetadataByName[presetName].icon;
-
-            icons.push(`[${presetIcon}](${docsUrl})`);
+        if (!presetNamesSet.has(presetName)) {
+            continue;
         }
+
+        const docsUrl = createPresetDocsUrl(presetName);
+        const icon = typedocConfigMetadataByName[presetName].icon;
+
+        icons.push(`[${icon}](${docsUrl})`);
     }
 
     return icons.length === 0 ? "—" : icons.join(" ");
@@ -317,9 +295,9 @@ const toRuleTableRow = ([ruleName, ruleModule]) => {
 /**
  * Generate the canonical README rules section from plugin rules metadata.
  *
- * @param {ReadmeRulesMap} rules - Plugin `rules` map.
+ * @param {ReadmeRulesMap} rules
  *
- * @returns {string} Full markdown section text starting at `## Rules`.
+ * @returns {string}
  */
 export const generateReadmeRulesSectionFromRules = (rules) => {
     const ruleEntries = Object.entries(rules).toSorted((left, right) =>
@@ -418,7 +396,7 @@ const runCli = async () => {
     }
 
     console.error(
-        "README rules table is out of sync. Run: npm run sync:readme-rules-table:write (or npm run sync:readme-rules-table:update to refresh snapshots too)."
+        "README rules table is out of sync. Run: npm run sync:readme-rules-table:write"
     );
     process.exitCode = 1;
 };

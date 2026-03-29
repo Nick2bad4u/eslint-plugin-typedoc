@@ -3,190 +3,82 @@ import * as path from "node:path";
 
 import plugin from "../plugin.mjs";
 
-/**
- * @typedef {Record<string, unknown>} UnknownRecord
- */
+/** @typedef {import("eslint").Linter.RulesRecord} BenchmarkRules */
+/** @typedef {{ rules: BenchmarkRules }} ConfigWithRules */
 
-/**
- * @typedef {import("eslint").Linter.RulesRecord} BenchmarkRules
- */
-
-/**
- * @typedef {{
- *     arrayableStressFixture: readonly string[];
- *     isPresentStressFixture: readonly string[];
- *     recommendedZeroMessageFixture: readonly string[];
- *     setHasStressFixture: readonly string[];
- *     safeCastToStressFixture: readonly string[];
- *     stringSplitStressFixture: readonly string[];
- *     tsExtrasInvalidFixtures: readonly string[];
- *     typedInvalidFixtures: readonly string[];
- *     typedValidFixtures: readonly string[];
- *     typeFestInvalidFixtures: readonly string[];
- * }} BenchmarkFileGlobs
- */
-
-/**
- * @typedef {{ rules: BenchmarkRules }} CreateTypefestFlatConfigOptions
- */
-
-/**
- * @typedef {{
- *     all: Readonly<BenchmarkRules>;
- *     minimal: Readonly<BenchmarkRules>;
- *     recommended: Readonly<BenchmarkRules>;
- *     strict: Readonly<BenchmarkRules>;
- *     tsExtrasTypeGuards: Readonly<BenchmarkRules>;
- *     typeFestTypes: Readonly<BenchmarkRules>;
- * }} TypefestRuleSets
- */
-
-/**
- * Check whether a value is an object record.
- *
- * @param {unknown} value - Value to inspect.
- *
- * @returns {value is UnknownRecord} `true` when value is a non-null object.
- */
-const isUnknownRecord = (value) => typeof value === "object" && value !== null;
-
-/**
- * Absolute repository root used by parser services and benchmark paths.
- */
+/** Absolute repository root used by parser services and benchmark paths. */
 export const repositoryRoot = path.resolve(process.cwd());
 
-/**
- * Shared file globs used by benchmark scenarios.
- */
-/** @type {Readonly<BenchmarkFileGlobs>} */
+/** Shared file globs used by benchmark scenarios. */
 export const benchmarkFileGlobs = Object.freeze({
-    arrayableStressFixture: Object.freeze([
-        "benchmarks/fixtures/arrayable.stress.ts",
+    typedInvalidFixtures: Object.freeze([
+        "benchmarks/fixtures/documentation.invalid.ts",
     ]),
-    isPresentStressFixture: Object.freeze([
-        "benchmarks/fixtures/is-present.stress.ts",
-    ]),
-    recommendedZeroMessageFixture: Object.freeze([
-        "benchmarks/fixtures/recommended-zero-message.baseline.ts",
-    ]),
-    safeCastToStressFixture: Object.freeze([
-        "benchmarks/fixtures/safe-cast-to.stress.ts",
-    ]),
-    setHasStressFixture: Object.freeze([
-        "benchmarks/fixtures/set-has.stress.ts",
-    ]),
-    stringSplitStressFixture: Object.freeze([
-        "benchmarks/fixtures/string-split.stress.ts",
-    ]),
-    tsExtrasInvalidFixtures: Object.freeze([
-        "test/fixtures/typed/prefer-ts-extras-*.invalid.ts",
-    ]),
-    typedInvalidFixtures: Object.freeze(["test/fixtures/typed/*.invalid.ts"]),
-    typedValidFixtures: Object.freeze(["test/fixtures/typed/*.valid.ts"]),
-    typeFestInvalidFixtures: Object.freeze([
-        "test/fixtures/typed/prefer-type-fest-*.invalid.ts",
+    typedValidFixtures: Object.freeze([
+        "benchmarks/fixtures/documentation.valid.ts",
     ]),
 });
-
-/**
- * Ensure a dynamic value is a non-null object record.
- *
- * @param {unknown} value - Value to validate.
- * @param {string} label - Error label for diagnostics.
- *
- * @returns {UnknownRecord} Normalized object record.
- */
-const ensureRecord = (value, label) => {
-    if (!isUnknownRecord(value)) {
-        throw new TypeError(`${label} must be a non-null object.`);
-    }
-
-    return value;
-};
-
-/**
- * Check whether a value is an ESLint rule entry.
- *
- * @param {unknown} value - Rule config candidate.
- *
- * @returns {value is import("eslint").Linter.RuleEntry} Whether value matches
- *   an ESLint rule entry shape.
- */
-const isRuleEntry = (value) =>
-    typeof value === "number" ||
-    typeof value === "string" ||
-    Array.isArray(value);
-
-/**
- * Ensure a dynamic value is a valid ESLint rules record.
- *
- * @param {unknown} value - Value to validate.
- * @param {string} label - Error label for diagnostics.
- *
- * @returns {BenchmarkRules} Normalized rules record.
- */
-const ensureRulesRecord = (value, label) => {
-    const record = ensureRecord(value, label);
-    /** @type {BenchmarkRules} */
-    const rulesRecord = {};
-
-    for (const [ruleName, ruleEntry] of Object.entries(record)) {
-        if (!isRuleEntry(ruleEntry)) {
-            throw new TypeError(
-                `${label}.${ruleName} must be a valid ESLint rule entry.`
-            );
-        }
-
-        rulesRecord[ruleName] = ruleEntry;
-    }
-
-    return rulesRecord;
-};
 
 /**
  * Resolve rules from a plugin preset by name.
  *
- * @param {string} presetName - Key under `typefestPlugin.configs`.
+ * @param {"all" | "minimal" | "recommended" | "strict"} presetName - Preset key
+ *   from `plugin.configs`.
  *
- * @returns {Readonly<BenchmarkRules>} Frozen rule map suitable for flat config.
+ * @returns {Readonly<BenchmarkRules>} Frozen rules object for the requested
+ *   preset.
  */
 const resolveRuleSet = (presetName) => {
-    const configs = ensureRecord(plugin.configs, "plugin.configs");
-    const preset = ensureRecord(
-        configs[presetName],
-        `plugin.configs.${presetName}`
-    );
-    const rules = ensureRulesRecord(
-        preset["rules"],
-        `${presetName} preset rules`
-    );
+    const presetConfig = plugin.configs?.[presetName];
+    const preset = Array.isArray(presetConfig)
+        ? presetConfig.find(
+              (config) =>
+                  typeof config === "object" &&
+                  !Array.isArray(config) &&
+                  "rules" in config
+          )
+        : presetConfig;
 
-    return Object.freeze({ ...rules });
+    if (!isConfigWithRules(preset)) {
+        throw new TypeError(`Missing preset rules for '${presetName}'.`);
+    }
+
+    return Object.freeze({ ...preset.rules });
 };
 
 /**
- * Plugin rule sets used by benchmark scenarios.
+ * Check whether a config value contains a concrete ESLint `rules` map.
+ *
+ * @param {unknown} value - Config candidate.
+ *
+ * @returns {value is ConfigWithRules} `true` when the value is an object config
+ *   with rules.
  */
-/** @type {Readonly<TypefestRuleSets>} */
-export const typefestRuleSets = Object.freeze({
+const isConfigWithRules = (value) =>
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    "rules" in value &&
+    typeof value.rules === "object" &&
+    value.rules !== null;
+
+/** Plugin rule sets used by benchmark scenarios. */
+export const typedocRuleSets = Object.freeze({
     all: resolveRuleSet("all"),
     minimal: resolveRuleSet("minimal"),
     recommended: resolveRuleSet("recommended"),
     strict: resolveRuleSet("strict"),
-    tsExtrasTypeGuards: resolveRuleSet("ts-extras/type-guards"),
-    typeFestTypes: resolveRuleSet("type-fest/types"),
 });
 
 /**
- * Create a flat ESLint config array for typefest benchmark scenarios.
+ * Create a flat ESLint config array for benchmark scenarios.
  *
- * @param {CreateTypefestFlatConfigOptions} options - Config creation options.
- *
- * @returns {import("eslint").Linter.Config[]} Flat config array for ESLint Node
- *   API / CLI usage.
+ * @type {(options: {
+ *     rules: BenchmarkRules;
+ * }) => import("eslint").Linter.Config[]}
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types -- This .mjs module relies on JSDoc contracts instead of TS syntax.
-export function createTypefestFlatConfig(options) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types -- This .mjs module relies on JSDoc contracts instead of TypeScript syntax.
+export const createTypedocFlatConfig = (options) => {
     const { rules } = options;
 
     return [
@@ -201,11 +93,11 @@ export function createTypefestFlatConfig(options) {
                     tsconfigRootDir: repositoryRoot,
                 },
             },
-            name: "benchmark:typefest",
+            name: "benchmark:typedoc",
             plugins: {
-                typefest: plugin,
+                typedoc: plugin,
             },
             rules,
         },
     ];
-}
+};

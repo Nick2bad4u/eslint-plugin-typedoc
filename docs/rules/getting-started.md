@@ -1,75 +1,33 @@
----
-title: Getting Started
-description: Enable eslint-plugin-typefest quickly in Flat Config.
----
+# Getting started
 
-# Getting Started
+This plugin integrates TypeDoc-focused documentation checks directly into ESLint so doc quality issues show up alongside normal lint diagnostics.
 
-Install the plugin:
+## Install
 
 ```bash
-npm install --save-dev eslint-plugin-typefest typescript
+npm install --save-dev eslint-plugin-typedoc typedoc
 ```
 
-Enable one preset in your Flat Config:
+## Flat config setup
 
 ```ts
-import typefest from "eslint-plugin-typefest";
+import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    typefest.configs.recommended,
-];
-```
-
-`recommended` does not require type information.
-
-If you want the same baseline plus type-aware helper rules, use
-`typefest.configs["recommended-type-checked"]`.
-
-## Alternative: manual scoped setup
-
-If you prefer to apply plugin rules inside your own file-scoped config object, spread the preset rules manually.
-
-```ts
-import tsParser from "@typescript-eslint/parser";
-import typefest from "eslint-plugin-typefest";
-
-export default [
+    typedocPlugin.configs.recommended,
     {
-        files: ["**/*.{ts,tsx,mts,cts}"],
-        languageOptions: {
-            parser: tsParser,
-            parserOptions: {
-                ecmaVersion: "latest",
-                // Enable only when using a type-aware preset.
-                // projectService: true,
-                sourceType: "module",
-            },
-        },
-        plugins: {
-            typefest,
-        },
         rules: {
-            ...typefest.configs.recommended.rules,
+            "typedoc/require-param-tags": "error",
         },
     },
 ];
 ```
 
-Use this pattern when you only extend rules and want full control over parser setup per scope.
+## Choose a preset
 
-## Recommended rollout
+- `typedoc.configs.minimal` for baseline TypeDoc hygiene.
+- `typedoc.configs.recommended` for exported API + tag/link validation.
+- `typedoc.configs.strict` for tighter API doc completeness checks.
+- `typedoc.configs.all` to enable every shipped rule.
 
-1. Start with `recommended` (or `minimal` if you want low initial noise).
-2. Fix violations in small batches.
-3. Move to `recommended-type-checked` when you are ready for typed rules.
-4. Move to `strict` once your baseline is stable.
-5. Use `all` when you want every stable rule.
-6. Use `experimental` only when you want report-only candidate rules under active evaluation.
-
-## Need a subset instead of a full preset?
-
-- 💠 `typefest.configs["type-fest/types"]`
-- ✴️ `typefest.configs["ts-extras/type-guards"]`
-
-See the **Presets** section in this sidebar for details and examples.
+See [preset docs](./presets/index.md) for the full matrix.

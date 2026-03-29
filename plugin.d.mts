@@ -5,7 +5,7 @@
 import type { ESLint } from "eslint";
 
 /**
- * Default eslint-plugin-typefest plugin export shape.
+ * Default eslint-plugin-typedoc plugin export shape.
  */
 declare const plugin: ESLint.Plugin;
 

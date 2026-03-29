@@ -2,37 +2,32 @@
 sidebar_position: 2
 ---
 
-# Getting Started
+# Getting started
 
-Install the plugin:
+## Install
 
 ```bash
-npm install --save-dev eslint-plugin-typefest
+npm install --save-dev eslint-plugin-typedoc typedoc
 ```
 
-Then enable it in your Flat Config:
+## Configure ESLint flat config
 
 ```ts
-import typefest from "eslint-plugin-typefest";
+import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
+    typedocPlugin.configs.recommended,
     {
-        plugins: {
-            typefest,
-        },
         rules: {
-            "typefest/prefer-ts-extras-is-defined": "error",
+            "typedoc/require-param-tags": "error",
         },
     },
 ];
 ```
 
-## Recommended approach
+## Choose a preset
 
-- Start with one ruleset (`typefest.configs.recommended` or `typefest.configs.strict`).
-- Fix violations in small batches.
-- Promote warnings to errors after stabilization.
-
-## Rule navigation
-
-Use the sidebar **Rules** section for the full list of rule docs synced from the repository.
+- `typedoc.configs.minimal` for baseline hygiene checks.
+- `typedoc.configs.recommended` for exported docs + tag/link validation.
+- `typedoc.configs.strict` for stronger API completeness enforcement.
+- `typedoc.configs.all` for complete rule coverage.

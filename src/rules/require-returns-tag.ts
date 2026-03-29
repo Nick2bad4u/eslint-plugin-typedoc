@@ -1,0 +1,149 @@
+/**
+ * @packageDocumentation
+ * Require documented declarations with non-void return types to include
+ * `@returns` tags.
+ */
+
+import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+
+import {
+    buildDocCommentTagInsertion,
+    getDocCommentTagNames,
+    getLeadingDocComment,
+    getPreferredLineEnding,
+} from "../_internal/doc-comments.js";
+import { createTypedRule } from "../_internal/typed-rule.js";
+
+const defaultOptions = [] as const;
+
+type Options = typeof defaultOptions;
+type MessageIds = "missingReturnsTag";
+
+type FunctionLikeNode =
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.TSDeclareFunction
+    | TSESTree.TSEmptyBodyFunctionExpression;
+
+const isVoidLikeTypeAnnotation = (
+    typeAnnotation: null | TSESTree.TypeNode | undefined
+): boolean => {
+    if (typeAnnotation === null || typeAnnotation === undefined) {
+        return false;
+    }
+
+    switch (typeAnnotation.type) {
+        case AST_NODE_TYPES.TSVoidKeyword:
+        case AST_NODE_TYPES.TSNeverKeyword: {
+            return true;
+        }
+
+        case AST_NODE_TYPES.TSTypeReference: {
+            if (
+                typeAnnotation.typeName.type !== AST_NODE_TYPES.Identifier ||
+                typeAnnotation.typeName.name !== "Promise"
+            ) {
+                return false;
+            }
+
+            const firstTypeParameter =
+                typeAnnotation.typeArguments?.params[0] ?? null;
+
+            return (
+                firstTypeParameter?.type === AST_NODE_TYPES.TSVoidKeyword ||
+                firstTypeParameter?.type === AST_NODE_TYPES.TSUndefinedKeyword
+            );
+        }
+
+        default: {
+            return false;
+        }
+    }
+};
+
+const requiresReturnsTag = (node: FunctionLikeNode): boolean => {
+    if (node.returnType === null || node.returnType === undefined) {
+        return false;
+    }
+
+    return !isVoidLikeTypeAnnotation(node.returnType.typeAnnotation);
+};
+
+const rule = createTypedRule<Options, MessageIds>({
+    create: (context) => {
+        const { sourceCode } = context;
+        const lineEnding = getPreferredLineEnding(sourceCode);
+
+        const checkFunctionLike = (
+            node: FunctionLikeNode,
+            docNode: TSESTree.Node
+        ): void => {
+            if (!requiresReturnsTag(node)) {
+                return;
+            }
+
+            const docComment = getLeadingDocComment(sourceCode, docNode);
+
+            if (docComment === null) {
+                return;
+            }
+
+            const tagNames = getDocCommentTagNames(sourceCode, docComment);
+
+            if (tagNames.has("returns") || tagNames.has("return")) {
+                return;
+            }
+
+            context.report({
+                fix: (fixer) =>
+                    fixer.insertTextBeforeRange(
+                        [docComment.range[1] - 2, docComment.range[1] - 2],
+                        buildDocCommentTagInsertion(
+                            docComment,
+                            ["@returns TODO describe the return value."],
+                            lineEnding
+                        )
+                    ),
+                messageId: "missingReturnsTag",
+                node: docNode,
+            });
+        };
+
+        return {
+            FunctionDeclaration: (node): void => {
+                checkFunctionLike(node, node);
+            },
+            MethodDefinition: (node): void => {
+                if (node.kind === "constructor") {
+                    return;
+                }
+
+                checkFunctionLike(node.value, node);
+            },
+            TSDeclareFunction: (node): void => {
+                checkFunctionLike(node, node);
+            },
+        };
+    },
+    defaultOptions,
+    meta: {
+        docs: {
+            description:
+                "Require @returns tags for documented declarations with non-void return types.",
+            frozen: false,
+            recommended: false,
+            requiresTypeChecking: false,
+            typedocConfigs: ["typedoc.configs.strict", "typedoc.configs.all"],
+        },
+        fixable: "code",
+        messages: {
+            missingReturnsTag:
+                "Add an @returns tag so TypeDoc output includes explicit return-value documentation.",
+        },
+        schema: [],
+        type: "problem",
+    },
+    name: "require-returns-tag",
+});
+
+export default rule;
