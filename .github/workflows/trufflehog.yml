@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Trufflehog Secret Scan
+
+run-name: Trufflehog Secret Scan • ${{ github.ref_name }} @${{ github.actor }}
+
+concurrency:
+    group: trufflehog-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+    push:
+    pull_request:
+    merge_group:
+        types:
+            - checks_requested
+    workflow_dispatch:
+    schedule:
+        - cron: "44 4 * * 0" # Runs every Sunday at midnight UTC; https://crontab.guru/#0_0_*_*_0
+
+jobs:
+    trufflehog:
+        name: Trufflehog Secret Scan
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+        steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Checkout code
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 0
+            - name: Secret Scanning (entire repo)
+              uses: trufflesecurity/trufflehog@7c0734f987ad0bb30ee8da210773b800ee2016d3 # v3.93.4
+              with:
+                  base: ""
+                  head: ${{ github.ref_name }}
+                  # Only fail the job for VERIFIED secrets.
+                  # Unverified/unknown results are often high-noise in OSS repos
+                  # (example strings, docs, placeholder tokens) and already
+                  # covered by other scanners (gitleaks, etc.).
+                  extra_args: --results=verified --exclude-detectors=URI

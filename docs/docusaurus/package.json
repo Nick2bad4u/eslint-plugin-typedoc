@@ -1,0 +1,124 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "name": "@eslint-plugin-typefest/docs",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Docusaurus documentation site for eslint-plugin-typefest.",
+    "keywords": [
+        "docusaurus",
+        "documentation",
+        "eslint",
+        "eslint-plugin",
+        "type-fest",
+        "typescript"
+    ],
+    "homepage": "https://nick2bad4u.github.io/eslint-plugin-typefest/",
+    "bugs": {
+        "url": "https://github.com/Nick2bad4u/eslint-plugin-typefest/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nick2bad4u/eslint-plugin-typefest.git"
+    },
+    "license": "MIT",
+    "author": "Nick2bad4u",
+    "contributors": [
+        {
+            "name": "Nick2bad4u",
+            "email": "20943337+Nick2bad4u@users.noreply.github.com",
+            "url": "https://nick2bad4u.github.io/eslint-plugin-typefest"
+        }
+    ],
+    "sideEffects": false,
+    "main": "docusaurus.config.ts",
+    "files": [
+        "site-docs"
+    ],
+    "scripts": {
+        "build": "npm run docs:api && npm --prefix ../.. run build:eslint-inspector && npm --prefix ../.. run build:stylelint-inspector && docusaurus build",
+        "build:fast": "cross-env DOCUSAURUS_ENABLE_EXPERIMENTAL=true docusaurus build",
+        "build:local": "npm run docs:api:local && npm --prefix ../.. run build:eslint-inspector:local && npm --prefix ../.. run build:stylelint-inspector:local && cross-env NODE_OPTIONS=--no-deprecation docusaurus build",
+        "clear": "docusaurus clear",
+        "deploy": "docusaurus deploy",
+        "docs:api": "node -e \"const { execSync } = require('node:child_process'); const isCi = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'; const command = isCi ? 'typedoc --options typedoc.config.json' : 'node ../../scripts/run-typedoc-docs.mjs --config typedoc.config.json'; execSync(command, { stdio: 'inherit' });\"",
+        "docs:api:default": "typedoc --options typedoc.config.json",
+        "docs:api:local": "node ../../scripts/run-typedoc-docs.mjs --config typedoc.local.config.mjs",
+        "docusaurus": "docusaurus",
+        "serve": "docusaurus serve",
+        "start": "docusaurus start --host localhost",
+        "start:devtools": "cross-env DOCUSAURUS_BASE_URL=/ docusaurus start --host localhost",
+        "type:css": "npx typed-css-modules .\\src",
+        "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tsconfig.typedoc.json --noEmit",
+        "write-heading-ids": "docusaurus write-heading-ids",
+        "write-translations": "docusaurus write-translations"
+    },
+    "browserslist": {
+        "development": [
+            "last 3 chrome version",
+            "last 3 firefox version",
+            "last 5 safari version"
+        ],
+        "production": [
+            ">0.5%",
+            "not dead",
+            "not op_mini all"
+        ]
+    },
+    "dependencies": {
+        "@docusaurus/core": "^3.9.2",
+        "@docusaurus/faster": "^3.9.2",
+        "@docusaurus/plugin-content-docs": "^3.9.2",
+        "@docusaurus/plugin-pwa": "^3.9.2",
+        "@docusaurus/preset-classic": "^3.9.2",
+        "@docusaurus/theme-mermaid": "^3.9.2",
+        "@docusaurus/types": "^3.9.2",
+        "@easyops-cn/docusaurus-search-local": "^0.55.1",
+        "clsx": "^2.1.1",
+        "prism-react-renderer": "^2.4.1"
+    },
+    "devDependencies": {
+        "@docusaurus/module-type-aliases": "^3.9.2",
+        "@docusaurus/tsconfig": "^3.9.2",
+        "@eslint/config-inspector": "^1.5.0",
+        "@mdx-js/react": "^3.1.1",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "docusaurus-plugin-image-zoom": "^3.0.1",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "react-github-btn": "^1.4.0",
+        "typed-css-modules": "^0.9.1",
+        "typedoc": "^0.28.18",
+        "typedoc-docusaurus-theme": "^1.4.2",
+        "typedoc-plugin-coverage": "^4.0.2",
+        "typedoc-plugin-dt-links": "^2.0.47",
+        "typedoc-plugin-external-package-links": "^0.2.0",
+        "typedoc-plugin-markdown": "^4.11.0",
+        "typedoc-plugin-mdn-links": "^5.1.1",
+        "typedoc-plugin-missing-exports": "^4.1.2",
+        "typedoc-plugin-remark": "^2.0.1",
+        "typedoc-plugin-rename-defaults": "^0.7.3",
+        "typedoc-plugin-replace-text": "^4.2.0",
+        "typescript": "^6.0.2"
+    },
+    "peerDependencies": {
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4"
+    },
+    "packageManager": "npm@11.12.1",
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "devEngines": {
+        "runtime": {
+            "name": "node",
+            "version": ">=22.0.0",
+            "onFail": "error"
+        },
+        "packageManager": {
+            "name": "npm",
+            "version": ">=11.0.0",
+            "onFail": "error"
+        }
+    }
+}

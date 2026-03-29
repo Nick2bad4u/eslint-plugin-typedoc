@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Summarize New Issues And Pull Requests
+
+run-name: Summary • ${{ github.ref_name }} @${{ github.actor }}
+
+concurrency:
+    group: summary-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+    issues:
+        types: [opened, edited]
+    pull_request:
+        types: [opened, edited, synchronize]
+    merge_group:
+        types:
+            - checks_requested
+
+jobs:
+    inference:
+        name: Summarize Issue Or Pull Request
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        if: github.event_name == 'issues' || (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]')
+        permissions:
+            issues: write
+            pull-requests: write
+            contents: read
+            models: read
+        defaults:
+            run:
+                shell: bash
+
+        steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Checkout repository
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+            - name: Run AI inference
+              id: inference
+              if: github.event.pull_request.head.repo.full_name == github.repository
+              uses: actions/ai-inference@a380166897b5408b8fb7dddd148142794cb5624a # v2.0.6
+              with:
+                  prompt: |
+                      Summarize the following GitHub ${{ github.event_name == 'pull_request' && 'pull request' || 'issue' }} in order to explain it to the project owner:
+                      Title: ${{ github.event.pull_request.title || github.event.issue.title }}
+                      Body: ${{ github.event.pull_request.body || github.event.issue.body }}
+
+            - name: Comment with AI summary
+              run: |
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    gh pr comment "$PR_NUMBER" --body "$RESPONSE"
+                  else
+                    gh issue comment "$ISSUE_NUMBER" --body "$RESPONSE"
+                  fi
+              env:
+                  enable-github-mcp: true
+                  model: gpt-5
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  github-mcp-token: ${{ secrets.GITHUB_TOKEN }}
+                  ISSUE_NUMBER: ${{ github.event.issue.number }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  RESPONSE: ${{ steps.inference.outputs.response }}
+                  system-prompt-file: ".github/instructions/copilot-instructions.md"
+                  endpoint: "https://models.github.ai/inference"
+                  max-completion-tokens: 8000
+
+            - name: Print Output
+              id: output
+              run: |
+                  echo "${{ steps.inference.outputs.response }}"
+                  echo "${{ steps.inference.outputs.response-file }}"
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

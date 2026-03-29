@@ -1,0 +1,53 @@
+{
+    "$schema": "https://www.schemastore.org/tsconfig.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "erasableSyntaxOnly": true,
+        "incremental": true,
+        "isolatedDeclarations": false,
+        "noCheck": false,
+        "noEmit": true,
+        "tsBuildInfoFile": "./.cache/tsbuildinfo/tsconfig.eslint.tsbuildinfo"
+    },
+    "exclude": [
+        ".cache/**",
+        "coverage/**",
+        "dist/**",
+        "docs/docusaurus/.docusaurus/**",
+        "docs/docusaurus/build/**",
+        "eslint.config.bundled_*.mjs",
+        "node_modules/**",
+        "test/fixtures/**"
+    ],
+    "extends": "./tsconfig.json",
+    "include": [
+        "*.cjs",
+        "*.d.cts",
+        "*.d.ts",
+        "*.mjs",
+        "*.ts",
+        "*.mts",
+        "*.cts",
+        "*.d.mts",
+        ".remarkrc.mjs",
+        "benchmarks/**/*.mjs",
+        "benchmarks/**/*.ts",
+        "docs/**/*.mjs",
+        "docs/**/*.mts",
+        "docs/**/*.ts",
+        "docs/**/*.tsx",
+        "knip.config.ts",
+        "prettier.config.ts",
+        "scripts/**/*.mjs",
+        "scripts/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.mjs",
+        "src/**/*.ts",
+        "test/**/*.d.ts",
+        "test/**/*.mjs",
+        "test/**/*.ts",
+        "vite.config.ts",
+        "vitest.stryker.config.ts"
+    ]
+}

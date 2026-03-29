@@ -1,0 +1,126 @@
+# Run IndexNow notifications manually
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Run Index Now Submission
+
+run-name: >-
+    IndexNow • ${{ inputs.submission_mode }} • ${{ github.ref_name }} @${{ github.actor }}
+
+on:
+    workflow_dispatch:
+        inputs:
+            submission_mode:
+                default: delta
+                description: Choose whether to submit only changed public URLs or replay the full deployed sitemap.
+                options:
+                    - delta
+                    - sitemap
+                required: true
+                type: choice
+            base_ref:
+                default: ""
+                description: Optional older git ref/SHA for delta mode. Defaults to HEAD^.
+                required: false
+                type: string
+            head_ref:
+                default: ""
+                description: Optional newer git ref/SHA for delta mode. Defaults to HEAD.
+                required: false
+                type: string
+            content_paths_json:
+                default: ""
+                description: Optional JSON string array of repo-relative paths to constrain delta scanning.
+                required: false
+                type: string
+
+concurrency:
+    group: indexnow-manual
+    cancel-in-progress: true
+
+jobs:
+    submit:
+        name: Submit IndexNow Notification
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        permissions:
+            contents: read
+        defaults:
+            run:
+                shell: bash
+        steps:
+            - name: Harden runner
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Checkout repository
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+              with:
+                  node-version-file: .node-version
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+
+            - name: Install dependencies
+              run: npm ci --force
+
+            - name: Verify IndexNow secret
+              env:
+                  INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+              run: |
+                  if [ -z "${INDEXNOW_KEY}" ]; then
+                    echo "::error title=Missing INDEXNOW_KEY::Set the INDEXNOW_KEY repository secret before running the manual IndexNow workflow."
+                    exit 1
+                  fi
+
+            - name: Build Docusaurus site for route manifest
+              if: inputs.submission_mode == 'delta'
+              run: npm run docs:build
+
+            - name: Write IndexNow route manifest
+              if: inputs.submission_mode == 'delta'
+              run: >-
+                  node scripts/indexnow.mjs write-route-manifest
+                  --output temp/indexnow-route-manifest.json
+                  --site-directory docs/docusaurus
+
+            - name: Resolve delta refs
+              id: delta_refs
+              if: inputs.submission_mode == 'delta'
+              env:
+                  INDEXNOW_INPUT_BASE_REF: ${{ inputs.base_ref }}
+                  INDEXNOW_INPUT_HEAD_REF: ${{ inputs.head_ref }}
+              run: |
+                  HEAD_REF="${INDEXNOW_INPUT_HEAD_REF}"
+                  if [ -z "${HEAD_REF}" ]; then
+                    HEAD_REF="$(git rev-parse HEAD)"
+                  fi
+
+                  BASE_REF="${INDEXNOW_INPUT_BASE_REF}"
+                  if [ -z "${BASE_REF}" ]; then
+                    BASE_REF="$(git rev-parse "${HEAD_REF}^" 2>/dev/null || printf '0000000000000000000000000000000000000000')"
+                  fi
+
+                  echo "head_ref=${HEAD_REF}" >> "$GITHUB_OUTPUT"
+                  echo "base_ref=${BASE_REF}" >> "$GITHUB_OUTPUT"
+
+            - name: Submit changed public URLs to IndexNow
+              if: inputs.submission_mode == 'delta'
+              env:
+                  INDEXNOW_BASE_REF: ${{ steps.delta_refs.outputs.base_ref }}
+                  INDEXNOW_CONTENT_PATHS_JSON: ${{ inputs.content_paths_json }}
+                  INDEXNOW_HEAD_REF: ${{ steps.delta_refs.outputs.head_ref }}
+                  INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+                  INDEXNOW_ROUTE_MANIFEST_PATH: temp/indexnow-route-manifest.json
+                  INDEXNOW_SITE_DIRECTORY: docs/docusaurus
+              run: node scripts/indexnow.mjs submit-delta
+
+            - name: Submit deployed sitemap URLs to IndexNow
+              if: inputs.submission_mode == 'sitemap'
+              env:
+                  INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+                  INDEXNOW_SITE_DIRECTORY: docs/docusaurus
+              run: node scripts/indexnow.mjs submit-sitemap

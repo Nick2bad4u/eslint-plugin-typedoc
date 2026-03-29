@@ -1,0 +1,138 @@
+{
+    "$schema": "https://www.schemastore.org/any.json",
+    "AbsolutePaths": false,
+    "BasePath": "",
+    "CacheLocation": ".devskim-cache",
+    "CommentsPath": "",
+    "Confidences": [
+        "High",
+        "Medium",
+        "Low"
+    ],
+    "ConsoleVerbosityLevel": "Information",
+    "CrawlArchives": false,
+    "DisableConsoleOutput": false,
+    "DisableParallel": false,
+    "DisableSuppression": false,
+    "EnableCaching": true,
+    "ExitCodeIsNumIssues": true,
+    "Globs": [
+        ".devskim.json",
+        ".vscode/settings.json",
+        "**/.git/**",
+        "**/**.xml",
+        "**/build/**",
+        "**/coverage/**",
+        "**/dist/**",
+        "**/docs/TSDoc/**",
+        "**/libs/**",
+        "**/megalinter-reports/**",
+        "**/node_modules/**",
+        "**/out/**",
+        "**/release/**",
+        "**/test-results/**",
+        "**/test/**",
+        "**/tests/**",
+        "**/tmp/**",
+        "**/assets/**/*.wasm",
+        "**/*.min.js",
+        "**/*.min.css",
+        "**/*.map",
+        "**/*.snap",
+        "**/*.log",
+        "**/package-lock.json",
+        "**/yarn.lock",
+        "**/pnpm-lock.yaml",
+        "coverage-results.json",
+        "**/.next/**",
+        "**/.nuxt/**",
+        "**/.svelte-kit/**",
+        "**/target/**",
+        "**/.cache/**",
+        "**/.vite/**",
+        "**/tsconfig.*.tsbuildinfo",
+        "**/*.d.ts.map",
+        "**/.turbo/**",
+        "**/public/workbox-*.js",
+        "**/sw.js",
+        "**/service-worker.js"
+    ],
+    "IgnoreDefaultRules": false,
+    "IgnoreRuleIds": ["DS162092"],
+    "LanguageRuleIgnoreMap": {
+        "typescript": ["DS172411"],
+        "javascript": ["DS172411"],
+        "react": [],
+        "jsx": []
+    },
+    "LanguagesPath": "",
+    "LogFileLevel": "Warning",
+    "LogFilePath": "devskim.log",
+    "MaxDepth": 50,
+    "OutputFile": "devskim-report.sarif",
+    "OutputFileFormat": "sarif",
+    "OutputTextFormat": "%F:%L:%C [%S] %R - %N",
+    "RespectGitIgnore": true,
+    "RuleIds": [],
+    "Rules": [],
+    "Severities": [
+        "Critical",
+        "Important",
+        "Moderate",
+        "BestPractice",
+        "ManualReview"
+    ],
+    "SkipExcerpts": false,
+    "Suppressions": [
+        {
+            "Justification": "False positive: localhost redirect URI is required for OAuth dev flow (only present in development builds, not production)",
+            "FilePattern": "**/exportUtils.js",
+            "LineNumber": 359,
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Development-only: Binding server to localhost is required for secure local OAuth testing. This code is not present in production builds, and does not expose any security risk in release artifacts.",
+            "FilePattern": "**/main.js",
+            "LineNumber": 801,
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Development-only: Checking for localhost is required for dev/debug logic. This code is not present in production builds.",
+            "FilePattern": "**/renderer.js",
+            "LineNumber": 58,
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Development-only: Checking for 127.0.0.1 is required for dev/debug logic. This code is not present in production builds.",
+            "FilePattern": "*",
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Manual review: 'http://localhost/' is used in test context for ScreenshotThumbnail. This is not production code.",
+            "FilePattern": "src/test/ScreenshotThumbnail.test.tsx",
+            "LineNumber": 87,
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Manual review: 'http://localhost:5173' is used for development server URL, not present in production builds.",
+            "FilePattern": "electron/services/window/WindowService.ts",
+            "LineNumber": 73,
+            "RuleId": "DS162092"
+        },
+        {
+            "Justification": "Manual review: setTimeout is used in controlled contexts with fixed timeouts for legitimate development/testing purposes, not with untrusted data.",
+            "FilePattern": "electron/services/window/WindowService.ts",
+            "RuleId": "DS172411"
+        },
+        {
+            "Justification": "Electron preload security: nodeIntegration is disabled and contextIsolation is enabled for security. This is Electron best practice.",
+            "FilePattern": "electron/main.ts",
+            "RuleId": "DS172412"
+        },
+        {
+            "Justification": "Electron security: webSecurity is enabled in production builds. Development mode requires it disabled for local file access.",
+            "FilePattern": "electron/services/window/**",
+            "RuleId": "DS172413"
+        }
+    ]
+}

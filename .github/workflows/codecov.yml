@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Codecov
+
+run-name: Codecov • ${{ github.ref_name }} @${{ github.actor }}
+
+concurrency:
+    group: codecov-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+    workflow_dispatch:
+
+jobs:
+    coverage:
+        name: Run Coverage And Upload (${{ matrix.label }})
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 20
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: true
+            matrix:
+                include:
+                    - label: linux
+                      os: ubuntu-latest
+                      codecov_flag: os-linux
+                    - label: windows
+                      os: windows-latest
+                      codecov_flag: os-windows
+                    - label: macos
+                      os: macos-latest
+                      codecov_flag: os-macos
+        defaults:
+            run:
+                shell: bash
+
+        steps:
+            - name: Harden the runner (Audit all outbound calls)
+              if: ${{ matrix.os == 'ubuntu-latest' }}
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Checkout
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 2
+
+            - name: Setup Node.js
+              uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+              with:
+                  node-version-file: .node-version
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+
+            - name: Install dependencies
+              run: npm ci --force
+
+            - name: Build package
+              run: npm run build
+
+            - name: Run tests with coverage and emit JUnit report
+              run: npx vitest run --coverage --reporter=github-actions --reporter=dot --reporter=junit --outputFile=test-report.junit.xml --silent
+              env:
+                  CI: "true"
+                  MAX_THREADS: "1"
+                  TYPEFEST_VITEST_HANGING_PROCESS_REPORTER: "true"
+                  VITEST_HANGING_PROCESS_REPORTER: "true"
+
+            - name: Verify coverage artifact
+              run: python -c "from pathlib import Path; assert Path('coverage/lcov.info').is_file(), 'coverage/lcov.info was not generated'"
+
+            - name: Verify JUnit artifact
+              run: python -c "from pathlib import Path; assert Path('test-report.junit.xml').is_file(), 'test-report.junit.xml was not generated'"
+
+            - name: Upload test results to Codecov
+              if: ${{ !cancelled() }}
+              uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  slug: Nick2bad4u/eslint-plugin-typefest
+                  files: test-report.junit.xml
+                  flags: unit,${{ matrix.codecov_flag }}
+                  name: vitest-junit-${{ matrix.codecov_flag }}
+                  report_type: test_results
+                  fail_ci_if_error: true
+                  disable_search: true
+                  verbose: true
+
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  slug: Nick2bad4u/eslint-plugin-typefest
+                  files: ./coverage/lcov.info
+                  flags: unit,${{ matrix.codecov_flag }}
+                  name: vitest-unit-coverage-${{ matrix.codecov_flag }}
+                  report_type: coverage
+                  fail_ci_if_error: true
+                  disable_search: true
+                  verbose: true
