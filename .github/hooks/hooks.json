@@ -1,0 +1,41 @@
+{
+    "hooks": {
+        "sessionEnd": [
+            {
+                "bash": "./.github/hooks/scripts/remove-temp.sh",
+                "cwd": ".",
+                "env": {
+                    "SUPPRESS_PWSH_DECORATIONS": "1"
+                },
+                "powershell": "pwsh -NoLogo -NonInteractive -NoProfile -File \".github/hooks/scripts/remove-temp.ps1\"",
+                "timeoutSec": 10,
+                "type": "command"
+            }
+        ],
+        "sessionStart": [
+            {
+                "bash": "./.github/hooks/scripts/remove-temp.sh",
+                "cwd": ".",
+                "env": {
+                    "SUPPRESS_PWSH_DECORATIONS": "1"
+                },
+                "powershell": "pwsh -NoLogo -NonInteractive -NoProfile -File \".github/hooks/scripts/remove-temp.ps1\"",
+                "timeoutSec": 10,
+                "type": "command"
+            }
+        ],
+        "userPromptSubmitted": [
+            {
+                "bash": "./.github/hooks/scripts/log-prompt.sh",
+                "cwd": ".",
+                "env": {
+                    "SUPPRESS_PWSH_DECORATIONS": "1"
+                },
+                "powershell": "pwsh -NoLogo -NonInteractive -NoProfile -File \".github/hooks/scripts/log-prompt.ps1\"",
+                "timeoutSec": 10,
+                "type": "command"
+            }
+        ]
+    },
+    "version": 1
+}

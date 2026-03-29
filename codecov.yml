@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://www.schemastore.org/codecov.json
+
+codecov:
+    branch: main
+    max_report_age: "24h"
+    notify:
+        wait_for_ci: true
+    require_ci_to_pass: true
+    slug: Nick2bad4u/eslint-plugin-typefest
+
+comment:
+    behavior: default
+    layout: "header, diff, flags, files, footer"
+    require_base: false
+    require_changes: false
+    require_head: true
+
+component_management:
+    default_rules:
+        statuses:
+            - target: auto
+              threshold: 2%
+              type: project
+    individual_components:
+        - component_id: plugin_entry
+          name: "Plugin entrypoint"
+          paths:
+              - plugin.mjs
+              - src/plugin.ts
+
+        - component_id: rules
+          name: "Rules"
+          paths:
+              - src/rules/**
+          statuses:
+              - target: auto
+                threshold: 2%
+                type: project
+              - target: 80%
+                threshold: 3%
+                type: patch
+
+        - component_id: internals
+          name: "Internal utilities"
+          paths:
+              - src/_internal/**
+
+coverage:
+    precision: 2
+    range: "60...100"
+    round: down
+    status:
+        patch:
+            default:
+                target: 80%
+                threshold: 2%
+        project:
+            default:
+                target: auto
+                threshold: 2%
+
+flags:
+    unit:
+        carryforward: true
+        paths:
+            - plugin.mjs
+            - src/
+
+ignore:
+    - "benchmarks/**"
+    - "coverage/**"
+    - "dist/**"
+    - "docs/**"
+    - "scripts/**"
+    - "test/**"
+    - "**/*.d.ts"
+    - "**/*.test.*"
+    - "**/*.spec.*"

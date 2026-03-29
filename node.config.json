@@ -1,0 +1,75 @@
+{
+    "$schema": "https://nodejs.org/docs/latest/node-config-schema.json",
+    "nodeOptions": {
+        "allow-fs-read": [
+            "./src",
+            "./tests",
+            "./dist",
+            "./node_modules",
+            "./coverage",
+            "./scripts",
+            "./docs",
+            "./.github",
+            "./package.json",
+            "./package-lock.json",
+            "./tsconfig.json",
+            "./tsconfig.build.json",
+            "./eslint.config.js",
+            "./eslint.config.mjs",
+            "./vitest.config.ts",
+            "./cliff.toml",
+            "./README.md",
+            "./CHANGELOG.md",
+            "./LICENSE"
+        ],
+        "allow-fs-write": [
+            "./dist",
+            "./coverage",
+            "./temp",
+            "./.cache"
+        ],
+        "conditions": [
+            "development",
+            "node"
+        ],
+        "diagnostic-dir": "./temp",
+        "enable-source-maps": true,
+        "extra-info-on-fatal-exception": true,
+        "max-old-space-size-percentage": "80",
+        "trace-deprecation": false,
+        "trace-warnings": false,
+        "warnings": true
+    },
+    "test": {
+        "experimental-test-coverage": true,
+        "test-concurrency": 4,
+        "test-coverage-branches": 80,
+        "test-coverage-exclude": [
+            "**/tests/**",
+            "**/*.test.{ts,mts}",
+            "**/*.spec.{ts,mts}",
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/coverage/**"
+        ],
+        "test-coverage-functions": 80,
+        "test-coverage-include": [
+            "src/**/*.ts",
+            "src/**/*.mjs",
+            "src/**/*.mts"
+        ],
+        "test-coverage-lines": 80,
+        "test-force-exit": false,
+        "test-isolation": "process",
+        "test-reporter": [
+            "spec",
+            "json"
+        ],
+        "test-reporter-destination": [
+            "stdout",
+            "./coverage/test-results.json"
+        ],
+        "test-timeout": 30000,
+        "test-update-snapshots": true
+    }
+}

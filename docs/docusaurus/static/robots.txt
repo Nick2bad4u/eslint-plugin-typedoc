@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nick2bad4u.github.io/eslint-plugin-typefest/sitemap.xml

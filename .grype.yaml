@@ -1,0 +1,348 @@
+# Grype vulnerability scanner configuration
+# Enhanced configuration for 2025 with VEX support, EPSS integration, and modern security features.
+# Compatible with Grype v0.89+ and database schema v6
+# yaml-language-server: $schema=https://raw.githubusercontent.com/anchore/grype/refs/heads/main/schema/grype/db/blob/json/schema-latest.json
+
+# Generate CPEs for packages without CPE data (improves matching coverage)
+
+add-cpes-if-none: true
+
+# Orient results by CVE instead of original vulnerability ID when possible
+by-cve: false
+
+# Disable application update checks for enterprise environments
+check-for-app-update: false
+
+# Kernel header matching for comprehensive Linux vulnerability detection
+# Enhanced database configuration with v6 schema optimizations
+db:
+    # Automatic database updates for latest vulnerability intelligence
+    auto-update: true
+
+    # CA certificate for secure database downloads
+    ca-cert: ""
+
+    # Database cache location (uses system-appropriate default)
+    cache-dir: "~/Library/Caches/grype/db"
+
+    # Database freshness requirements (5 days maximum age)
+    max-allowed-built-age: 120h0m0s
+
+    max-update-check-frequency: 2h0m0s # maximum update check frequency
+
+    # Updated URL for latest database schema and features
+    # Update check requirements and timeouts
+    require-update-check: false
+    update-available-timeout: 30s # timeout for update availability check
+    update-download-timeout: 5m0s # timeout for database download
+    update-url: "https://grype.anchore.io/databases"
+
+    validate-age: true
+
+    # Database integrity validation for security
+    validate-by-hash-on-start: true
+default-image-pull-source: "" # registry, docker, podman
+
+# Distro specification for enhanced matching (format: <distro>:<version>)
+# Enhanced logging configuration for debugging and monitoring
+# Development and debugging configuration
+dev:
+    db:
+        debug: false # show SQL queries in trace logging (requires -vv)
+
+    # Resource profiling for performance analysis
+    profile: "" # cpu, mem
+
+distro: ""
+
+exclude:
+    # Source code and testing exclusions
+    - "**/src/test/**" # source test directories
+    - "**/src/tests/**" # source tests directories
+    - "**/test/**" # test directories
+    - "**/tests/**" # tests directories
+    - "**/spec/**" # spec directories
+    - "**/specs/**" # specs directories
+    - "**/__tests__/**" # Jest test directories
+    - "**/__mocks__/**" # Jest mock directories
+    - "**/cypress/**" # Cypress test directories
+    - "**/e2e/**" # end-to-end test directories
+    - "**/playwright/**" # Playwright test directories
+    - "**/benchmark/**" # benchmark directories
+    - "**/benchmarks/**" # benchmarks directories
+
+    # Documentation and examples exclusions
+    - "**/docs/**" # documentation
+    - "**/doc/**" # documentation
+    - "**/documentation/**" # documentation
+    - "**/examples/**" # example code
+    - "**/example/**" # example code
+    - "**/demo/**" # demo code
+    - "**/demos/**" # demo code
+    - "**/sample/**" # sample code
+    - "**/samples/**" # sample code
+    - "**/storybook/**" # Storybook files
+
+    # Dependency and vendor exclusions
+    - "**/node_modules/**" # Node.js dependencies
+    - "**/vendor/**" # vendor directories
+    - "**/third_party/**" # third party directories
+    - "**/libs/**" # library directories
+    - "**/packages/**" # packages directories (monorepos)
+    - "**/.yarn/**" # Yarn cache and metadata
+    - "**/.pnp.*" # Yarn Plug'n'Play
+
+    # Build and distribution exclusions
+    - "**/dist/**" # distribution builds
+    - "**/build/**" # build outputs
+    - "**/out/**" # output directories
+    - "**/target/**" # Maven/Gradle targets
+    - "**/bin/**" # binary directories
+    - "**/obj/**" # object files
+    - "**/release/**" # release builds
+    - "**/artifacts/**" # build artifacts
+    - "**/.next/**" # Next.js build cache
+    - "**/.nuxt/**" # Nuxt.js build cache
+    - "**/.vite/**" # Vite cache
+    - "**/.cache/**" # cache directories
+    - "**/cache/**" # cache directories
+    - "**/tmp/**" # temporary directories
+    - "**/temp/**" # temporary directories
+    - "**/coverage/**" # coverage reports
+    - "**/lcov-report/**" # LCOV coverage reports
+    - "**/nyc_output/**" # NYC coverage output
+    - "**/.turbo/**" # Turbo cache
+
+    # IDE and tool configuration exclusions
+    - "**/.git/**" # git metadata
+    - "**/.svn/**" # SVN metadata
+    - "**/.hg/**" # Mercurial metadata
+    - "**/.vscode/**" # VS Code configuration
+    - "**/.idea/**" # IntelliJ configuration
+    - "**/.eclipse/**" # Eclipse configuration
+    - "**/.settings/**" # Eclipse settings
+    - "**/.project" # Eclipse project files
+    - "**/.classpath" # Eclipse classpath files
+    - "**/.vs/**" # Visual Studio metadata
+
+    # File type exclusions
+    - "**/*.md" # markdown files
+    - "**/*.txt" # text files
+    - "**/*.log" # log files
+    - "**/*.bak" # backup files
+    - "**/*.swp" # vim swap files
+    - "**/*.tmp" # temporary files
+    - "**/.DS_Store" # macOS metadata files
+    - "**/Thumbs.db" # Windows thumbnail cache
+    - "**/*.orig" # merge conflict originals
+
+    # License and meta file exclusions
+    - "**/LICENSE*" # license files
+    - "**/LICENCE*" # licence files (British spelling)
+    - "**/COPYING*" # copying files
+    - "**/COPYRIGHT*" # copyright files
+    - "**/README*" # readme files
+    - "**/CHANGELOG*" # changelog files
+    - "**/HISTORY*" # history files
+    - "**/NEWS*" # news files
+    - "**/SECURITY*" # security files
+    - "**/CONTRIBUTING*" # contributing files
+    - "**/AUTHORS*" # author files
+    - "**/MAINTAINERS*" # maintainer files
+    - "**/NOTICE*" # notice files
+    - "**/ATTRIBUTION*" # attribution files
+
+# Output file path (stdout if empty)
+external-sources:
+    # Enable comprehensive vulnerability data from external sources
+    enable: true
+
+    # Maven repository search with optimized rate limiting
+    maven:
+        base-url: "https://search.maven.org/solrsearch/select"
+        rate-limit: 200ms # optimized for better performance
+
+        search-maven-upstream: true
+fail-on-severity: "" # negligible, low, medium, high, critical
+
+file: ""
+
+ignore-wontfix: "" # ignore vulnerabilities with specific fix states: fixed,not-fixed,unknown,wont-fix
+
+# Output configuration specifies how results are displayed
+# Modern Grype includes EPSS data in JSON output for risk-based decision making
+# Filter configuration for vulnerability focus
+# Database debugging configuration
+log:
+    # Log file path (stdout if empty)
+    file: ""
+
+    # Logging level for appropriate verbosity
+    level: "warn" # error, warn, info, debug, trace
+
+    # Suppress all logging output
+    quiet: false
+
+match:
+    # .NET ecosystem support with enhanced matching
+    dotnet:
+        using-cpes: true
+
+    # Go ecosystem with enhanced standard library and pseudo-version support
+    golang:
+        allow-main-module-pseudo-version-comparison: true
+
+        always-use-cpe-for-stdlib: true
+        using-cpes: true
+    # Java ecosystem matching with modern Maven integration
+    java:
+        using-cpes: true # enhanced CPE matching for broader coverage
+
+    # JVM ecosystem support
+    # JavaScript/Node.js ecosystem support
+    javascript:
+        using-cpes: true
+
+    jvm:
+        using-cpes: true
+
+    # Python ecosystem support with enhanced PyPI matching
+    python:
+        using-cpes: true
+
+    # Ruby/Gem ecosystem support
+    ruby:
+        using-cpes: true
+
+    # Rust/Cargo ecosystem support
+    rust:
+        using-cpes: true
+
+    # Stock package matching for broader coverage
+    stock:
+        using-cpes: true
+
+match-upstream-kernel-headers: false
+
+name: "Uptime-Watcher"
+
+only-fixed: false # show only vulnerabilities with available fixes
+only-notfixed: false # show only vulnerabilities without fixes
+output: "table" # table, json, cyclonedx, sarif, template (use 'json' for EPSS data)
+
+# Template file for custom output formatting (when output=template)
+output-template-file: ""
+
+# Platform specification for multi-architecture scanning
+platform: "" # e.g., 'linux/arm64', 'linux/amd64'
+
+# Pretty-print JSON output for readability
+pretty: true
+
+# Risk-based failure threshold (exit code 1 if severity at or above threshold)
+# Consider using JSON output with EPSS data for more sophisticated risk assessment
+# Show suppressed/ignored vulnerabilities in output (table format only)
+registry:
+    # Authentication credentials for private registries
+    # Example configurations:
+    # auth:
+    #   - authority: "ghcr.io"
+    #     username: "${GITHUB_USERNAME}"
+    #     token: "${GITHUB_TOKEN}"
+    #   - authority: "registry.npmjs.org"
+    #     token: "${NPM_TOKEN}"
+
+    auth: []
+
+    # CA certificate for registry communication
+    ca-cert: ""
+
+    # TLS configuration for secure registry communication
+    insecure-skip-tls-verify: false
+    insecure-use-http: false
+
+search:
+    indexed-archives: true # search indexed archives (zip files)
+
+    # Layer analysis scope for container images
+    scope: "squashed" # squashed, all-layers
+
+    # Archive search configuration for comprehensive package discovery
+    unindexed-archives: false # search unindexed archives (performance impact)
+show-suppressed: false
+
+# Modern sorting with risk-based prioritization (combines EPSS + severity)
+# Options: package, severity, epss, risk, kev, vulnerability
+sort-by: "risk" # default to risk-based sorting for better prioritization
+
+# Target name for analysis (for reporting and tracking)
+# Image source selection for SBOM generation
+# Enhanced search configuration with modern performance optimizations
+# Comprehensive ignore rules with VEX support for modern vulnerability management
+# ignore:
+# VEX-based ignore rules (requires VEX documents)
+# Example VEX ignore patterns:
+# - vex-status: not_affected
+#   vex-justification: vulnerable_code_not_present
+#   reason: "VEX: Vulnerable code not present in execution path"
+# - vex-status: not_affected
+#   vex-justification: vulnerable_code_not_in_execute_path
+#   reason: "VEX: Vulnerable code exists but not in execution path"
+# Traditional ignore rules for non-VEX scenarios
+# - vulnerability: CVE-2008-4318
+#   fix-state: unknown
+#   package:
+#     name: libcurl
+#     version: 1.5.1
+#     type: npm
+#     location: "/usr/local/lib/node_modules/**"
+#   reason: "Archived CVE - code path verified safe in our implementation"
+# EPSS-based filtering considerations (implement via JSON output processing)
+# - vulnerability: CVE-2023-*
+#   reason: "Low exploitation probability per EPSS analysis (<10% percentile)"
+# Business-justified severity filtering
+# - severity: Low
+#   reason: "Business decision - low severity risks accepted per security policy"
+
+# Comprehensive exclusion patterns for modern development environments
+# Enhanced external sources configuration with modern vulnerability intelligence
+# Comprehensive matching configuration with enhanced language support
+# Enhanced registry configuration with security best practices
+# Example VEX document configurations:
+# - path: "./security/vex.json"           # OpenVEX document path
+# - path: "./security/csaf-vex.json"      # CSAF VEX document path
+# - url: "https://vendor.com/vex.json"    # Remote VEX document URL
+
+# VEX behavior configuration
+vex-add: [] # VEX statuses to consider as ignored rules
+
+# VEX (Vulnerability Exploitability eXchange) configuration for modern vulnerability management
+vex-documents: []
+# Modern usage examples and best practices:
+#
+# Basic vulnerability scan with risk prioritization:
+#   grype <target>
+#
+# JSON output with EPSS data for analysis:
+#   grype <target> -o json
+#
+# Risk-based sorting (EPSS + severity):
+#   grype <target> --sort-by risk
+#
+# VEX document integration:
+#   grype <target> --vex <vex-document>
+#
+# Filter high-risk vulnerabilities with EPSS:
+#   grype <target> -o json | jq '.matches[] | select(.vulnerability.epss.percentile > 90)'
+#
+# Show only known exploited vulnerabilities:
+#   grype <target> -o json | jq '.matches[] | select(.vulnerability.dataSource | contains("kev"))'
+#
+# Critical vulnerabilities only:
+#   grype <target> --fail-on-severity critical
+#
+# Environment variables for automation:
+#   GRYPE_CHECK_FOR_APP_UPDATE=false         # disable update checks
+#   GRYPE_VEX_ADD=true                       # enable VEX data augmentation
+#   GRYPE_SORT_BY=risk                       # default to risk-based sorting
+#   GRYPE_OUTPUT_FORMAT=json                 # use JSON for programmatic access

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+name: Mark Stale Issues And Pull Requests
+
+run-name: Stale Sweep • ${{ github.ref_name }} @${{ github.actor }}
+
+concurrency:
+    group: stale-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+    schedule:
+        - cron: "38 7 * * *"
+    pull_request_target:
+        branches:
+            - main
+        types:
+            - opened
+            - reopened
+            - synchronize
+    issues:
+        types:
+            - opened
+            - reopened
+            - edited
+    workflow_dispatch:
+
+jobs:
+    stale:
+        name: Mark Stale Issues And Pull Requests
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+            issues: write
+            pull-requests: write
+        steps:
+            - name: Harden Runner
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Mark stale issues and pull requests
+              uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f # v10.2.0
+              with:
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+                  stale-issue-message: "Stale issue"
+                  stale-pr-message: "Stale pull request"
+                  stale-issue-label: "no-issue-activity"
+                  stale-pr-label: "no-pr-activity"

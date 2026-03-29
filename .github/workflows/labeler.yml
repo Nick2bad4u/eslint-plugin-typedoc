@@ -1,0 +1,38 @@
+name: Label Pull Requests
+
+run-name: Label Pull Requests • ${{ github.ref_name }} @${{ github.actor }}
+
+concurrency:
+    group: labeler-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+    pull_request_target:
+        branches:
+            - main
+        types:
+            - opened
+            - edited
+            - reopened
+            - synchronize
+
+jobs:
+    labeler:
+        name: Label Pull Requests
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: read
+            pull-requests: write
+        steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Apply labels
+              uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+              with:
+                  configuration-path: .github/labeler.yml
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+                  sync-labels: true

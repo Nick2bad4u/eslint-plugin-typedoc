@@ -1,0 +1,17 @@
+# Prettier ignore file used only for `lint:remark:fix`.
+#
+# Unlike the main .prettierignore, we DO NOT ignore **/*.md so we can normalize
+# line endings before remark-lint runs on Windows.
+
+node_modules/
+.cache/
+build/
+dist/
+coverage/
+storybook-static/
+docs/docusaurus/build/
+docs/docusaurus/.docusaurus/
+docs/docusaurus/docs/
+
+# Auto-generated changelog (do not reformat during remark runs)
+CHANGELOG.md

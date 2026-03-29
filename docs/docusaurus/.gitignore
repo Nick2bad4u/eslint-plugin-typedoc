@@ -1,0 +1,5 @@
+.docusaurus/
+build/
+node_modules/
+site-docs/developer/api/*
+!site-docs/developer/api/README.md

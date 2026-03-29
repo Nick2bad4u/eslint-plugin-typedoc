@@ -1,0 +1,76 @@
+name: Mutation Testing Stryker
+
+run-name: Mutation Testing Stryker • ${{ github.ref_name }} @${{ github.actor }}
+
+on:
+    schedule:
+        - cron: "0 7 * * 0"
+    workflow_dispatch:
+        inputs:
+            mode:
+                default: fast
+                description: Mutation run mode
+                options:
+                    - fast
+                    - full
+                required: true
+                type: choice
+
+concurrency:
+    group: stryker-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    stryker:
+        name: Run Stryker Mutation Testing
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        permissions:
+            contents: read
+        env:
+            NODE_ENV: test
+            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY || '' }}
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+        defaults:
+            run:
+                shell: bash
+        steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+              with:
+                  egress-policy: audit
+
+            - name: Checkout
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+            - name: Setup Node.js
+              uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+              with:
+                  cache: npm
+                  cache-dependency-path: package-lock.json
+                  node-version-file: .node-version
+
+            - name: Install dependencies
+              run: npm ci --force
+
+            - name: Build package
+              run: npm run build
+
+            - if: github.event_name == 'workflow_dispatch' && inputs.mode == 'fast'
+              name: Run Stryker (fast)
+              run: npm run test:stryker:ci
+
+            - if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'full')
+              name: Run Stryker (full)
+              run: npm run test:stryker:full:ci
+
+            - if: always()
+              name: Upload Stryker reports
+              uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+              with:
+                  if-no-files-found: warn
+                  name: stryker-reports-${{ github.run_id }}
+                  path: |
+                      coverage/stryker.html
+                      coverage/stryker.json
+                  retention-days: 14
