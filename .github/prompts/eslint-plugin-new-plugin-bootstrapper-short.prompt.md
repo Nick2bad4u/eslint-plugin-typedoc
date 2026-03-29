@@ -8,6 +8,13 @@ argument-hint: "Provide the name of the new plugin (for example, `eslint-plugin-
 
 Its an eslint plugin to lint ALL things to do with <NEW_PLUGIN>. We must have quality rules related to <NEW_PLUGIN> usage, and we must have a high quality repository with great documentation, tests, and developer experience.
 
+Critical migration constraint (non-negotiable):
+
+- Adapt existing mature files in place.
+- Do NOT cheat by deleting and recreating entire configs/docs/scripts with tiny replacements.
+- Do NOT replace rich files with placeholders/stubs just to pass checks.
+- Preserve template infrastructure quality gates and only remove obsolete plugin-specific rule artifacts surgically.
+
 Lots of documentaion can be found online I suggest you read it and go through as much as possible to get everything nailed down perfectly.
 
 https://example.com/docs

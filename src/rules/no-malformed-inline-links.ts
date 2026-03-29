@@ -3,13 +3,15 @@
  * Report malformed inline `{@link ...}` tags in TypeDoc comments.
  */
 
+import type { TSESLint } from "@typescript-eslint/utils";
+
 import { getInlineLinkMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 const defaultOptions = [] as const;
 
-type Options = typeof defaultOptions;
 type MessageIds = "malformedInlineLink" | "replaceWithPlaceholder";
+type Options = typeof defaultOptions;
 
 const isMalformedInlineLinkContent = (rawContent: string): boolean => {
     const content = rawContent.trim();
@@ -34,7 +36,10 @@ const isMalformedInlineLinkContent = (rawContent: string): boolean => {
     );
 };
 
-const rule = createTypedRule<Options, MessageIds>({
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
     create: (context) => {
         const { sourceCode } = context;
 

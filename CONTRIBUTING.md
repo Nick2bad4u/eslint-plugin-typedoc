@@ -109,7 +109,7 @@ npx vitest run test/plugin-contract-snapshots.test.ts test/rule-metadata-snapsho
 ```
 
 For detailed design and review guidance, see
-[`docs/rules/guides/snapshot-testing.md`](./docs/rules/guides/snapshot-testing.md).
+[`docs/rules/overview.md`](./docs/rules/overview.md).
 
 Optional focused checks:
 

@@ -1,111 +1,131 @@
 /**
  * @packageDocumentation
- * Shared comment-analysis helpers for TypeDoc-focused ESLint rules.
+ * Shared helpers for reading and updating type documentation block comments.
  */
 
-import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
+import {
+    AST_NODE_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 
-const DOC_COMMENT_PREFIX_EXPRESSION = /^\*/u;
-const LINE_ENDING_EXPRESSION = /\r\n/u;
-const LINE_PREFIX_EXPRESSION = /^\s*\*?\s?/u;
-const TAG_EXPRESSION = /@([A-Za-z][A-Za-z0-9-]*)/gu;
-const INLINE_LINK_EXPRESSION = /\{@link([^}]*)\}/gu;
-const PARAM_TAG_EXPRESSION =
-    /^@param(?:\s+\{[^}]+\})?\s+(\.\.\.)?(\[[^\]]+\]|[A-Za-z_$][\w$]*)/u;
+const docTagPattern = /@([A-Za-z][\w-]*)/gu;
+const inlineLinkPattern = /\{@link\s*([^}]*)\}/gu;
+const paramTagPattern = /@param\s+(\.\.\.)?(\S+)/gu;
 
+/** Matched documentation tag with absolute source range. */
 export type DocTagMatch = Readonly<{
     absoluteRange: readonly [number, number];
     name: string;
 }>;
 
+/** Matched inline link token with absolute source range. */
 export type InlineLinkMatch = Readonly<{
     absoluteRange: readonly [number, number];
     content: string;
     fullText: string;
 }>;
 
-/**
- * Determine the preferred newline delimiter for fixer output.
- */
+/** Determine preferred line ending from source text. */
 export const getPreferredLineEnding = (
     sourceCode: TSESLint.SourceCode
-): "\n" | "\r\n" =>
-    LINE_ENDING_EXPRESSION.test(sourceCode.text) ? "\r\n" : "\n";
+): "\n" | "\r\n" => (sourceCode.text.includes("\r\n") ? "\r\n" : "\n");
 
 /**
- * Resolve the nearest leading block doc comment for a node.
+ * Get the closest leading documentation block comment attached to a node. A
+ * comment is considered attached when it ends on the previous line.
  */
 export const getLeadingDocComment = (
     sourceCode: TSESLint.SourceCode,
     node: TSESTree.Node
 ): null | TSESTree.Comment => {
     const comments = sourceCode.getCommentsBefore(node);
+    const nodeStartLine = node.loc?.start.line;
+
+    if (nodeStartLine === undefined) {
+        return null;
+    }
 
     for (let index = comments.length - 1; index >= 0; index -= 1) {
         const comment = comments[index];
 
-        if (comment === undefined) {
+        if (comment?.type !== "Block") {
             continue;
         }
 
-        if (comment.type !== "Block") {
+        if (!comment.value.startsWith("*")) {
             continue;
         }
 
-        if (!DOC_COMMENT_PREFIX_EXPRESSION.test(comment.value)) {
+        const commentEndLine = comment.loc?.end.line;
+
+        if (commentEndLine === undefined) {
             continue;
         }
 
-        if (
-            node.loc !== null &&
-            comment.loc !== null &&
-            node.loc.start.line - comment.loc.end.line > 1
-        ) {
-            continue;
+        if (commentEndLine === nodeStartLine - 1) {
+            return comment;
         }
 
-        return comment;
+        if (commentEndLine < nodeStartLine - 1) {
+            return null;
+        }
     }
 
     return null;
 };
 
 /**
- * Normalize a block doc comment into plain text lines without `*` prefixes.
+ * Resolve the node that should be used as the documentation anchor for leading
+ * comments. Exported declarations are anchored on the parent export statement.
  */
+export const getDocCommentAnchorNode = (node: TSESTree.Node): TSESTree.Node => {
+    const { parent } = node;
+
+    if (
+        parent?.type === AST_NODE_TYPES.ExportDefaultDeclaration ||
+        parent?.type === AST_NODE_TYPES.ExportNamedDeclaration
+    ) {
+        return parent;
+    }
+
+    return node;
+};
+
+/** Normalize raw comment lines for lightweight parsing. */
 export const normalizeDocCommentLines = (
-    comment: TSESTree.Comment
+    comment: Readonly<TSESTree.Comment>
 ): readonly string[] =>
     comment.value
-        .split(/\r?\n/gu)
-        .map((line) => line.replace(LINE_PREFIX_EXPRESSION, "").trimEnd());
+        .replaceAll("\r\n", "\n")
+        .split("\n")
+        .map((line) => line.replace(/^\s*\* ?/u, "").trimEnd());
 
-/**
- * Extract all `@tag` usages from a block comment with absolute source ranges.
- */
+/** Collect all `@tag` matches from a comment with absolute ranges. */
 export const getDocCommentTagMatches = (
     sourceCode: TSESLint.SourceCode,
-    comment: TSESTree.Comment
+    comment: Readonly<TSESTree.Comment>
 ): readonly DocTagMatch[] => {
-    const rawCommentText = sourceCode.getText(comment);
+    const commentText = sourceCode.getText(comment);
     const matches: DocTagMatch[] = [];
 
-    for (const match of rawCommentText.matchAll(TAG_EXPRESSION)) {
-        if (typeof match.index !== "number") {
+    for (const match of commentText.matchAll(docTagPattern)) {
+        const fullMatch = match[0];
+        const tagName = match[1];
+        const relativeStart = match.index;
+
+        if (
+            typeof fullMatch !== "string" ||
+            typeof tagName !== "string" ||
+            typeof relativeStart !== "number"
+        ) {
             continue;
         }
 
-        const [fullMatch, tagName] = match;
-
-        if (typeof fullMatch !== "string" || typeof tagName !== "string") {
-            continue;
-        }
-
-        const absoluteStart = comment.range[0] + match.index;
-        const absoluteEnd = absoluteStart + fullMatch.length;
+        const absoluteStart = comment.range[0] + relativeStart;
 
         matches.push({
-            absoluteRange: [absoluteStart, absoluteEnd],
+            absoluteRange: [absoluteStart, absoluteStart + fullMatch.length],
             name: tagName,
         });
     }
@@ -113,37 +133,28 @@ export const getDocCommentTagMatches = (
     return matches;
 };
 
-/**
- * Read the set of unique tag names used in a block doc comment.
- */
+/** Collect unique `@tag` names from a comment. */
 export const getDocCommentTagNames = (
     sourceCode: TSESLint.SourceCode,
-    comment: TSESTree.Comment
+    comment: Readonly<TSESTree.Comment>
 ): ReadonlySet<string> => {
-    const tags = new Set<string>();
+    const tagNames = new Set<string>();
 
-    for (const { name } of getDocCommentTagMatches(sourceCode, comment)) {
-        tags.add(name);
+    for (const match of getDocCommentTagMatches(sourceCode, comment)) {
+        tagNames.add(match.name);
     }
 
-    return tags;
+    return tagNames;
 };
 
-/**
- * Parse all `@param` names declared in a block doc comment.
- */
+/** Collect documented parameter names from `@param` tags in a comment. */
 export const getDocCommentParamTagNames = (
-    comment: TSESTree.Comment
+    comment: Readonly<TSESTree.Comment>
 ): ReadonlySet<string> => {
-    const names = new Set<string>();
+    const tagNames = new Set<string>();
+    const commentBody = normalizeDocCommentLines(comment).join("\n");
 
-    for (const line of normalizeDocCommentLines(comment)) {
-        const match = PARAM_TAG_EXPRESSION.exec(line);
-
-        if (match === null) {
-            continue;
-        }
-
+    for (const match of commentBody.matchAll(paramTagPattern)) {
         const isRestParameter = match[1] === "...";
         const rawName = match[2];
 
@@ -152,47 +163,52 @@ export const getDocCommentParamTagNames = (
         }
 
         const normalizedName = rawName
-            .replace(/^\[|\]$/gu, "")
-            .replace(/=.*/u, "")
+            .replace(/^\[/u, "")
+            .replace(/\]$/u, "")
             .trim();
+        const equalsSignOffset = normalizedName.indexOf("=");
+        const nameWithoutDefault =
+            equalsSignOffset === -1
+                ? normalizedName
+                : normalizedName.slice(0, equalsSignOffset);
 
-        if (normalizedName.length === 0) {
+        if (nameWithoutDefault.length === 0) {
             continue;
         }
 
-        names.add(isRestParameter ? `...${normalizedName}` : normalizedName);
-        names.add(normalizedName);
+        tagNames.add(
+            isRestParameter ? `...${nameWithoutDefault}` : nameWithoutDefault
+        );
     }
 
-    return names;
+    return tagNames;
 };
 
-/**
- * Collect inline `{@link ...}` tags from a block doc comment.
- */
+/** Collect all inline `{@link ...}` matches from a comment. */
 export const getInlineLinkMatches = (
     sourceCode: TSESLint.SourceCode,
-    comment: TSESTree.Comment
+    comment: Readonly<TSESTree.Comment>
 ): readonly InlineLinkMatch[] => {
-    const rawCommentText = sourceCode.getText(comment);
+    const commentText = sourceCode.getText(comment);
     const matches: InlineLinkMatch[] = [];
 
-    for (const match of rawCommentText.matchAll(INLINE_LINK_EXPRESSION)) {
-        if (typeof match.index !== "number") {
+    for (const match of commentText.matchAll(inlineLinkPattern)) {
+        const fullMatch = match[0];
+        const content = match[1];
+        const relativeStart = match.index;
+
+        if (
+            typeof fullMatch !== "string" ||
+            typeof content !== "string" ||
+            typeof relativeStart !== "number"
+        ) {
             continue;
         }
 
-        const [fullMatch, content] = match;
-
-        if (typeof fullMatch !== "string" || typeof content !== "string") {
-            continue;
-        }
-
-        const absoluteStart = comment.range[0] + match.index;
-        const absoluteEnd = absoluteStart + fullMatch.length;
+        const absoluteStart = comment.range[0] + relativeStart;
 
         matches.push({
-            absoluteRange: [absoluteStart, absoluteEnd],
+            absoluteRange: [absoluteStart, absoluteStart + fullMatch.length],
             content,
             fullText: fullMatch,
         });
@@ -206,14 +222,41 @@ export const getInlineLinkMatches = (
  * of an existing block comment, immediately before the closing comment token.
  */
 export const buildDocCommentTagInsertion = (
-    comment: TSESTree.Comment,
+    comment: Readonly<TSESTree.Comment>,
     lineTexts: readonly string[],
     lineEnding: "\n" | "\r\n"
 ): string => {
     const indentWidth = comment.loc?.start.column ?? 0;
     const indentation = " ".repeat(indentWidth);
+    const linePrefix = `${indentation} * `;
 
-    return lineTexts
-        .map((lineText) => `${lineEnding}${indentation} * ${lineText}`)
-        .join("");
+    return linePrefix + lineTexts.join(lineEnding + linePrefix) + lineEnding;
+};
+
+/**
+ * Resolve the absolute insertion index for new tag lines in a block comment.
+ * The insertion point is the beginning of the closing-comment line.
+ */
+export const getDocCommentClosingLineStartIndex = (
+    sourceCode: TSESLint.SourceCode,
+    comment: Readonly<TSESTree.Comment>
+): number => {
+    const commentText = sourceCode.getText(comment);
+    const closingTokenOffset = commentText.lastIndexOf("*/");
+
+    if (closingTokenOffset === -1) {
+        return comment.range[1] - 2;
+    }
+
+    const beforeClosingTokenText = commentText.slice(0, closingTokenOffset);
+    const lastLineBreakOffset = Math.max(
+        beforeClosingTokenText.lastIndexOf("\n"),
+        beforeClosingTokenText.lastIndexOf("\r")
+    );
+
+    if (lastLineBreakOffset < 0) {
+        return comment.range[1] - 2;
+    }
+
+    return comment.range[0] + lastLineBreakOffset + 1;
 };

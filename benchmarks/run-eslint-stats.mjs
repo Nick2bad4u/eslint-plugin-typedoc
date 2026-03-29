@@ -210,9 +210,11 @@ const runScenario = async (scenario, { iterations, warmupIterations }) => {
         lastLintResults = lintResults;
     }
 
-    const mathWithSumPrecise = /** @type {Math & {
-    sumPrecise: (values: readonly number[]) => number;
-}} */ (Math);
+    const mathWithSumPrecise = /**
+     * @type {Math & {
+     *     sumPrecise: (values: readonly number[]) => number;
+     * }}
+     */ (Math);
     const totalWallClock = mathWithSumPrecise.sumPrecise(wallClockMeasurements);
 
     return {

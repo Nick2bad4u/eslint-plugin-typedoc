@@ -3,15 +3,19 @@
  * Require key options in TypeDoc configuration objects.
  */
 
-import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import {
+    AST_NODE_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 
 import { getPreferredLineEnding } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 const defaultOptions = [] as const;
 
-type Options = typeof defaultOptions;
 type MessageIds = "missingTypedocConfigOptions";
+type Options = typeof defaultOptions;
 
 const typedocConfigFileExpression =
     /(^|\\|\/)(typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
@@ -165,7 +169,10 @@ const supportsSafeAutofix = (
             !property.computed
     );
 
-const rule = createTypedRule<Options, MessageIds>({
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
     create: (context) => {
         const { sourceCode } = context;
         const lineEnding = getPreferredLineEnding(sourceCode);
@@ -218,11 +225,30 @@ const rule = createTypedRule<Options, MessageIds>({
                         const hasTrailingComma = /,\s*\}$/u.test(
                             configObjectText
                         );
-                        const startColumn = configObject.loc?.start.column;
-                        const indentation = " ".repeat(
-                            typeof startColumn === "number" ? startColumn : 0
-                        );
-                        const propertyIndentation = `${indentation}    `;
+                        const objectStartLineIndex =
+                            (configObject.loc?.start.line ?? 1) - 1;
+                        const objectStartLineText =
+                            sourceCode.lines[objectStartLineIndex] ?? "";
+                        const lineIndentation =
+                            /^\s*/u.exec(objectStartLineText)?.[0] ?? "";
+                        const firstPropertyWithLocation =
+                            configObject.properties.find(
+                                (
+                                    property
+                                ): property is TSESTree.Property & {
+                                    loc: NonNullable<TSESTree.Property["loc"]>;
+                                } =>
+                                    property.type === AST_NODE_TYPES.Property &&
+                                    property.kind === "init" &&
+                                    property.loc !== null
+                            ) ?? null;
+                        const indentation = lineIndentation;
+                        const propertyIndentation =
+                            firstPropertyWithLocation === null
+                                ? `${lineIndentation}    `
+                                : " ".repeat(
+                                      firstPropertyWithLocation.loc.start.column
+                                  );
                         const insertedProperties = missingOptionNames
                             .map(
                                 (name) =>
@@ -233,7 +259,9 @@ const rule = createTypedRule<Options, MessageIds>({
                         const insertionText =
                             configObject.properties.length === 0
                                 ? `${lineEnding}${insertedProperties}${lineEnding}${indentation}`
-                                : `${hasTrailingComma ? "" : ","}${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
+                                : hasTrailingComma
+                                  ? `${insertedProperties}${lineEnding}${indentation}`
+                                  : `,${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
 
                         return fixer.insertTextBeforeRange(
                             [

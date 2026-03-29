@@ -8,8 +8,7 @@
     --ifm-color-primary-lightest: #a5b4fc;
     --ifm-code-font-size: 95%;
     --ifm-font-family-base:
-        "Inter var", "Inter", "Segoe UI", system-ui, -apple-system,
-        sans-serif;
+        "Inter var", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -31,12 +30,17 @@
     transition:
         background-color 140ms ease-in-out,
         color 140ms ease-in-out;
-}
 
-.theme-doc-sidebar-menu .menu__link:hover,
-.theme-doc-sidebar-menu .menu__link:focus {
-    background-color: rgb(79 70 229 / 10%);
-    text-decoration: none;
+    @media screen and (prefers-reduced-motion: reduce) {
+        border-radius: 0.4rem;
+        transition: none;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: rgb(79 70 229 / 10%);
+        text-decoration: none;
+    }
 }
 
 [data-theme="dark"] .theme-doc-sidebar-menu .menu__link:hover,
@@ -45,7 +49,8 @@
 }
 
 .main-wrapper {
-    background: radial-gradient(
+    background:
+        radial-gradient(
             circle at 20% 0%,
             rgb(129 140 248 / 10%),
             transparent 48%

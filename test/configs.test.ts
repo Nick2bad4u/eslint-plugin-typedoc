@@ -8,7 +8,7 @@ describe("preset configs", () => {
             const ruleIds = Object.keys(preset.rules ?? {});
 
             for (const ruleId of ruleIds) {
-                expect(ruleId.startsWith("typedoc/")).toBe(true);
+                expect(ruleId.startsWith("typedoc/")).toBeTruthy();
             }
         }
     });

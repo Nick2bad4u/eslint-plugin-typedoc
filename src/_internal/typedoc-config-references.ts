@@ -12,14 +12,20 @@ export const typedocConfigNames = [
 
 export type TypedocConfigName = (typeof typedocConfigNames)[number];
 
-export const typedocConfigReferenceToName = {
+const typedocConfigReferenceToNameValue: Readonly<{
+    "typedoc.configs.all": "all";
+    "typedoc.configs.minimal": "minimal";
+    "typedoc.configs.recommended": "recommended";
+    "typedoc.configs.strict": "strict";
+}> = {
     "typedoc.configs.all": "all",
     "typedoc.configs.minimal": "minimal",
     "typedoc.configs.recommended": "recommended",
     "typedoc.configs.strict": "strict",
-} as const satisfies Record<string, TypedocConfigName>;
+};
 
-export type TypedocConfigReference = keyof typeof typedocConfigReferenceToName;
+export const typedocConfigReferenceToName: typeof typedocConfigReferenceToNameValue =
+    typedocConfigReferenceToNameValue;
 
 export type TypedocConfigMetadata = Readonly<{
     icon: string;
@@ -28,7 +34,11 @@ export type TypedocConfigMetadata = Readonly<{
     requiresTypeChecking: boolean;
 }>;
 
-export const typedocConfigMetadataByName = {
+export type TypedocConfigReference = keyof typeof typedocConfigReferenceToName;
+
+const typedocConfigMetadataByNameValue: Readonly<
+    Record<TypedocConfigName, TypedocConfigMetadata>
+> = {
     all: {
         icon: "🟣",
         presetName: "typedoc/all",
@@ -53,18 +63,25 @@ export const typedocConfigMetadataByName = {
         readmeOrder: 3,
         requiresTypeChecking: false,
     },
-} as const satisfies Record<TypedocConfigName, TypedocConfigMetadata>;
+};
 
-export const typedocConfigNamesByReadmeOrder = [...typedocConfigNames].toSorted(
+export const typedocConfigMetadataByName: typeof typedocConfigMetadataByNameValue =
+    typedocConfigMetadataByNameValue;
+
+export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
+    ...typedocConfigNames,
+].toSorted(
     (left, right) =>
         typedocConfigMetadataByName[left].readmeOrder -
         typedocConfigMetadataByName[right].readmeOrder
 );
 
+const typedocConfigNameSet = new Set<TypedocConfigName>(typedocConfigNames);
+
 export const isTypedocConfigName = (
     value: string
 ): value is TypedocConfigName =>
-    typedocConfigNames.some((configName) => configName === value);
+    typedocConfigNameSet.has(value as TypedocConfigName);
 
 export const isTypedocConfigReference = (
     value: string

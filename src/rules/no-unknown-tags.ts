@@ -3,13 +3,15 @@
  * Disallow unknown tags in TypeDoc comments.
  */
 
+import type { TSESLint } from "@typescript-eslint/utils";
+
 import { getDocCommentTagMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 const defaultOptions = [] as const;
 
-type Options = typeof defaultOptions;
 type MessageIds = "unknownTag";
+type Options = typeof defaultOptions;
 
 const allowedTags = new Set([
     "alpha",
@@ -48,7 +50,10 @@ const aliasTagsByUnknownTag = {
     return: "returns",
 } as const satisfies Record<string, string>;
 
-const rule = createTypedRule<Options, MessageIds>({
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
     create: (context) => {
         const { sourceCode } = context;
 

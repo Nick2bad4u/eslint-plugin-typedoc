@@ -9,6 +9,8 @@ Baseline TypeDoc lint checks for teams that want fast documentation hygiene wins
   - `💡` = suggestions available
   - `—` = report only
 
-| Rule                                | Fix |
-| ----------------------------------- | :-: |
-| _Run sync script to generate table_ |  —  |
+| Rule | Fix |
+| --- | :-: |
+| [`no-malformed-inline-links`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links) | 💡 |
+| [`no-unknown-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags) | 🔧 |
+| [`typedoc-config-requires-options`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options) | 🔧 |

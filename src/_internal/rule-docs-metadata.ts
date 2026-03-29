@@ -13,12 +13,14 @@ import {
     typedocConfigReferenceToName,
 } from "./typedoc-config-references.js";
 
-type RuleModule = TSESLint.RuleModule<string, readonly unknown[]>;
-
-type RuleName<TRules extends Record<string, RuleModule>> = Extract<
-    keyof TRules,
-    string
->;
+export type RuleDocsMetadata = Readonly<{
+    description: string;
+    frozen: boolean;
+    recommended: boolean;
+    requiresTypeChecking: boolean;
+    typedocConfigs: readonly TypedocConfigName[];
+    url: string;
+}>;
 
 type RuleDocsRecord = Readonly<{
     description?: string;
@@ -32,14 +34,12 @@ type RuleDocsRecord = Readonly<{
     url?: string;
 }>;
 
-export type RuleDocsMetadata = Readonly<{
-    description: string;
-    frozen: boolean;
-    recommended: boolean;
-    requiresTypeChecking: boolean;
-    typedocConfigs: readonly TypedocConfigName[];
-    url: string;
-}>;
+type RuleModule = TSESLint.RuleModule<string, readonly unknown[]>;
+
+type RuleName<TRules extends Record<string, RuleModule>> = Extract<
+    keyof TRules,
+    string
+>;
 
 const normalizeTypedocConfigName = (
     value: string | TypedocConfigName
@@ -147,12 +147,11 @@ export const deriveRulePresetMembershipByRuleName = <TRuleName extends string>(
 ): Readonly<Record<TRuleName, readonly TypedocConfigName[]>> => {
     const membershipMap = {} as Record<TRuleName, readonly TypedocConfigName[]>;
 
-    for (const [rawRuleName, metadata] of Object.entries(metadataByRuleName)) {
+    for (const [rawRuleName, metadataValue] of Object.entries(
+        metadataByRuleName
+    )) {
         const ruleName = rawRuleName as TRuleName;
-
-        if (metadata === undefined) {
-            continue;
-        }
+        const metadata = metadataValue as RuleDocsMetadata;
 
         membershipMap[ruleName] = [...metadata.typedocConfigs];
     }
@@ -168,12 +167,11 @@ export const deriveTypeCheckedRuleNameSet = <TRuleName extends string>(
 ): ReadonlySet<TRuleName> => {
     const names = new Set<TRuleName>();
 
-    for (const [rawRuleName, metadata] of Object.entries(metadataByRuleName)) {
+    for (const [rawRuleName, metadataValue] of Object.entries(
+        metadataByRuleName
+    )) {
         const ruleName = rawRuleName as TRuleName;
-
-        if (metadata === undefined) {
-            continue;
-        }
+        const metadata = metadataValue as RuleDocsMetadata;
 
         if (metadata.requiresTypeChecking) {
             names.add(ruleName);

@@ -35,6 +35,8 @@ const typedocRuleRegistry = {
 } as const satisfies Record<TypedocRuleNamePattern, RuleWithDocs>;
 
 /** Exported typed view consumed by the plugin entrypoint. */
-export const typedocRules = typedocRuleRegistry;
+export const typedocRules: Readonly<
+    Record<TypedocRuleNamePattern, RuleWithDocs>
+> = typedocRuleRegistry;
 
 export default typedocRules;

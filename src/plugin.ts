@@ -72,8 +72,8 @@ const normalizeParserOptions = (
         ? { ...parserOptions }
         : { ...defaultParserOptions };
 
-export type TypedocRuleName = keyof typeof typedocRules;
 export type TypedocRuleId = `typedoc/${TypedocRuleName}`;
+export type TypedocRuleName = keyof typeof typedocRules;
 
 const typedocEslintRules = typedocRules as NonNullable<ESLint.Plugin["rules"]> &
     typeof typedocRules;
@@ -200,7 +200,7 @@ const createTypedocConfigsDefinition = (): TypedocConfigsContract => {
     return configs;
 };
 
-const typedocConfigs = createTypedocConfigsDefinition();
+const typedocConfigs: TypedocConfigsContract = createTypedocConfigsDefinition();
 
 export type TypedocConfigs = typeof typedocConfigs;
 

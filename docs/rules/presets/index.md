@@ -11,12 +11,21 @@
 
 ## Rule matrix
 
-This section is synchronized from plugin metadata via:
+- `Fix` legend:
+  - `🔧` = autofixable
+  - `💡` = suggestions available
+  - `—` = report only
+- `Preset key` legend:
+  - [🟢](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/minimal) — [`typedoc.configs.minimal`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/minimal)
+  - [🔵](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended) — [`typedoc.configs.recommended`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended)
+  - [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) — [`typedoc.configs.strict`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict)
+  - [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) — [`typedoc.configs.all`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all)
 
-```bash
-npm run sync:presets-rules-matrix -- --write
-```
-
-| Rule                                 | Fix | Preset key |
-| ------------------------------------ | :-: | :--------- |
-| _Run sync script to generate matrix_ |  —  | —          |
+| Rule | Fix | Preset key |
+| --- | :-: | :-- |
+| [`no-malformed-inline-links`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links) | 💡 | [🟢](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/minimal) [🔵](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended) [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |
+| [`no-unknown-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags) | 🔧 | [🟢](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/minimal) [🔵](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended) [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |
+| [`require-exported-doc-comment`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment) | 🔧 | [🔵](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended) [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |
+| [`require-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-param-tags) | 🔧 | [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |
+| [`require-returns-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-returns-tag) | 🔧 | [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |
+| [`typedoc-config-requires-options`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options) | 🔧 | [🟢](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/minimal) [🔵](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/recommended) [🟠](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/strict) [🟣](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/presets/all) |

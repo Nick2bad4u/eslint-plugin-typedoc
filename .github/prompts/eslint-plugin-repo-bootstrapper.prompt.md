@@ -29,6 +29,24 @@ Do **not** do any of the following unless the source plugin already contains an 
 
 The source of truth for **rule content** is the source plugin in `./[SOURCE_PLUGIN_FOLDER]` plus any clearly stated user requirements. The source of truth for **project structure and quality bar** is this template repo.
 
+## 🚫 Non-destructive migration policy (no cheating)
+
+You must adapt mature files in place. Do **not** shortcut the migration by deleting and recreating large files as tiny replacements.
+
+Hard requirements:
+
+- Do not wipe/recreate mature root files (`eslint.config.mjs`, `tsconfig*`, docs config, scripts, workflows, README, major docs pages) unless absolutely unavoidable.
+- Prefer surgical edits that preserve existing structure, comments, ordering, and quality gates.
+- Do not replace rich docs/tests/configs with minimal placeholders or stubs to force green checks.
+- If a full-file rewrite is truly required, keep equal-or-better depth/coverage and explicitly justify why adaptation was impossible.
+- Remove obsolete plugin-specific rule artifacts incrementally, not by blanket mass deletion.
+
+Forbidden shortcuts:
+
+- “Delete entire config and regenerate a tiny version.”
+- “Drop sync scripts/tests/docs depth to save time.”
+- “Mass delete first, reconstruct later.”
+
 **Project Context & Current State:**
 1. We are adapting an old plugin currently located in the folder: `./[SOURCE_PLUGIN_FOLDER]`
 2. The root of this repository has been scaffolded using my template (based on my `eslint-plugin-typefest` repo). All root `package.json` dependencies & devDependencies are already installed.
@@ -81,7 +99,9 @@ Work methodically through these requirements without taking shortcuts or cheatin
 
 ## Migration Steps (Clarified)
 
-1. **Delete all TypeFest rule code, docs, and tests** from the template repo before migrating anything from the source plugin.
+1. **Inventory TypeFest-specific rule code, docs, and tests and remove them surgically during migration.**
+	- Do not do blanket wipe-first deletion.
+	- Keep shared infrastructure and adapt it in place.
 2. **Migrate only the rules, tests, and docs that exist in the source plugin** (in `./[SOURCE_PLUGIN_FOLDER]`). Do not invent new rules or copy anything from TypeFest unless the source plugin has a direct equivalent.
 3. **Update all configs, scripts, and docs** to remove any references to TypeFest, ts-extras, or their rules.
 4. **Do not create new folders or subfolders** for rules, tests, or docs unless the source plugin already uses them.
@@ -93,6 +113,6 @@ Work methodically through these requirements without taking shortcuts or cheatin
 - The folder structure must match the source plugin (or the template’s default: `src/rules/`, `test/`, `docs/rules/`), not invent new subfolders.
 - All configs, scripts, and docs must be updated to reflect the new plugin and its rules only.
 
-**If you are ever unsure, default to deleting TypeFest content and only migrating what exists in the source plugin.**
+**If you are ever unsure, default to preserving infrastructure and only removing clearly obsolete TypeFest-specific rule artifacts once replacement coverage exists.**
 
 ---

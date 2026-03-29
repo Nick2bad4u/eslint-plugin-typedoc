@@ -1,20 +1,20 @@
-/**
- * @packageDocumentation
- * Require exported declarations to include a leading TypeDoc block comment.
- */
-
-import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import {
+    AST_NODE_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 
 import {
+    getDocCommentAnchorNode,
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
-
-type Options = typeof defaultOptions;
 type MessageIds = "missingDocComment";
+type Options = readonly [];
+
+const defaultOptions = [] as const satisfies Options;
 
 type DocumentableExportDeclaration =
     | TSESTree.ClassDeclaration
@@ -26,10 +26,11 @@ type DocumentableExportDeclaration =
     | TSESTree.VariableDeclaration;
 
 const isDocumentableExportDeclaration = (
-    value:
+    value: Readonly<
+        | null
         | TSESTree.ExportDefaultDeclaration["declaration"]
         | TSESTree.ExportNamedDeclaration["declaration"]
-        | null
+    >
 ): value is DocumentableExportDeclaration => {
     if (value === null) {
         return false;
@@ -81,18 +82,12 @@ const getDeclarationName = (
 
             return "exported declaration";
         }
-
         case AST_NODE_TYPES.VariableDeclaration: {
             const firstDeclarator = declaration.declarations[0];
 
-            if (
-                firstDeclarator?.id.type === AST_NODE_TYPES.Identifier &&
-                firstDeclarator.id.name.length > 0
-            ) {
-                return firstDeclarator.id.name;
-            }
-
-            return "exported variable declaration";
+            return firstDeclarator?.id.type === AST_NODE_TYPES.Identifier
+                ? firstDeclarator.id.name
+                : "exported declaration";
         }
     }
 };
@@ -109,15 +104,21 @@ const createDocCommentText = (
         "",
     ].join(lineEnding);
 
-const rule = createTypedRule<Options, MessageIds>({
-    create: (context) => {
-        const { sourceCode } = context;
+/** Rule implementation for exported declaration documentation coverage. */
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
+    create(context) {
+        const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
         const reportIfMissingDocComment = (
-            declaration: DocumentableExportDeclaration
+            declaration: Readonly<DocumentableExportDeclaration>
         ): void => {
-            if (getLeadingDocComment(sourceCode, declaration) !== null) {
+            const docAnchorNode = getDocCommentAnchorNode(declaration);
+
+            if (getLeadingDocComment(sourceCode, docAnchorNode) !== null) {
                 return;
             }
 
@@ -125,11 +126,11 @@ const rule = createTypedRule<Options, MessageIds>({
 
             context.report({
                 data: {
-                    name: declarationName,
+                    declarationName,
                 },
                 fix: (fixer) => {
                     const indentation = " ".repeat(
-                        declaration.loc?.start.column ?? 0
+                        docAnchorNode.loc?.start.column ?? 0
                     );
                     const docComment = createDocCommentText(
                         declarationName,
@@ -137,7 +138,7 @@ const rule = createTypedRule<Options, MessageIds>({
                         lineEnding
                     );
 
-                    return fixer.insertTextBefore(declaration, docComment);
+                    return fixer.insertTextBefore(docAnchorNode, docComment);
                 },
                 messageId: "missingDocComment",
                 node: declaration,
@@ -169,20 +170,21 @@ const rule = createTypedRule<Options, MessageIds>({
     meta: {
         docs: {
             description:
-                "Require exported declarations to include a TypeDoc comment block.",
+                "require a leading TypeDoc block comment for exported declarations.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,
             typedocConfigs: [
+                "typedoc.configs.all",
+                "typedoc.configs.minimal",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
-                "typedoc.configs.all",
             ],
         },
         fixable: "code",
         messages: {
             missingDocComment:
-                "Add a TypeDoc comment for exported '{{name}}' so documentation and lint diagnostics stay in sync.",
+                "Exported declaration '{{declarationName}}' must have a leading TypeDoc comment.",
         },
         schema: [],
         type: "problem",

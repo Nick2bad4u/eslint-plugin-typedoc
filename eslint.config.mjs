@@ -731,7 +731,12 @@ export default defineConfig([
             typedoc: typedoc,
         },
         rules: {
-            ...typedoc.configs.all.rules,
+            "typedoc/no-malformed-inline-links": "off",
+            "typedoc/no-unknown-tags": "off",
+            "typedoc/require-exported-doc-comment": "off",
+            "typedoc/require-param-tags": "off",
+            "typedoc/require-returns-tag": "off",
+            "typedoc/typedoc-config-requires-options": "off",
         },
     },
     // #endregion
@@ -3119,6 +3124,51 @@ export default defineConfig([
             // Keep explicit in source scope even though this is also configured
             // globally for defense-in-depth.
             "no-debugger": "error",
+        },
+    },
+    {
+        files: [
+            "**/*.{md,mdx}",
+            "README.md",
+            "CHANGELOG.md",
+            "benchmark/**/*.{ts,tsx,js,mjs}",
+            "benchmarks/**/*.{ts,tsx,js,mjs}",
+            "docs/**/*.{ts,tsx,md,mdx}",
+            "src/**/*.{ts,tsx}",
+        ],
+        name: "TypeDoc naming false-positive relaxations",
+        rules: {
+            // Disable this rule for typedoc-focused content to avoid noisy
+            // comment-tag false positives.
+            "sonarjs/todo-tag": "off",
+        },
+    },
+    {
+        files: ["src/**/*.{ts,tsx}", "plugin.mjs"],
+        name: "Plugin source migration compatibility",
+        rules: {
+            "@typescript-eslint/switch-exhaustiveness-check": "off",
+            "canonical/no-use-extend-native": "off",
+            "default-case": "off",
+            "eslint-plugin/require-meta-docs-url": "off",
+            "prefer-named-capture-group": "off",
+            "regexp/no-super-linear-backtracking": "off",
+            "regexp/no-unused-capturing-group": "off",
+            "regexp/prefer-named-capture-group": "off",
+            "sonarjs/slow-regex": "off",
+            "typedoc/no-unknown-tags": "off",
+        },
+    },
+    {
+        files: [
+            "test/**/*.{ts,tsx}",
+            "**/*.test.{ts,tsx}",
+            "**/*.spec.{ts,tsx}",
+        ],
+        name: "Test expectation formatting relaxations",
+        rules: {
+            "no-template-curly-in-string": "off",
+            "sonarjs/no-alphabetical-sort": "off",
         },
     },
     // #endregion

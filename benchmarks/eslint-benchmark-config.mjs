@@ -63,6 +63,14 @@ const isConfigWithRules = (value) =>
     value.rules !== null;
 
 /** Plugin rule sets used by benchmark scenarios. */
+/**
+ * @type {Readonly<
+ *     Record<
+ *         "all" | "minimal" | "recommended" | "strict",
+ *         Readonly<BenchmarkRules>
+ *     >
+ * >}
+ */
 export const typedocRuleSets = Object.freeze({
     all: resolveRuleSet("all"),
     minimal: resolveRuleSet("minimal"),

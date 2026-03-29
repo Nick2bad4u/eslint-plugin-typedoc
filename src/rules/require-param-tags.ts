@@ -3,10 +3,16 @@
  * Require documented function-like declarations to include `@param` tags.
  */
 
-import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import {
+    AST_NODE_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 
 import {
     buildDocCommentTagInsertion,
+    getDocCommentAnchorNode,
+    getDocCommentClosingLineStartIndex,
     getDocCommentParamTagNames,
     getLeadingDocComment,
     getPreferredLineEnding,
@@ -15,24 +21,24 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 
 const defaultOptions = [] as const;
 
-type Options = typeof defaultOptions;
 type MessageIds = "missingParamTags";
+type Options = typeof defaultOptions;
 
 const getParameterName = (
     parameter: TSESTree.Parameter,
     parameterIndex: number
 ): string => {
     switch (parameter.type) {
-        case AST_NODE_TYPES.Identifier: {
-            return parameter.name;
-        }
-
         case AST_NODE_TYPES.AssignmentPattern: {
             if (parameter.left.type === AST_NODE_TYPES.Identifier) {
                 return parameter.left.name;
             }
 
             return `param${parameterIndex + 1}`;
+        }
+
+        case AST_NODE_TYPES.Identifier: {
+            return parameter.name;
         }
 
         case AST_NODE_TYPES.RestElement: {
@@ -49,7 +55,10 @@ const getParameterName = (
     }
 };
 
-const rule = createTypedRule<Options, MessageIds>({
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
     create: (context) => {
         const { sourceCode } = context;
         const lineEnding = getPreferredLineEnding(sourceCode);
@@ -82,9 +91,14 @@ const rule = createTypedRule<Options, MessageIds>({
                 data: {
                     params: missingParamNames.join(", "),
                 },
-                fix: (fixer) =>
-                    fixer.insertTextBeforeRange(
-                        [docComment.range[1] - 2, docComment.range[1] - 2],
+                fix: (fixer) => {
+                    const insertionIndex = getDocCommentClosingLineStartIndex(
+                        sourceCode,
+                        docComment
+                    );
+
+                    return fixer.insertTextBeforeRange(
+                        [insertionIndex, insertionIndex],
                         buildDocCommentTagInsertion(
                             docComment,
                             missingParamNames.map(
@@ -93,7 +107,8 @@ const rule = createTypedRule<Options, MessageIds>({
                             ),
                             lineEnding
                         )
-                    ),
+                    );
+                },
                 messageId: "missingParamTags",
                 node: reportNode,
             });
@@ -101,7 +116,11 @@ const rule = createTypedRule<Options, MessageIds>({
 
         return {
             FunctionDeclaration: (node): void => {
-                checkFunctionLike(node, node, node.params);
+                checkFunctionLike(
+                    node,
+                    getDocCommentAnchorNode(node),
+                    node.params
+                );
             },
             MethodDefinition: (node): void => {
                 if (node.kind === "constructor") {
@@ -119,7 +138,11 @@ const rule = createTypedRule<Options, MessageIds>({
                 checkFunctionLike(node, node, node.value.params);
             },
             TSDeclareFunction: (node): void => {
-                checkFunctionLike(node, node, node.params);
+                checkFunctionLike(
+                    node,
+                    getDocCommentAnchorNode(node),
+                    node.params
+                );
             },
         };
     },

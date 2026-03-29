@@ -4,10 +4,16 @@
  * `@returns` tags.
  */
 
-import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import {
+    AST_NODE_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 
 import {
     buildDocCommentTagInsertion,
+    getDocCommentAnchorNode,
+    getDocCommentClosingLineStartIndex,
     getDocCommentTagNames,
     getLeadingDocComment,
     getPreferredLineEnding,
@@ -16,14 +22,14 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 
 const defaultOptions = [] as const;
 
-type Options = typeof defaultOptions;
-type MessageIds = "missingReturnsTag";
-
 type FunctionLikeNode =
     | TSESTree.FunctionDeclaration
     | TSESTree.FunctionExpression
     | TSESTree.TSDeclareFunction
     | TSESTree.TSEmptyBodyFunctionExpression;
+type MessageIds = "missingReturnsTag";
+
+type Options = typeof defaultOptions;
 
 const isVoidLikeTypeAnnotation = (
     typeAnnotation: null | TSESTree.TypeNode | undefined
@@ -33,8 +39,8 @@ const isVoidLikeTypeAnnotation = (
     }
 
     switch (typeAnnotation.type) {
-        case AST_NODE_TYPES.TSVoidKeyword:
-        case AST_NODE_TYPES.TSNeverKeyword: {
+        case AST_NODE_TYPES.TSNeverKeyword:
+        case AST_NODE_TYPES.TSVoidKeyword: {
             return true;
         }
 
@@ -69,7 +75,10 @@ const requiresReturnsTag = (node: FunctionLikeNode): boolean => {
     return !isVoidLikeTypeAnnotation(node.returnType.typeAnnotation);
 };
 
-const rule = createTypedRule<Options, MessageIds>({
+const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
+    Options,
+    MessageIds
+>({
     create: (context) => {
         const { sourceCode } = context;
         const lineEnding = getPreferredLineEnding(sourceCode);
@@ -95,15 +104,21 @@ const rule = createTypedRule<Options, MessageIds>({
             }
 
             context.report({
-                fix: (fixer) =>
-                    fixer.insertTextBeforeRange(
-                        [docComment.range[1] - 2, docComment.range[1] - 2],
+                fix: (fixer) => {
+                    const insertionIndex = getDocCommentClosingLineStartIndex(
+                        sourceCode,
+                        docComment
+                    );
+
+                    return fixer.insertTextBeforeRange(
+                        [insertionIndex, insertionIndex],
                         buildDocCommentTagInsertion(
                             docComment,
                             ["@returns TODO describe the return value."],
                             lineEnding
                         )
-                    ),
+                    );
+                },
                 messageId: "missingReturnsTag",
                 node: docNode,
             });
@@ -111,7 +126,7 @@ const rule = createTypedRule<Options, MessageIds>({
 
         return {
             FunctionDeclaration: (node): void => {
-                checkFunctionLike(node, node);
+                checkFunctionLike(node, getDocCommentAnchorNode(node));
             },
             MethodDefinition: (node): void => {
                 if (node.kind === "constructor") {
@@ -121,7 +136,7 @@ const rule = createTypedRule<Options, MessageIds>({
                 checkFunctionLike(node.value, node);
             },
             TSDeclareFunction: (node): void => {
-                checkFunctionLike(node, node);
+                checkFunctionLike(node, getDocCommentAnchorNode(node));
             },
         };
     },

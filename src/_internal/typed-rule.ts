@@ -5,8 +5,9 @@
 
 import { ESLintUtils } from "@typescript-eslint/utils";
 
-import { createRuleDocsUrl } from "./rule-docs-url.js";
 import type { TypedocConfigReference } from "./typedoc-config-references.js";
+
+import { createRuleDocsUrl } from "./rule-docs-url.js";
 
 export type TypedocRuleDocs = Readonly<{
     description: string;
@@ -19,7 +20,10 @@ export type TypedocRuleDocs = Readonly<{
 /**
  * Canonical rule creator that stamps `meta.docs.url` from rule names.
  */
-export const createTypedRule =
-    ESLintUtils.RuleCreator<TypedocRuleDocs>(createRuleDocsUrl);
+const typedRuleCreator = ESLintUtils.RuleCreator<TypedocRuleDocs>(
+    createRuleDocsUrl
+) as ReturnType<typeof ESLintUtils.RuleCreator<TypedocRuleDocs>>;
+
+export const createTypedRule: typeof typedRuleCreator = typedRuleCreator;
 
 export default createTypedRule;

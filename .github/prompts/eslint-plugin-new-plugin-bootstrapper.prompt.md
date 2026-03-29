@@ -32,6 +32,25 @@ Do **not** do any of the following unless I explicitly request it:
 
 The source of truth for **rule content** is my request in this prompt session: package identity, plugin purpose, desired first rules, and any explicitly requested behavior. The source of truth for **project structure and quality bar** is this template repo.
 
+## 🚫 Non-destructive migration policy (no cheating)
+
+You must adapt mature files in place. Do **not** “pass quickly” by deleting and recreating large files with tiny replacements.
+
+Hard requirements:
+
+- Do not wipe and recreate mature root files (`eslint.config.mjs`, `tsconfig*`, docs config, scripts, workflows, README, major docs pages) unless replacement is strictly necessary.
+- Prefer surgical edits that preserve existing structure, comments, ordering, and quality controls.
+- Do not replace rich docs/tests/configs with minimal stubs or placeholder content just to get green checks.
+- If a full-file rewrite is truly unavoidable, keep equal-or-better depth/coverage and explicitly state why the old structure could not be adapted.
+- Delete only obsolete plugin-specific rule artifacts; preserve shared infrastructure.
+
+Forbidden shortcuts:
+
+- “Delete entire config and re-scaffold a tiny version.”
+- “Replace docs with 5-line placeholders.”
+- “Drop tests/sync scripts/quality gates to reduce work.”
+- “Mass-delete first, figure out parity later.”
+
 ## Required input to interpret correctly
 
 Use the user-provided prompt arguments as the product brief for the new plugin. Extract or infer the following carefully:
@@ -78,6 +97,7 @@ If the package name implies the namespace, use the obvious derived namespace unl
 
 8. **Remove template-only rule content:**
    - Delete the template's existing TypeFest-specific rules, docs, tests, examples, README references, and preset references unless the user explicitly asked for an equivalent rule.
+   - Removals must be targeted and surgical. Do not delete whole mature files/directories if they also contain reusable infrastructure.
    - Do not leave old rule files around as placeholders.
    - Do not keep template rule IDs in docs tables, presets, tests, or snapshots.
 
@@ -166,7 +186,9 @@ Work methodically through these requirements without taking shortcuts or cheatin
 
 ## Creation Flow (Clarified)
 
-1. **Remove the template's TypeFest-specific rule/docs/test content first.**
+1. **Inventory TypeFest-specific rule/docs/test artifacts and remove them surgically.**
+   - Do not perform blanket file wipes.
+   - Preserve reusable infrastructure and adapt it.
 2. **Re-identify the repository** for the new package name, namespace, docs site, and metadata.
 3. **Adapt configs and scripts** so the template works for the new plugin instead of replacing the whole setup.
 4. **Implement only the rules the user actually requested.**
@@ -181,4 +203,4 @@ Work methodically through these requirements without taking shortcuts or cheatin
 - All configs, scripts, docs, tests, and package metadata must reflect the new plugin and only the new plugin.
 - If no rules were requested, the repo should still read as an intentional new plugin scaffold, not a half-cleaned template.
 
-**If you are ever unsure, default to deleting template-specific TypeFest content and only keeping infrastructure plus the new plugin behavior that was explicitly requested.**
+**If you are ever unsure, default to preserving infrastructure and performing targeted removals of obsolete TypeFest-specific artifacts only.**
