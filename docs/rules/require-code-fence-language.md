@@ -8,7 +8,7 @@ This rule scans TypeDoc block comments for Markdown triple-backtick fences and c
 
 ## What this rule reports
 
-This rule reports opening code fences that omit a language identifier (for example, ```` ``` ```` instead of ```` ```ts ````).
+This rule reports opening code fences that omit a language identifier (for example, ` ``` ` instead of ` ```ts `).
 
 ## Why this rule exists
 
@@ -16,7 +16,7 @@ Language-less fences reduce syntax highlighting quality and readability in gener
 
 ## ❌ Incorrect
 
-```ts
+````ts
 /**
  * Render value.
  * @example
@@ -27,11 +27,11 @@ Language-less fences reduce syntax highlighting quality and readability in gener
 export function renderValue(value: number): string {
     return String(value);
 }
-```
+````
 
 ## ✅ Correct
 
-```ts
+````ts
 /**
  * Render value.
  * @example
@@ -42,7 +42,7 @@ export function renderValue(value: number): string {
 export function renderValue(value: number): string {
     return String(value);
 }
-```
+````
 
 ## Behavior and migration notes
 

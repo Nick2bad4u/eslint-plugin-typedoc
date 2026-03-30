@@ -89,8 +89,10 @@ const findMissingFenceLanguageRanges = (
     return ranges;
 };
 
-/** Rule implementation for requiring code-fence languages in doc-comment
-Markdown. */
+/**
+ * Rule implementation for requiring code-fence languages in doc-comment
+ * Markdown.
+ */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
