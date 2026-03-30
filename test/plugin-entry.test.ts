@@ -10,7 +10,9 @@ describe("plugin entry", () => {
     });
 
     it("registers the expected rule set", () => {
-        const ruleNames = Object.keys(typedocPlugin.rules ?? {}).toSorted();
+        const ruleNames = Object.keys(typedocPlugin.rules ?? {}).toSorted(
+            (left, right) => left.localeCompare(right)
+        );
 
         expect(ruleNames).toEqual([
             "no-duplicate-param-tags",
@@ -41,7 +43,11 @@ describe("plugin entry", () => {
     });
 
     it("exports all expected presets", () => {
-        expect(Object.keys(typedocPlugin.configs ?? {}).toSorted()).toEqual([
+        expect(
+            Object.keys(typedocPlugin.configs ?? {}).toSorted((left, right) =>
+                left.localeCompare(right)
+            )
+        ).toEqual([
             "all",
             "minimal",
             "recommended",

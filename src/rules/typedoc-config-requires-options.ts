@@ -260,12 +260,17 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             )
                             .join(`,${lineEnding}`);
 
-                        const insertionText =
-                            configObject.properties.length === 0
-                                ? `${lineEnding}${insertedProperties}${lineEnding}${indentation}`
-                                : hasTrailingComma
-                                  ? `${insertedProperties}${lineEnding}${indentation}`
-                                  : `,${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
+                        const insertionText = (() => {
+                            if (configObject.properties.length === 0) {
+                                return `${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
+                            }
+
+                            if (hasTrailingComma) {
+                                return `${insertedProperties}${lineEnding}${indentation}`;
+                            }
+
+                            return `,${lineEnding}${insertedProperties}${lineEnding}${indentation}`;
+                        })();
 
                         return fixer.insertTextBeforeRange(
                             [

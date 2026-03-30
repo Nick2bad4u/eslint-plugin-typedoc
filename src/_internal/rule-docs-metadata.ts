@@ -59,9 +59,10 @@ const normalizeTypedocConfigNames = (
 ): readonly TypedocConfigName[] => {
     const values = Array.isArray(references)
         ? references
-        : references === undefined
-          ? []
-          : [references];
+        : typeof references === "string"
+          ? [references]
+          : [];
+
     const resolvedConfigNames = new Set<TypedocConfigName>();
 
     for (const value of values) {
