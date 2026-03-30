@@ -215,9 +215,9 @@
         "jsonc-eslint-parser": "$jsonc-eslint-parser"
     },
     "dependencies": {
-        "@typescript-eslint/parser": "^8.57.2",
-        "@typescript-eslint/type-utils": "^8.57.2",
-        "@typescript-eslint/utils": "^8.57.2"
+        "@typescript-eslint/parser": "^8.58.0",
+        "@typescript-eslint/type-utils": "^8.58.0",
+        "@typescript-eslint/utils": "^8.58.0"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.2",
@@ -230,10 +230,10 @@
         "@eslint/compat": "^2.0.3",
         "@eslint/config-helpers": "^0.5.3",
         "@eslint/config-inspector": "^1.5.0",
-        "@eslint/css": "^1.0.0",
+        "@eslint/css": "^1.1.0",
         "@eslint/js": "^10.0.1",
         "@eslint/json": "^1.2.0",
-        "@eslint/markdown": "^8.0.0",
+        "@eslint/markdown": "^8.0.1",
         "@html-eslint/eslint-plugin": "^0.58.1",
         "@html-eslint/parser": "^0.58.1",
         "@microsoft/eslint-plugin-sdl": "^1.1.0",
@@ -274,8 +274,8 @@
         "@types/postcss-normalize": "^9.0.4",
         "@types/postcss-reporter": "^7.0.5",
         "@types/sloc": "^0.2.3",
-        "@typescript-eslint/eslint-plugin": "^8.57.2",
-        "@typescript-eslint/rule-tester": "^8.57.2",
+        "@typescript-eslint/eslint-plugin": "^8.58.0",
+        "@typescript-eslint/rule-tester": "^8.58.0",
         "@typpi/eslint-plugin-vite": "^1.0.11",
         "@vitest/coverage-v8": "^4.1.2",
         "@vitest/eslint-plugin": "^1.6.13",
@@ -544,7 +544,7 @@
         "ts-unused-exports": "^11.0.1",
         "typedoc": "^0.28.18",
         "typescript": "^6.0.2",
-        "typescript-eslint": "^8.57.2",
+        "typescript-eslint": "^8.58.0",
         "typesync": "^0.14.3",
         "vfile": "^6.0.3",
         "vite": "^8.0.3",
