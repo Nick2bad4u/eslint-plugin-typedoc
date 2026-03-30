@@ -1,7 +1,10 @@
 import type { TSESLint } from "@typescript-eslint/utils";
 
 import {
+    buildDocCommentTagInsertion,
     getDocCommentAnchorNode,
+    getDocCommentClosingLineStartIndex,
+    getDocCommentTagNames,
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
@@ -12,24 +15,12 @@ import {
 } from "../_internal/exported-declarations.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingDocComment";
+type MessageIds = "missingExampleTag";
 type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-const createDocCommentText = (
-    declarationName: string,
-    indentation: string,
-    lineEnding: "\n" | "\r\n"
-): string =>
-    [
-        `${indentation}/**`,
-        `${indentation} * TODO: Document ${declarationName}.`,
-        `${indentation} */`,
-        "",
-    ].join(lineEnding);
-
-/** Rule implementation for exported declaration documentation coverage. */
+/** Rule implementation for requiring @example on documented exported APIs. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -38,12 +29,19 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
-        const reportIfMissingDocComment = (
+        const reportIfMissingExampleTag = (
             declaration: Readonly<DocumentableExportDeclaration>
         ): void => {
             const docAnchorNode = getDocCommentAnchorNode(declaration);
+            const docComment = getLeadingDocComment(sourceCode, docAnchorNode);
 
-            if (getLeadingDocComment(sourceCode, docAnchorNode) !== null) {
+            if (docComment === null) {
+                return;
+            }
+
+            const tagNames = getDocCommentTagNames(sourceCode, docComment);
+
+            if (tagNames.has("example")) {
                 return;
             }
 
@@ -54,18 +52,23 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     declarationName,
                 },
                 fix: (fixer) => {
-                    const indentation = " ".repeat(
-                        docAnchorNode.loc?.start.column ?? 0
-                    );
-                    const docComment = createDocCommentText(
-                        declarationName,
-                        indentation,
-                        lineEnding
+                    const insertionIndex = getDocCommentClosingLineStartIndex(
+                        sourceCode,
+                        docComment
                     );
 
-                    return fixer.insertTextBefore(docAnchorNode, docComment);
+                    return fixer.insertTextBeforeRange(
+                        [insertionIndex, insertionIndex],
+                        buildDocCommentTagInsertion(
+                            docComment,
+                            [
+                                `@example TODO add usage example for ${declarationName}.`,
+                            ],
+                            lineEnding
+                        )
+                    );
                 },
-                messageId: "missingDocComment",
+                messageId: "missingExampleTag",
                 node: declaration,
             });
         };
@@ -78,7 +81,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     return;
                 }
 
-                reportIfMissingDocComment(declaration);
+                reportIfMissingExampleTag(declaration);
             },
             ExportNamedDeclaration: (node): void => {
                 const declaration = node.declaration;
@@ -87,7 +90,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     return;
                 }
 
-                reportIfMissingDocComment(declaration);
+                reportIfMissingExampleTag(declaration);
             },
         };
     },
@@ -95,26 +98,21 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "require a leading TypeDoc block comment for exported declarations.",
+                "require `@example` tags on documented exported declarations.",
             frozen: false,
-            recommended: true,
+            recommended: false,
             requiresTypeChecking: false,
-            typedocConfigs: [
-                "typedoc.configs.all",
-                "typedoc.configs.minimal",
-                "typedoc.configs.recommended",
-                "typedoc.configs.strict",
-            ],
+            typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
         },
         fixable: "code",
         messages: {
-            missingDocComment:
-                "Exported declaration '{{declarationName}}' must have a leading TypeDoc comment.",
+            missingExampleTag:
+                "Documented exported declaration '{{declarationName}}' should include an `@example` tag.",
         },
         schema: [],
-        type: "problem",
+        type: "suggestion",
     },
-    name: "require-exported-doc-comment",
+    name: "require-example-tag",
 });
 
 export default rule;

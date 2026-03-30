@@ -3,8 +3,16 @@
     overflow: hidden;
     padding: 5rem 0 3.5rem;
     background:
-        radial-gradient(circle at 20% 10%, rgb(194 120 255 / 35%), transparent 38%),
-        radial-gradient(circle at 80% 0%, rgb(99 102 241 / 35%), transparent 42%),
+        radial-gradient(
+            circle at 20% 10%,
+            rgb(194 120 255 / 35%),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 80% 0%,
+            rgb(99 102 241 / 35%),
+            transparent 42%
+        ),
         linear-gradient(120deg, #3d1b79 0%, #5d2d91 48%, #6a37a8 100%);
     color: #ffffff;
 }
@@ -24,42 +32,42 @@
 .heroEyebrow {
     margin: 0 0 0.5rem;
     color: rgb(233 213 255);
+    font-size: 0.75rem;
+    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    font-size: 0.78rem;
-    font-weight: 700;
 }
 
 .heroTitle {
     margin: 0;
-    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-size: clamp(2rem, 4vi, 3rem);
     letter-spacing: -0.02em;
 }
 
 .heroSubtitle {
     margin: 0.75rem 0 0;
-    max-width: 54ch;
     color: rgb(243 232 255);
-    line-height: 1.65;
-    font-size: 1.02rem;
+    font-size: 1rem;
+    line-height: 1.625;
+    max-inline-size: 54ch;
 }
 
 .heroPillarList {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 1rem 0 0;
     padding: 0;
+    margin: 1rem 0 0;
+    gap: 0.5rem;
+    list-style: "";
 }
 
 .heroPillarItem {
+    padding: 0.25rem 0.72rem;
     border: 1px solid rgb(237 233 254 / 35%);
     border-radius: 999px;
     background: rgb(255 255 255 / 12%);
-    padding: 0.25rem 0.72rem;
     color: rgb(250 245 255);
-    font-size: 0.82rem;
+    font-size: 0.875rem;
     font-weight: 600;
 }
 
@@ -67,7 +75,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1rem;
+    margin-block-start: 1rem;
 }
 
 .heroActionButton {
@@ -77,15 +85,15 @@
 
 .heroPanel {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     padding: 0.75rem;
 }
 
 .heroPanelLogo {
-    inline-size: min(100%, 520px);
     block-size: auto;
     filter: drop-shadow(0 10px 24px rgb(30 10 60 / 35%));
+    inline-size: min(100%, 520px);
 }
 
 .heroLiveBadges {
@@ -103,45 +111,54 @@
 }
 
 .card {
+    padding: 1.1rem;
     border: 1px solid var(--ifm-color-emphasis-300);
     border-radius: 0.85rem;
     background: var(--ifm-background-surface-color);
-    padding: 1.1rem;
     transition:
         border-color 140ms ease-in-out,
         transform 140ms ease-in-out;
-}
 
-.card:hover {
-    border-color: var(--ifm-color-primary-light);
-    transform: translateY(-1px);
+    @media screen and (prefers-reduced-motion: reduce) {
+        padding: 1.1rem;
+        border: 1px solid var(--ifm-color-emphasis-300);
+        border-radius: 0.85rem;
+        background: var(--ifm-background-surface-color);
+        transition: none;
+    }
+
+    &:hover,
+    &:focus {
+        border-color: var(--ifm-color-primary-light);
+        transform: translateY(-1px);
+    }
 }
 
 .cardTitle {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 1rem;
 }
 
 .cardDescription {
     margin: 0.55rem 0 0.8rem;
     color: var(--ifm-color-emphasis-700);
-    line-height: 1.55;
+    line-height: 1.5;
 }
 
 .cardLink {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
     font-weight: 600;
+    gap: 0.35rem;
 }
 
 .quickLinksSection {
-    margin-top: 2.2rem;
+    margin-block-start: 2.2rem;
 }
 
 .quickLinksTitle {
-    margin-bottom: 0.85rem;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    margin-block-end: 0.85rem;
 }
 
 .quickLinksGrid {
@@ -152,35 +169,50 @@
 
 .quickLinkCard {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.85rem;
     border: 1px solid var(--ifm-color-emphasis-300);
     border-radius: 0.7rem;
     background: var(--ifm-background-surface-color);
-    min-height: 3rem;
-    padding: 0.45rem 0.85rem;
     color: var(--ifm-font-color-base);
     font-weight: 600;
+    min-block-size: 3rem;
     text-decoration: none;
     transition:
         border-color 140ms ease-in-out,
         background-color 140ms ease-in-out;
-}
 
-.quickLinkCard:hover,
-.quickLinkCard:focus {
-    border-color: var(--ifm-color-primary-light);
-    background-color: rgb(168 85 247 / 8%);
-    text-decoration: none;
+    @media screen and (prefers-reduced-motion: reduce) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.45rem 0.85rem;
+        border: 1px solid var(--ifm-color-emphasis-300);
+        border-radius: 0.7rem;
+        background: var(--ifm-background-surface-color);
+        color: var(--ifm-font-color-base);
+        font-weight: 600;
+        min-block-size: 3rem;
+        text-decoration: none;
+        transition: none;
+    }
+
+    &:hover,
+    &:focus {
+        border-color: var(--ifm-color-primary-light);
+        background-color: rgb(168 85 247 / 8%);
+        text-decoration: none;
+    }
 }
 
 .liveBadgeList {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
+    gap: 0.5rem;
+    list-style: "";
 }
 
 .liveBadgeListItem {
@@ -212,6 +244,6 @@
     }
 
     .heroBanner {
-        padding-top: 4.2rem;
+        padding-block-start: 4.2rem;
     }
 }

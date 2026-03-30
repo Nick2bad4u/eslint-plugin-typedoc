@@ -11,7 +11,12 @@ Balanced TypeDoc lint preset for most projects. Includes baseline checks plus ex
 
 | Rule | Fix |
 | --- | :-: |
+| [`no-duplicate-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-param-tags) | — |
+| [`no-duplicate-type-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-type-param-tags) | — |
+| [`no-extra-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-extra-param-tags) | — |
 | [`no-malformed-inline-links`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links) | 💡 |
 | [`no-unknown-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags) | 🔧 |
+| [`prefer-package-documentation-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-package-documentation-tag) | 🔧 |
+| [`prefer-type-param-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-type-param-tag) | 🔧 |
 | [`require-exported-doc-comment`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment) | 🔧 |
 | [`typedoc-config-requires-options`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options) | 🔧 |

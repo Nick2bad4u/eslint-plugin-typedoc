@@ -7,8 +7,8 @@
     --ifm-color-primary-lighter: #c4b5fd;
     --ifm-color-primary-lightest: #ddd6fe;
     --ifm-code-font-size: 95%;
-    --ifm-font-family-base: "Inter var", "Inter", "Segoe UI", system-ui,
-        -apple-system, sans-serif;
+    --ifm-font-family-base:
+        "Inter var", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
     --site-sb-rules: #8b5cf6;
     --site-sb-dev: #2563eb;
     --site-sb-tooling: #0d9488;
@@ -55,8 +55,10 @@
     border-radius: 0.5rem;
 }
 
-.theme-doc-sidebar-item-category.sb-rules-presets > .menu__list-item-collapsible,
-.theme-doc-sidebar-item-category.sb-rules-catalog > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category.sb-rules-presets
+    > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category.sb-rules-catalog
+    > .menu__list-item-collapsible,
 .theme-doc-sidebar-item-link.sb-rules-overview > .menu__link,
 .theme-doc-sidebar-item-link.sb-rules-started > .menu__link {
     border-inline-start: 3px solid var(--site-sb-rules);
@@ -81,7 +83,8 @@
 }
 
 .main-wrapper {
-    background: radial-gradient(
+    background:
+        radial-gradient(
             circle at 18% 0%,
             rgb(139 92 246 / 10%),
             transparent 46%

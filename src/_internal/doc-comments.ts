@@ -12,6 +12,19 @@ import {
 const docTagPattern = /@([A-Za-z][\w-]*)/gu;
 const inlineLinkPattern = /\{@link\s*([^}]*)\}/gu;
 const paramTagPattern = /@param\s+(\.\.\.)?(\S+)/gu;
+const typeParamTagPattern = /@(template|typeParam)\s+(\S+)/gu;
+
+const normalizeTagNameToken = (rawName: string): string => {
+    const normalizedName = rawName
+        .replace(/^\[/u, "")
+        .replace(/\]$/u, "")
+        .trim();
+    const equalsSignOffset = normalizedName.indexOf("=");
+
+    return equalsSignOffset === -1
+        ? normalizedName
+        : normalizedName.slice(0, equalsSignOffset);
+};
 
 /** Matched documentation tag with absolute source range. */
 export type DocTagMatch = Readonly<{
@@ -148,10 +161,10 @@ export const getDocCommentTagNames = (
 };
 
 /** Collect documented parameter names from `@param` tags in a comment. */
-export const getDocCommentParamTagNames = (
+export const getDocCommentParamTagNameList = (
     comment: Readonly<TSESTree.Comment>
-): ReadonlySet<string> => {
-    const tagNames = new Set<string>();
+): readonly string[] => {
+    const tagNames: string[] = [];
     const commentBody = normalizeDocCommentLines(comment).join("\n");
 
     for (const match of commentBody.matchAll(paramTagPattern)) {
@@ -162,27 +175,59 @@ export const getDocCommentParamTagNames = (
             continue;
         }
 
-        const normalizedName = rawName
-            .replace(/^\[/u, "")
-            .replace(/\]$/u, "")
-            .trim();
-        const equalsSignOffset = normalizedName.indexOf("=");
-        const nameWithoutDefault =
-            equalsSignOffset === -1
-                ? normalizedName
-                : normalizedName.slice(0, equalsSignOffset);
+        const nameWithoutDefault = normalizeTagNameToken(rawName);
 
         if (nameWithoutDefault.length === 0) {
             continue;
         }
 
-        tagNames.add(
+        tagNames.push(
             isRestParameter ? `...${nameWithoutDefault}` : nameWithoutDefault
         );
     }
 
     return tagNames;
 };
+
+/** Collect documented parameter names from `@param` tags in a comment. */
+export const getDocCommentParamTagNames = (
+    comment: Readonly<TSESTree.Comment>
+): ReadonlySet<string> => new Set(getDocCommentParamTagNameList(comment));
+
+/**
+ * Collect documented type-parameter names from `@typeParam`/`@template` tags.
+ */
+export const getDocCommentTypeParamTagNameList = (
+    comment: Readonly<TSESTree.Comment>
+): readonly string[] => {
+    const tagNames: string[] = [];
+    const commentBody = normalizeDocCommentLines(comment).join("\n");
+
+    for (const match of commentBody.matchAll(typeParamTagPattern)) {
+        const rawName = match[2];
+
+        if (typeof rawName !== "string") {
+            continue;
+        }
+
+        const normalizedName = normalizeTagNameToken(rawName);
+
+        if (normalizedName.length === 0) {
+            continue;
+        }
+
+        tagNames.push(normalizedName);
+    }
+
+    return tagNames;
+};
+
+/**
+ * Collect documented type-parameter names from `@typeParam`/`@template` tags.
+ */
+export const getDocCommentTypeParamTagNames = (
+    comment: Readonly<TSESTree.Comment>
+): ReadonlySet<string> => new Set(getDocCommentTypeParamTagNameList(comment));
 
 /** Collect all inline `{@link ...}` matches from a comment. */
 export const getInlineLinkMatches = (
