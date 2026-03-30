@@ -86,7 +86,7 @@ const heroStats = [
 ] as const satisfies readonly HeroStat[];
 
 export default function Home() {
-    const logoSrc = useBaseUrl("/img/typedoc-logo-wordmark.png");
+    const logoSrc = useBaseUrl("/img/logo_512x512.png");
 
     return (
         <Layout

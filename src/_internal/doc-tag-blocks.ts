@@ -5,6 +5,7 @@ import { normalizeDocCommentLines } from "./doc-comments.js";
 const docTagLinePattern = /^@([A-Za-z][\w-]*)(.*)$/u;
 const nextTagLinePattern = /^\s*@[A-Za-z][\w-]*/u;
 
+/** Parsed representation of one contiguous TypeDoc block-tag section. */
 export type DocTagBlock = Readonly<{
     blockText: string;
     continuationText: string;

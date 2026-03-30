@@ -16,7 +16,9 @@ type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-const getParameterNameFromNode = (node: TSESTree.Parameter): null | string => {
+const getParameterNameFromNode = (
+    node: Readonly<TSESTree.Parameter>
+): null | string => {
     if (node.type === AST_NODE_TYPES.Identifier) {
         return node.name;
     }
@@ -47,7 +49,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         const checkFunctionLike = (
             reportNode: TSESTree.Node,
             docNode: TSESTree.Node,
-            params: readonly TSESTree.Parameter[]
+            params: readonly Readonly<TSESTree.Parameter>[]
         ): void => {
             const docComment = getLeadingDocComment(sourceCode, docNode);
 

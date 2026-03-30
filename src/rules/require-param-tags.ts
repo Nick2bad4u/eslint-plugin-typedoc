@@ -25,7 +25,7 @@ type MessageIds = "missingParamTags";
 type Options = typeof defaultOptions;
 
 const getParameterName = (
-    parameter: TSESTree.Parameter,
+    parameter: Readonly<TSESTree.Parameter>,
     parameterIndex: number
 ): string => {
     switch (parameter.type) {
@@ -55,6 +55,7 @@ const getParameterName = (
     }
 };
 
+/** Rule implementation for missing parameter-tag coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -66,7 +67,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         const checkFunctionLike = (
             reportNode: TSESTree.Node,
             docNode: TSESTree.Node,
-            params: readonly TSESTree.Parameter[]
+            params: readonly Readonly<TSESTree.Parameter>[]
         ): void => {
             if (params.length === 0) {
                 return;
@@ -150,7 +151,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "Require documented declarations to include @param tags for every parameter.",
+                "require documented declarations to include @param tags for every parameter.",
             frozen: false,
             recommended: false,
             requiresTypeChecking: false,

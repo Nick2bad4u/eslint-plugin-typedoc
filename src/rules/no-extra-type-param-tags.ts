@@ -20,7 +20,7 @@ type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for stale @typeParam/@template tags. */
+/** Rule implementation for stale `@typeParam`/`@template` tags. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

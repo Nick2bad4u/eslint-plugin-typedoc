@@ -36,6 +36,7 @@ const isMalformedInlineLinkContent = (rawContent: string): boolean => {
     );
 };
 
+/** Rule implementation for malformed inline link detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -99,7 +100,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "Disallow malformed inline {@link ...} tags in TypeDoc comments.",
+                "disallow malformed inline {@link ...} tags in TypeDoc comments.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,

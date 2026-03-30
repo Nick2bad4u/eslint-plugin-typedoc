@@ -18,14 +18,32 @@ export type TypedocRuleDocs = Readonly<{
     typedocConfigs: readonly TypedocConfigReference[];
 }>;
 
+type TypedRuleCreator = <
+    TOptions extends readonly unknown[],
+    TMessageIds extends string,
+>(
+    rule: Readonly<TypedRuleWithMetaAndName<TOptions, TMessageIds>>
+) => TypedRuleModule<TOptions, TMessageIds> & {
+    name: string;
+};
+
+type TypedRuleModule<
+    TOptions extends readonly unknown[],
+    TMessageIds extends string,
+> = ESLintUtils.RuleModule<TMessageIds, TOptions, TypedocRuleDocs>;
+
+type TypedRuleWithMetaAndName<
+    TOptions extends readonly unknown[],
+    TMessageIds extends string,
+> = ESLintUtils.RuleWithMetaAndName<TOptions, TMessageIds, TypedocRuleDocs>;
+
 /**
  * Canonical rule creator that stamps `meta.docs.url` from rule names.
  */
-const typedRuleCreator: ReturnType<
-    typeof ESLintUtils.RuleCreator<TypedocRuleDocs>
-> = ESLintUtils.RuleCreator<TypedocRuleDocs>(createRuleDocsUrl);
+const typedRuleCreator: TypedRuleCreator =
+    ESLintUtils.RuleCreator(createRuleDocsUrl);
 
 /** Shared RuleCreator instance that stamps canonical docs URLs. */
-export const createTypedRule: typeof typedRuleCreator = typedRuleCreator;
+export const createTypedRule: TypedRuleCreator = typedRuleCreator;
 
 export default createTypedRule;

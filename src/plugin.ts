@@ -23,8 +23,10 @@ import {
 const ERROR_SEVERITY = "error" as const;
 const TYPE_SCRIPT_FILES = ["**/*.{ts,tsx,mts,cts}"] as const;
 
+/** Public preset-name union exposed by the plugin runtime. */
 export type TypedocConfigName = InternalTypedocConfigName;
 
+/** Flat-config preset shape exported from `plugin.configs`. */
 export type TypedocPresetConfig = Linter.Config & {
     rules: NonNullable<Linter.Config["rules"]>;
 };
@@ -72,7 +74,9 @@ const normalizeParserOptions = (
         ? { ...parserOptions }
         : { ...defaultParserOptions };
 
+/** Fully qualified rule-id format used by this plugin. */
 export type TypedocRuleId = `typedoc/${TypedocRuleName}`;
+/** Unqualified rule-name union exposed by this plugin. */
 export type TypedocRuleName = keyof typeof typedocRules;
 
 const typedocEslintRules = typedocRules as NonNullable<ESLint.Plugin["rules"]> &
@@ -202,8 +206,10 @@ const createTypedocConfigsDefinition = (): TypedocConfigsContract => {
 
 const typedocConfigs: TypedocConfigsContract = createTypedocConfigsDefinition();
 
+/** Runtime type for the exported preset map. */
 export type TypedocConfigs = typeof typedocConfigs;
 
+/** Main plugin runtime object exported as default. */
 const typedocPlugin: TypedocPluginContract = {
     configs: typedocConfigs,
     meta: {
@@ -215,6 +221,7 @@ const typedocPlugin: TypedocPluginContract = {
     rules: typedocEslintRules,
 };
 
+/** Runtime type of the plugin default export. */
 export type TypedocPlugin = typeof typedocPlugin;
 
 export default typedocPlugin;

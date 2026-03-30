@@ -76,5 +76,8 @@ export const getDeclarationName = (
                 ? firstDeclarator.id.name
                 : "exported declaration";
         }
+        default: {
+            return "exported declaration";
+        }
     }
 };

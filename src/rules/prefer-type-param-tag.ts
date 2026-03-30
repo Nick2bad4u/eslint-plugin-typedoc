@@ -71,7 +71,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "prefer `@typeParam` over `@template` for generic TypeDoc documentation.",
+                "enforce using `@typeParam` over `@template` for generic TypeDoc documentation.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,

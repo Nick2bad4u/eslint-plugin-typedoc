@@ -1,7 +1,7 @@
 /**
  * Create a service id.
  *
- * @param name Service name.
+ * @param name - Service name.
  *
  * @returns Stable service identifier.
  */
@@ -12,7 +12,7 @@ export function createService(name: string): string {
 /**
  * Normalize service display names.
  *
- * @param name Raw service name.
+ * @param name - Raw service name.
  *
  * @returns Normalized service name.
  */
@@ -26,7 +26,7 @@ export function normalizeName(name: string): string {
  * @remarks
  * See {@link normalizeName|normalizeName}.
  *
- * @param taskName Task name.
+ * @param taskName - Task name.
  */
 export function runTask(taskName: string): void {
     console.info(taskName);

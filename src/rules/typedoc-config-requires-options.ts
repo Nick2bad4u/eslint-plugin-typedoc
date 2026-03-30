@@ -116,7 +116,9 @@ const getTypedocConfigObjectFromProgram = (
     return null;
 };
 
-const getPropertyKeyName = (property: TSESTree.Property): null | string => {
+const getPropertyKeyName = (
+    property: Readonly<TSESTree.Property>
+): null | string => {
     if (property.computed) {
         return null;
     }
@@ -135,7 +137,7 @@ const getPropertyKeyName = (property: TSESTree.Property): null | string => {
 };
 
 const getMissingOptionNames = (
-    configObject: TSESTree.ObjectExpression
+    configObject: Readonly<TSESTree.ObjectExpression>
 ): readonly (keyof typeof requiredOptionDefaultsByName)[] => {
     const configuredOptionNames = new Set<string>();
 
@@ -160,7 +162,7 @@ const getMissingOptionNames = (
 };
 
 const supportsSafeAutofix = (
-    configObject: TSESTree.ObjectExpression
+    configObject: Readonly<TSESTree.ObjectExpression>
 ): boolean =>
     configObject.properties.every(
         (property) =>
@@ -169,6 +171,7 @@ const supportsSafeAutofix = (
             !property.computed
     );
 
+/** Rule implementation for essential TypeDoc config option requirements. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -178,7 +181,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         const lineEnding = getPreferredLineEnding(sourceCode);
 
         return {
-            Program: (node): void => {
+            Program: (node: Readonly<TSESTree.Program>): void => {
                 const normalizedFileName = normalizePathSeparators(
                     context.filename
                 );
@@ -202,12 +205,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 const missingOptionsList = missingOptionNames
                     .map((name) => `"${name}"`)
                     .join(", ");
+                const messageId: MessageIds = "missingTypedocConfigOptions";
 
                 const baseReportDescriptor = {
                     data: {
                         options: missingOptionsList,
                     },
-                    messageId: "missingTypedocConfigOptions" as const,
+                    messageId,
                     node: configObject,
                 };
 
@@ -231,24 +235,24 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             sourceCode.lines[objectStartLineIndex] ?? "";
                         const lineIndentation =
                             /^\s*/u.exec(objectStartLineText)?.[0] ?? "";
-                        const firstPropertyWithLocation =
-                            configObject.properties.find(
-                                (
-                                    property
-                                ): property is TSESTree.Property & {
-                                    loc: NonNullable<TSESTree.Property["loc"]>;
-                                } =>
-                                    property.type === AST_NODE_TYPES.Property &&
-                                    property.kind === "init" &&
-                                    property.loc !== null
-                            ) ?? null;
                         const indentation = lineIndentation;
-                        const propertyIndentation =
-                            firstPropertyWithLocation === null
-                                ? `${lineIndentation}    `
-                                : " ".repeat(
-                                      firstPropertyWithLocation.loc.start.column
-                                  );
+                        let propertyIndentation = `${lineIndentation}    `;
+
+                        for (const property of configObject.properties) {
+                            if (
+                                property.type !== AST_NODE_TYPES.Property ||
+                                property.kind !== "init" ||
+                                property.loc === null
+                            ) {
+                                continue;
+                            }
+
+                            propertyIndentation = " ".repeat(
+                                property.loc.start.column
+                            );
+                            break;
+                        }
+
                         const insertedProperties = missingOptionNames
                             .map(
                                 (name) =>
@@ -279,7 +283,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "Require essential options (entryPoints and tsconfig) in TypeDoc config objects.",
+                "require essential options (entryPoints and tsconfig) in TypeDoc config objects.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,

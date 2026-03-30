@@ -32,7 +32,7 @@ type MessageIds = "missingReturnsTag";
 type Options = typeof defaultOptions;
 
 const isVoidLikeTypeAnnotation = (
-    typeAnnotation: null | TSESTree.TypeNode | undefined
+    typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
 ): boolean => {
     if (typeAnnotation === null || typeAnnotation === undefined) {
         return false;
@@ -67,7 +67,7 @@ const isVoidLikeTypeAnnotation = (
     }
 };
 
-const requiresReturnsTag = (node: FunctionLikeNode): boolean => {
+const requiresReturnsTag = (node: Readonly<FunctionLikeNode>): boolean => {
     if (node.returnType === null || node.returnType === undefined) {
         return false;
     }
@@ -75,6 +75,7 @@ const requiresReturnsTag = (node: FunctionLikeNode): boolean => {
     return !isVoidLikeTypeAnnotation(node.returnType.typeAnnotation);
 };
 
+/** Rule implementation for missing returns-tag coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -84,8 +85,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         const lineEnding = getPreferredLineEnding(sourceCode);
 
         const checkFunctionLike = (
-            node: FunctionLikeNode,
-            docNode: TSESTree.Node
+            node: Readonly<FunctionLikeNode>,
+            docNode: Readonly<TSESTree.Node>
         ): void => {
             if (!requiresReturnsTag(node)) {
                 return;
@@ -144,7 +145,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "Require @returns tags for documented declarations with non-void return types.",
+                "require @returns tags for documented declarations with non-void return types.",
             frozen: false,
             recommended: false,
             requiresTypeChecking: false,

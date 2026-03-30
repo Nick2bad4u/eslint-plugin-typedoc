@@ -23,6 +23,7 @@ type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
+/** Rule implementation for missing type-parameter-tag coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

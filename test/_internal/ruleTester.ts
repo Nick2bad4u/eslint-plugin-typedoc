@@ -68,7 +68,7 @@ RuleTester.itSkip = ((...args: readonly unknown[]) => {
     test.skip(text, method);
 }) as unknown as typeof RuleTester.itSkip;
 
-/* eslint-enable vitest/no-hooks, vitest/prefer-hooks-in-order, vitest/require-top-level-describe, vitest/valid-describe-callback, vitest/expect-expect, vitest/no-disabled-tests */
+/* eslint-enable vitest/no-hooks, vitest/prefer-hooks-in-order, vitest/require-top-level-describe, vitest/valid-describe-callback, vitest/expect-expect, vitest/no-disabled-tests -- Restore normal Vitest linting after RuleTester adapter wiring above. */
 
 /**
  * Create a default RuleTester instance for plugin rule tests.

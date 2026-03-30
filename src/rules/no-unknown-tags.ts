@@ -50,6 +50,7 @@ const aliasTagsByUnknownTag = {
     return: "returns",
 } as const satisfies Record<string, string>;
 
+/** Rule implementation for unknown TypeDoc tag detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -124,7 +125,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "Disallow unknown TypeDoc tags and normalize common aliases.",
+                "disallow unknown TypeDoc tags and normalize common aliases.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,

@@ -13,6 +13,20 @@ type Options = readonly [];
 const defaultOptions = [] as const satisfies Options;
 const lineBreakPattern = /\r\n|\n|\r/gu;
 
+const hasDocFencePrefix = (prefix: string): boolean => {
+    const trimmedPrefix = prefix.trimStart();
+
+    if (trimmedPrefix.length === 0) {
+        return true;
+    }
+
+    if (!trimmedPrefix.startsWith("*")) {
+        return false;
+    }
+
+    return trimmedPrefix.slice(1).trim().length === 0;
+};
+
 const splitTextIntoLinesWithOffsets = (
     text: string
 ): readonly LineWithOffset[] => {
@@ -63,7 +77,7 @@ const findMissingFenceLanguageRanges = (
 
         const prefix = line.text.slice(0, fenceOffset);
 
-        if (!/^\s*(\*\s*)?$/u.test(prefix)) {
+        if (!hasDocFencePrefix(prefix)) {
             continue;
         }
 
