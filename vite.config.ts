@@ -22,7 +22,7 @@ const maxWorkerCount =
         : 1;
 /** Raw flag controlling optional hanging-process reporter activation. */
 const rawHangingReporterFlag =
-    process.env["TYPEFEST_VITEST_HANGING_PROCESS_REPORTER"] ??
+    process.env["TYPEDOC_VITEST_HANGING_PROCESS_REPORTER"] ??
     process.env["VITEST_HANGING_PROCESS_REPORTER"] ??
     "false";
 /** Raw flag controlling optional Vitest typecheck execution. */
@@ -62,7 +62,7 @@ const typecheckTestFilePatterns = [
 ];
 
 /**
- * Vitest configuration for eslint-plugin-typefest.
+ * Vitest configuration for eslint-plugin-typedoc.
  */
 const vitestConfig: ReturnType<typeof defineConfig> = defineConfig({
     cacheDir: "./.cache/vitest",

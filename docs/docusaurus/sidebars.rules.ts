@@ -33,6 +33,94 @@ const ruleDocIds = readdirSync(rulesDirectoryPath, { withFileTypes: true })
     )
     .sort((left: string, right: string) => left.localeCompare(right));
 
+type RuleGroupDefinition = Readonly<{
+    className: string;
+    itemClassName: string;
+    label: string;
+    prefix: string;
+}>;
+
+const ruleGroupDefinitions: readonly RuleGroupDefinition[] = [
+    {
+        className: "sb-rules-group-no",
+        itemClassName: "sb-rules-rule-item-no",
+        label: "🛑 no-*",
+        prefix: "no-",
+    },
+    {
+        className: "sb-rules-group-prefer",
+        itemClassName: "sb-rules-rule-item-prefer",
+        label: "✨ prefer-*",
+        prefix: "prefer-",
+    },
+    {
+        className: "sb-rules-group-require",
+        itemClassName: "sb-rules-rule-item-require",
+        label: "📏 require-*",
+        prefix: "require-",
+    },
+    {
+        className: "sb-rules-group-config",
+        itemClassName: "sb-rules-rule-item-config",
+        label: "⚙️ typedoc-config-*",
+        prefix: "typedoc-config-",
+    },
+];
+
+const toIndexedRuleLabel = (index: number, docId: string): string =>
+    `${String(index + 1).padStart(2, "0")} ${formatRuleDocLabel(docId)}`;
+
+const toRuleDocItem = (
+    docId: string,
+    index: number,
+    itemClassName: string
+) => ({
+    className: `sb-rules-rule-item ${itemClassName}`,
+    id: docId,
+    label: toIndexedRuleLabel(index, docId),
+    type: "doc" as const,
+});
+
+const usedRuleDocIds = new Set<string>();
+
+const groupedRuleCategoryItems = ruleGroupDefinitions
+    .map((groupDefinition) => {
+        const groupedRuleDocIds = ruleDocIds.filter((docId) =>
+            docId.startsWith(groupDefinition.prefix)
+        );
+
+        for (const groupedRuleDocId of groupedRuleDocIds) {
+            usedRuleDocIds.add(groupedRuleDocId);
+        }
+
+        return {
+            className: groupDefinition.className,
+            collapsed: true,
+            items: groupedRuleDocIds.map((docId, index) =>
+                toRuleDocItem(docId, index, groupDefinition.itemClassName)
+            ),
+            label: groupDefinition.label,
+            type: "category" as const,
+        };
+    })
+    .filter((groupCategory) => groupCategory.items.length > 0);
+
+const otherRuleDocIds = ruleDocIds.filter(
+    (docId) => !usedRuleDocIds.has(docId)
+);
+
+if (otherRuleDocIds.length > 0) {
+    groupedRuleCategoryItems.push({
+        className: "sb-rules-group-other",
+        collapsed: true,
+        items: otherRuleDocIds.map((docId, index) =>
+            toRuleDocItem(docId, index, "sb-rules-rule-item-other")
+        ),
+        label: "🧩 Other rules",
+        type: "category",
+    });
+}
+
 const sidebars = {
     rules: [
         {
@@ -49,6 +137,41 @@ const sidebars = {
         },
         {
             collapsed: true,
+            className: "sb-rules-adoption",
+            items: [
+                {
+                    id: "presets/minimal",
+                    label: "🟢 Start with minimal",
+                    type: "doc",
+                },
+                {
+                    id: "presets/recommended",
+                    label: "🟡 Expand with recommended",
+                    type: "doc",
+                },
+                {
+                    id: "presets/strict",
+                    label: "🟠 Tighten with strict",
+                    type: "doc",
+                },
+                {
+                    id: "presets/all",
+                    label: "🔴 Full policy with all",
+                    type: "doc",
+                },
+            ],
+            label: "🧭 Adoption & Rollout",
+            link: {
+                description:
+                    "Stage TypeDoc policy adoption from minimal through strict/all with low-noise rollout sequencing.",
+                slug: "/adoption-rollout",
+                title: "Adoption & Rollout",
+                type: "generated-index",
+            },
+            type: "category",
+        },
+        {
+            collapsed: false,
             className: "sb-rules-presets",
             customProps: {
                 badge: "presets",
@@ -61,12 +184,17 @@ const sidebars = {
                 },
                 {
                     id: "presets/recommended",
-                    label: "🔵 Recommended",
+                    label: "🟡 Recommended",
                     type: "doc",
                 },
                 {
+                    href: "/docs/rules/presets/recommended",
+                    label: "🟠 Recommended (type-checked)",
+                    type: "link",
+                },
+                {
                     id: "presets/strict",
-                    label: "🟠 Strict",
+                    label: "🔴 Strict",
                     type: "doc",
                 },
                 {
@@ -83,22 +211,18 @@ const sidebars = {
             type: "category",
         },
         {
-            collapsed: true,
-            className: "sb-rules-catalog",
+            collapsed: false,
+            className: "sb-rules-root",
             customProps: {
                 badge: "rules",
             },
-            items: ruleDocIds.map((docId: string) => ({
-                id: docId,
-                label: formatRuleDocLabel(docId),
-                type: "doc" as const,
-            })),
-            label: "Rule catalog",
+            items: groupedRuleCategoryItems,
+            label: "Rules",
             link: {
                 description:
-                    "Browse the full TypeDoc-focused rule catalog for this plugin.",
+                    "Browse the full TypeDoc-focused rule catalog, grouped by rule family.",
                 slug: "/",
-                title: "Rule catalog",
+                title: "Rules",
                 type: "generated-index",
             },
             type: "category",

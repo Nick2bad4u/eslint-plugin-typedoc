@@ -8,7 +8,7 @@
 
 "$schema"   = "https://raw.githubusercontent.com/Nick2bad4u/Uptime-Watcher/refs/heads/main/config/schemas/generic.schema.json"
 description = "Configuration file for git-cliff to generate changelogs based on conventional commits."
-name        = "eslint-plugin-typefest Changelog Configuration"
+name        = "eslint-plugin-typedoc Changelog Configuration"
 version     = "1.0.0"
 
 [changelog]
@@ -28,12 +28,12 @@ All notable changes to this project will be documented in this file.\n
   ## [Unreleased]
 {% endif %}
 {% if commit_range and commit_range.from and commit_range.to %}
-  [{{ commit_range.from | truncate(length=7, end="") }}...{{ commit_range.to | truncate(length=7, end="") }}](https://github.com/Nick2bad4u/eslint-plugin-typefest/compare/{{ commit_range.from }}...{{ commit_range.to }})
+  [{{ commit_range.from | truncate(length=7, end="") }}...{{ commit_range.to | truncate(length=7, end="") }}](https://github.com/Nick2bad4u/eslint-plugin-typedoc/compare/{{ commit_range.from }}...{{ commit_range.to }})
 {% endif %}
 {% for group, commits in commits | group_by(attribute="group") %}
   ### {{ group | striptags | trim | upper_first }}
   {% for commit in commits %}
-    - [`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/Nick2bad4u/eslint-plugin-typefest/commit/{{ commit.id }}) — {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
+    - [`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/Nick2bad4u/eslint-plugin-typedoc/commit/{{ commit.id }}) — {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
       {% if commit.breaking %}[**breaking**] {% endif %}\
       {{ commit.message
           | upper_first
@@ -60,16 +60,16 @@ All notable changes to this project will be documented in this file.\n
     # template for the changelog footer
     footer = """
 ## Contributors
-Thanks to all the [contributors](https://github.com/Nick2bad4u/eslint-plugin-typefest/graphs/contributors) for their hard work!
+Thanks to all the [contributors](https://github.com/Nick2bad4u/eslint-plugin-typedoc/graphs/contributors) for their hard work!
 ## License
-This project is licensed under the [UnLicense](https://github.com/Nick2bad4u/eslint-plugin-typefest/blob/main/LICENSE)
+This project is licensed under the [UnLicense](https://github.com/Nick2bad4u/eslint-plugin-typedoc/blob/main/LICENSE)
 *This changelog was automatically generated with [git-cliff](https://github.com/orhun/git-cliff).*
 """
     # Remove leading and trailing whitespace from the changelog content
     trim = true
     # postprocessors
     postprocessors = [
-        # { pattern = 'eslint-plugin-typefest', replace = "[eslint-plugin-typefest](https://github.com/Nick2bad4u/eslint-plugin-typefest)" }, # replace repository URL
+        # { pattern = 'eslint-plugin-typedoc', replace = "[eslint-plugin-typedoc](https://github.com/Nick2bad4u/eslint-plugin-typedoc)" }, # replace repository URL
         { pattern = 'Merge branch', replace = "[chore] Merge Branch" }, # replace merge branch commit messages
         { pattern = '\[dependency\]', replace = 'test' },
         { pattern = 'merge branch', replace = "[chore] Merge Branch" }, # replace merge branch commit messages
@@ -208,6 +208,6 @@ This project is licensed under the [UnLicense](https://github.com/Nick2bad4u/esl
     # GitHub integration for better changelog links
     # [remote.github]
     # owner = "Nick2bad4u"
-    # repo = "eslint-plugin-typefest"
+    # repo = "eslint-plugin-typedoc"
     # api_url = "https://api.github.com"
     # native_tls = false

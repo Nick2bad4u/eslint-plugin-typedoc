@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new rule or improvement for eslint-plugin-typefest
+about: Suggest a new rule or improvement for eslint-plugin-typedoc
 title: "Feature: "
 labels:
     - enhancement

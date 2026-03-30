@@ -63,7 +63,6 @@ const surfaceCards = [
 const qualityPillars = [
     "TypeDoc-native lint rules",
     "Autofix-first rule ergonomics",
-    "Synced README + preset matrices",
     "Generated API docs",
 ] as const;
 

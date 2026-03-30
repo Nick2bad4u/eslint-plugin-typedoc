@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -28,13 +29,18 @@ import plugin from "../plugin.mjs";
 
 const scriptsDirectoryPath = fileURLToPath(new URL(".", import.meta.url));
 const repositoryRootPath = path.resolve(scriptsDirectoryPath, "..");
-const typedFixturePath = path.resolve(
+const compatibilityFixturesDirectoryPath = path.resolve(
     repositoryRootPath,
-    "test/fixtures/typed/prefer-ts-extras-safe-cast-to.invalid.ts"
+    "temp",
+    "eslint9-compat-fixtures"
 );
-const arrayableFixturePath = path.resolve(
-    repositoryRootPath,
-    "test/fixtures/typed/prefer-type-fest-arrayable.invalid.ts"
+const unknownTagFixturePath = path.resolve(
+    compatibilityFixturesDirectoryPath,
+    "unknown-tag.invalid.ts"
+);
+const typedocConfigFixturePath = path.resolve(
+    compatibilityFixturesDirectoryPath,
+    "typedoc.config.ts"
 );
 
 const expectedEslintMajorArgumentPrefix = "--expect-eslint-major=";
@@ -151,6 +157,37 @@ const assertFixtureExists = (fixturePath) => {
     }
 };
 
+const ensureCompatibilityFixtures = async () => {
+    await mkdir(compatibilityFixturesDirectoryPath, { recursive: true });
+
+    await writeFile(
+        unknownTagFixturePath,
+        [
+            "/**",
+            " * Normalize a service name.",
+            " *",
+            " * @return Normalized service identifier.",
+            " */",
+            "export function normalizeServiceName(input: string): string {",
+            "    return input.trim();",
+            "}",
+            "",
+        ].join("\n"),
+        "utf8"
+    );
+
+    await writeFile(
+        typedocConfigFixturePath,
+        [
+            "export default {",
+            '    entryPoints: ["./src/plugin.ts"],',
+            "};",
+            "",
+        ].join("\n"),
+        "utf8"
+    );
+};
+
 /**
  * @param {string} ruleId
  * @param {boolean} typed
@@ -219,7 +256,7 @@ const createCompatibilityConfig = (ruleId, typed, fixturePath) => {
             },
             name: `compat-smoke:${ruleId}`,
             plugins: {
-                typefest: plugin,
+                typedoc: plugin,
             },
             rules: {
                 [ruleId]: "error",
@@ -256,8 +293,20 @@ const runScenario = async ({
     );
 
     if (fatalMessages.length > 0) {
+        const fatalSummary = fatalMessages
+            .map((message) => {
+                const position =
+                    typeof message.line === "number" &&
+                    typeof message.column === "number"
+                        ? `:${message.line}:${message.column}`
+                        : "";
+
+                return `${message.ruleId ?? "fatal"}${position} ${message.message}`;
+            })
+            .join(" | ");
+
         throw new Error(
-            `${name}: encountered fatal parse/runtime diagnostics (${fatalMessages.length}).`
+            `${name}: encountered fatal parse/runtime diagnostics (${fatalMessages.length}): ${fatalSummary}`
         );
     }
 
@@ -313,30 +362,32 @@ const scenarios = /** @type {const} */ ([
     {
         expectedMinimumMessages: 1,
         fix: false,
-        fixturePath: typedFixturePath,
+        fixturePath: unknownTagFixturePath,
         name: "typed-detection",
-        ruleId: "typefest/prefer-ts-extras-safe-cast-to",
+        ruleId: "typedoc/no-unknown-tags",
         typed: true,
     },
     {
         expectedMaximumMessages: 0,
         expectedMinimumMessages: 0,
-        expectedOutputIncludes: ["safeCastTo<"],
+        expectedOutputIncludes: ["@returns"],
         fix: true,
-        fixturePath: typedFixturePath,
+        fixturePath: unknownTagFixturePath,
         name: "typed-autofix",
-        ruleId: "typefest/prefer-ts-extras-safe-cast-to",
+        ruleId: "typedoc/no-unknown-tags",
         typed: true,
     },
     {
         expectedMinimumMessages: 1,
         fix: false,
-        fixturePath: arrayableFixturePath,
-        name: "non-typed-detection",
-        ruleId: "typefest/prefer-type-fest-arrayable",
+        fixturePath: typedocConfigFixturePath,
+        name: "typedoc-config-detection",
+        ruleId: "typedoc/typedoc-config-requires-options",
         typed: false,
     },
 ]);
+
+await ensureCompatibilityFixtures();
 
 for (const scenario of scenarios) {
     assertFixtureExists(scenario.fixturePath);
