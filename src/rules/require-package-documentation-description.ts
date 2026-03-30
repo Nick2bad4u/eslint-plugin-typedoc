@@ -4,13 +4,14 @@ import {
     type TSESTree,
 } from "@typescript-eslint/utils";
 
-import { getPreferredLineEnding } from "../_internal/doc-comments.js";
+import { normalizeDocCommentLines } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingPackageDocumentation";
+type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [];
 
-const packageDocumentationTagPattern = /@(module|packageDocumentation)\b/u;
+const packageDocumentationLinePattern = /^@(module|packageDocumentation)\b/u;
+const packageDocumentationSearchPattern = /@(module|packageDocumentation)\b/u;
 const defaultOptions = [] as const satisfies Options;
 
 const isExportStatement = (
@@ -31,35 +32,49 @@ const isExportStatement = (
     }
 };
 
-const hasPackageDocumentationComment = (
+const getPackageDocumentationComment = (
     sourceCode: TSESLint.SourceCode,
     program: TSESTree.Program
-): boolean => {
+): null | TSESTree.Comment => {
     const firstStatement = program.body[0];
     const candidateComments =
         firstStatement === undefined
             ? sourceCode.getAllComments()
             : sourceCode.getCommentsBefore(firstStatement);
 
-    return candidateComments.some(
-        (comment) =>
+    for (const comment of candidateComments) {
+        if (
             comment.type === "Block" &&
             comment.value.startsWith("*") &&
-            packageDocumentationTagPattern.test(comment.value)
-    );
+            packageDocumentationSearchPattern.test(comment.value)
+        ) {
+            return comment;
+        }
+    }
+
+    return null;
 };
 
-/**
- * Rule implementation for requiring package-documentation coverage on exporting
- * modules.
- */
+const hasMeaningfulPackageDocumentationDescription = (
+    comment: Readonly<TSESTree.Comment>
+): boolean => {
+    const remainingLines = normalizeDocCommentLines(comment)
+        .map((line) => line.trim())
+        .filter(
+            (line) =>
+                line.length > 0 && !packageDocumentationLinePattern.test(line)
+        );
+
+    return remainingLines.length > 0;
+};
+
+/** Rule implementation for package-documentation description requirements. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
 >({
     create(context) {
         const sourceCode = context.sourceCode;
-        const lineEnding = getPreferredLineEnding(sourceCode);
 
         return {
             Program(program): void {
@@ -71,26 +86,23 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     return;
                 }
 
-                if (hasPackageDocumentationComment(sourceCode, program)) {
+                const packageDocumentationComment =
+                    getPackageDocumentationComment(sourceCode, program);
+
+                if (packageDocumentationComment === null) {
+                    return;
+                }
+
+                if (
+                    hasMeaningfulPackageDocumentationDescription(
+                        packageDocumentationComment
+                    )
+                ) {
                     return;
                 }
 
                 context.report({
-                    fix: (fixer) => {
-                        const insertionIndex = program.body[0]?.range[0] ?? 0;
-                        const packageDocumentationComment = [
-                            "/**",
-                            " * @packageDocumentation",
-                            " */",
-                            "",
-                        ].join(lineEnding);
-
-                        return fixer.insertTextBeforeRange(
-                            [insertionIndex, insertionIndex],
-                            packageDocumentationComment
-                        );
-                    },
-                    messageId: "missingPackageDocumentation",
+                    messageId: "missingPackageDocumentationDescription",
                     node: program,
                 });
             },
@@ -100,21 +112,20 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         docs: {
             description:
-                "require top-level `@packageDocumentation` comments in modules that export API.",
+                "require top-level `@packageDocumentation` comments to include descriptive prose.",
             frozen: false,
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
         },
-        fixable: "code",
         messages: {
-            missingPackageDocumentation:
-                "Modules that export API should include a top-level `@packageDocumentation` comment.",
+            missingPackageDocumentationDescription:
+                "`@packageDocumentation` comments must include a module-level description.",
         },
         schema: [],
-        type: "suggestion",
+        type: "problem",
     },
-    name: "require-package-documentation",
+    name: "require-package-documentation-description",
 });
 
 export default rule;

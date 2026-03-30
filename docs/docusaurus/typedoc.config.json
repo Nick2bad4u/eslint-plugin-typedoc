@@ -14,6 +14,7 @@
     "excludePrivate": true,
     "excludeProtected": true,
     "includeVersion": false,
+    "name": "eslint-plugin-typedoc",
     "out": "site-docs/developer/api",
     "plugin": [
         "typedoc-plugin-markdown"

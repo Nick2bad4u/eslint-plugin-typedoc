@@ -94,6 +94,13 @@ const sidebars = {
                 type: "doc" as const,
             })),
             label: "Rule catalog",
+            link: {
+                description:
+                    "Browse the full TypeDoc-focused rule catalog for this plugin.",
+                slug: "/",
+                title: "Rule catalog",
+                type: "generated-index",
+            },
             type: "category",
         },
     ],

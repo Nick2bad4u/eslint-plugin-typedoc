@@ -36,7 +36,7 @@ const getParameterNameFromNode = (node: TSESTree.Parameter): null | string => {
     return null;
 };
 
-/** Rule implementation for detecting stale @param tags. */
+/** Rule implementation for detecting stale parameter-tag entries. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

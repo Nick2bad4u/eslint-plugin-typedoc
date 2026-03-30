@@ -1,8 +1,9 @@
 /**
- * @packageDocumentation
- * Canonical TypeDoc preset/config references used by plugin metadata and docs sync.
+ * Canonical TypeDoc preset/config references used by plugin metadata and docs
+ * sync.
  */
 
+/** Supported preset keys exported by the plugin. */
 export const typedocConfigNames = [
     "minimal",
     "recommended",
@@ -10,6 +11,7 @@ export const typedocConfigNames = [
     "all",
 ] as const;
 
+/** Supported preset-name union exported by the plugin. */
 export type TypedocConfigName = (typeof typedocConfigNames)[number];
 
 const typedocConfigReferenceToNameValue: Readonly<{
@@ -24,9 +26,11 @@ const typedocConfigReferenceToNameValue: Readonly<{
     "typedoc.configs.strict": "strict",
 };
 
+/** Canonical string references used inside rule metadata to indicate presets. */
 export const typedocConfigReferenceToName: typeof typedocConfigReferenceToNameValue =
     typedocConfigReferenceToNameValue;
 
+/** Metadata attached to each published preset. */
 export type TypedocConfigMetadata = Readonly<{
     icon: string;
     presetName: string;
@@ -34,6 +38,7 @@ export type TypedocConfigMetadata = Readonly<{
     requiresTypeChecking: boolean;
 }>;
 
+/** String-literal references accepted in rule metadata for preset membership. */
 export type TypedocConfigReference = keyof typeof typedocConfigReferenceToName;
 
 const typedocConfigMetadataByNameValue: Readonly<
@@ -65,9 +70,11 @@ const typedocConfigMetadataByNameValue: Readonly<
     },
 };
 
+/** Metadata table for all published presets. */
 export const typedocConfigMetadataByName: typeof typedocConfigMetadataByNameValue =
     typedocConfigMetadataByNameValue;
 
+/** Preset keys sorted in the order they should appear in README/docs tables. */
 export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
     ...typedocConfigNames,
 ].toSorted(
@@ -78,11 +85,13 @@ export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
 
 const typedocConfigNameSet = new Set<TypedocConfigName>(typedocConfigNames);
 
+/** Determine whether a string is a supported preset key. */
 export const isTypedocConfigName = (
     value: string
 ): value is TypedocConfigName =>
     typedocConfigNameSet.has(value as TypedocConfigName);
 
+/** Determine whether a string is a supported preset reference literal. */
 export const isTypedocConfigReference = (
     value: string
 ): value is TypedocConfigReference =>

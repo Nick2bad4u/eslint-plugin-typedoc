@@ -29,7 +29,7 @@ const normalizeParamTagName = (rawName: string): string => {
         : bracketTrimmed.slice(0, equalsSignOffset);
 };
 
-/** Rule implementation for requiring @param tag descriptions. */
+/** Rule implementation for requiring parameter-tag descriptions. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

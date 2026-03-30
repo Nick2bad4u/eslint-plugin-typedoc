@@ -112,7 +112,8 @@ export const normalizeDocCommentLines = (
     comment.value
         .replaceAll("\r\n", "\n")
         .split("\n")
-        .map((line) => line.replace(/^\s*\* ?/u, "").trimEnd());
+        .map((line) => line.replace(/^\s*\* ?/u, "").trimEnd())
+        .map((line) => (line === "/" ? "" : line));
 
 /** Collect all `@tag` matches from a comment with absolute ranges. */
 export const getDocCommentTagMatches = (

@@ -7,6 +7,17 @@ import Heading from "@theme/Heading";
 import GitHubStats from "../components/GitHubStats";
 import styles from "./index.module.css";
 
+type SurfaceCard = Readonly<{
+    description: string;
+    title: string;
+    to: string;
+}>;
+
+type HeroStat = Readonly<{
+    description: string;
+    title: string;
+}>;
+
 const homepageDescription =
     "ESLint rules for TypeDoc documentation quality, validation, and autofix workflows.";
 const homepageKeywords =
@@ -31,48 +42,23 @@ const homepageStructuredData = {
 const surfaceCards = [
     {
         description:
-            "Browse the full rule catalog, examples, and preset strategy for gradual policy adoption.",
-        title: "Rules reference",
-        to: "/docs/rules/overview",
-    },
-    {
-        description:
-            "Review TypeDoc integration architecture, generation flow, and maintenance guidance.",
-        title: "Developer docs",
-        to: "/docs/developer/intro",
-    },
-    {
-        description:
-            "Inspect resolved ESLint configuration output and active rule layering in a dedicated UI.",
-        title: "ESLint Inspector",
-        to: "/eslint-inspector/",
-    },
-    {
-        description:
-            "Validate Stylelint configuration layering and output snapshots used by this repository.",
-        title: "Stylelint Inspector",
-        to: "/stylelint-inspector/",
-    },
-] as const;
-
-const quickLinks = [
-    {
-        label: "Rules getting started",
+            "Install the plugin, enable a preset, and start surfacing TypeDoc issues directly in ESLint.",
+        title: "Get Started",
         to: "/docs/rules/getting-started",
     },
     {
-        label: "Preset matrix",
+        description:
+            "Compare minimal, recommended, strict, and all presets for gradual documentation policy adoption.",
+        title: "Presets",
         to: "/docs/rules/presets",
     },
     {
-        label: "TypeDoc pipeline",
-        to: "/docs/developer/typedoc-pipeline",
+        description:
+            "Browse the full TypeDoc-focused rule catalog with examples, migration notes, and autofix behavior.",
+        title: "Rule Reference",
+        to: "/docs/rules",
     },
-    {
-        label: "Inspector workflows",
-        to: "/docs/developer/inspectors",
-    },
-] as const;
+] as const satisfies readonly SurfaceCard[];
 
 const qualityPillars = [
     "TypeDoc-native lint rules",
@@ -80,6 +66,24 @@ const qualityPillars = [
     "Synced README + preset matrices",
     "Generated API docs",
 ] as const;
+
+const heroStats = [
+    {
+        description:
+            "Coverage for tag hygiene, generic docs, examples, package docs, and markdown snippets.",
+        title: "20+ Documentation Rules",
+    },
+    {
+        description:
+            "Start with recommended, tighten with strict, or enable the full rule catalog.",
+        title: "4 Presets",
+    },
+    {
+        description:
+            "Safe autofixes and suggestions keep docs cleanup practical in normal lint workflows.",
+        title: "DX-first Autofix",
+    },
+] as const satisfies readonly HeroStat[];
 
 export default function Home() {
     const logoSrc = useBaseUrl("/img/typedoc-logo-wordmark.png");
@@ -132,7 +136,7 @@ export default function Home() {
                                 </Link>
                                 <Link
                                     className={`button button--secondary button--lg ${styles.heroActionButton}`}
-                                    to="/docs/developer/intro"
+                                    to="/docs/intro"
                                 >
                                     Developer docs
                                 </Link>
@@ -153,6 +157,22 @@ export default function Home() {
                     </div>
 
                     <GitHubStats className={styles.heroLiveBadges} />
+
+                    <div className={styles.heroStats}>
+                        {heroStats.map((stat) => (
+                            <article
+                                key={stat.title}
+                                className={styles.heroStatCard}
+                            >
+                                <p className={styles.heroStatTitle}>
+                                    {stat.title}
+                                </p>
+                                <p className={styles.heroStatDescription}>
+                                    {stat.description}
+                                </p>
+                            </article>
+                        ))}
+                    </div>
                 </div>
             </header>
 
@@ -171,22 +191,6 @@ export default function Home() {
                                     Open section →
                                 </Link>
                             </article>
-                        ))}
-                    </div>
-                </section>
-                <section className={`container ${styles.quickLinksSection}`}>
-                    <Heading as="h2" className={styles.quickLinksTitle}>
-                        Quick paths
-                    </Heading>
-                    <div className={styles.quickLinksGrid}>
-                        {quickLinks.map((link) => (
-                            <Link
-                                className={styles.quickLinkCard}
-                                key={link.label}
-                                to={link.to}
-                            >
-                                {link.label}
-                            </Link>
                         ))}
                     </div>
                 </section>

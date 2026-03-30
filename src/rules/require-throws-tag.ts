@@ -99,7 +99,7 @@ const functionBodyContainsThrow = (
     return false;
 };
 
-/** Rule implementation for requiring @throws when functions throw. */
+/** Rule implementation for requiring throws-tag coverage when functions throw. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

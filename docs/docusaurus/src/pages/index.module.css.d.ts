@@ -15,6 +15,10 @@ declare const styles: {
     readonly heroPanelLogo: string;
     readonly heroPillarItem: string;
     readonly heroPillarList: string;
+    readonly heroStatCard: string;
+    readonly heroStatDescription: string;
+    readonly heroStatTitle: string;
+    readonly heroStats: string;
     readonly heroSubtitle: string;
     readonly heroTitle: string;
     readonly liveBadgeAnchor: string;
@@ -22,9 +26,5 @@ declare const styles: {
     readonly liveBadgeList: string;
     readonly liveBadgeListItem: string;
     readonly mainContent: string;
-    readonly quickLinkCard: string;
-    readonly quickLinksGrid: string;
-    readonly quickLinksSection: string;
-    readonly quickLinksTitle: string;
 };
 export default styles;

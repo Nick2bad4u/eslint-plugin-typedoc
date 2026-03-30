@@ -1,5 +1,6 @@
 import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
 
+/** Declarations that can be documented as exported API surface. */
 export type DocumentableExportDeclaration =
     | TSESTree.ClassDeclaration
     | TSESTree.FunctionDeclaration
@@ -9,6 +10,7 @@ export type DocumentableExportDeclaration =
     | TSESTree.TSTypeAliasDeclaration
     | TSESTree.VariableDeclaration;
 
+/** Check whether an export declaration contains a documentable API node. */
 export const isDocumentableExportDeclaration = (
     value: Readonly<
         | null
@@ -37,6 +39,7 @@ export const isDocumentableExportDeclaration = (
     }
 };
 
+/** Resolve a stable human-readable name for an exported declaration. */
 export const getDeclarationName = (
     declaration: Readonly<DocumentableExportDeclaration>
 ): string => {

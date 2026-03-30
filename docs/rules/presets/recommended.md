@@ -13,6 +13,7 @@ Balanced TypeDoc lint preset for most projects. Includes baseline checks plus ex
 | --- | :-: |
 | [`no-duplicate-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-param-tags) | — |
 | [`no-duplicate-type-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-type-param-tags) | — |
+| [`no-empty-example-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-example-tag) | — |
 | [`no-extra-param-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-extra-param-tags) | — |
 | [`no-malformed-inline-links`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links) | 💡 |
 | [`no-unknown-tags`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags) | 🔧 |

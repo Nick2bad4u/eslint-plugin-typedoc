@@ -13,6 +13,7 @@ import {
     typedocConfigReferenceToName,
 } from "./typedoc-config-references.js";
 
+/** Normalized docs metadata used for preset composition and generated tables. */
 export type RuleDocsMetadata = Readonly<{
     description: string;
     frozen: boolean;
@@ -27,10 +28,7 @@ type RuleDocsRecord = Readonly<{
     frozen?: boolean;
     recommended?: boolean;
     requiresTypeChecking?: boolean;
-    typedocConfigs?:
-        | readonly (string | TypedocConfigName)[]
-        | string
-        | TypedocConfigName;
+    typedocConfigs?: readonly string[] | string;
     url?: string;
 }>;
 
@@ -42,7 +40,7 @@ type RuleName<TRules extends Record<string, RuleModule>> = Extract<
 >;
 
 const normalizeTypedocConfigName = (
-    value: string | TypedocConfigName
+    value: string
 ): null | TypedocConfigName => {
     if (isTypedocConfigName(value)) {
         return value;
@@ -56,11 +54,7 @@ const normalizeTypedocConfigName = (
 };
 
 const normalizeTypedocConfigNames = (
-    references:
-        | readonly (string | TypedocConfigName)[]
-        | string
-        | TypedocConfigName
-        | undefined,
+    references: readonly string[] | string | undefined,
     fallbackToRecommended: boolean
 ): readonly TypedocConfigName[] => {
     const values = Array.isArray(references)

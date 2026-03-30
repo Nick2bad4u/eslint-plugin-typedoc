@@ -1,20 +1,21 @@
 import { describe, expect, it } from "vitest";
 
-import plugin from "../src/plugin.js";
+import typedocPlugin from "../src/plugin.js";
 
 describe("plugin entry", () => {
     it("exposes typedoc plugin meta", () => {
-        expect(plugin.meta?.name).toBe("eslint-plugin-typedoc");
-        expect(plugin.meta?.namespace).toBe("typedoc");
-        expect(typeof plugin.meta?.version).toBe("string");
+        expect(typedocPlugin.meta?.name).toBe("eslint-plugin-typedoc");
+        expect(typedocPlugin.meta?.namespace).toBe("typedoc");
+        expect(typeof typedocPlugin.meta?.version).toBe("string");
     });
 
     it("registers the expected rule set", () => {
-        const ruleNames = Object.keys(plugin.rules ?? {}).toSorted();
+        const ruleNames = Object.keys(typedocPlugin.rules ?? {}).toSorted();
 
         expect(ruleNames).toEqual([
             "no-duplicate-param-tags",
             "no-duplicate-type-param-tags",
+            "no-empty-example-tag",
             "no-extra-param-tags",
             "no-extra-type-param-tags",
             "no-malformed-inline-links",
@@ -22,9 +23,11 @@ describe("plugin entry", () => {
             "prefer-package-documentation-tag",
             "prefer-type-param-tag",
             "require-code-fence-language",
+            "require-default-value-tag",
             "require-example-tag",
             "require-exported-doc-comment",
             "require-package-documentation",
+            "require-package-documentation-description",
             "require-param-tag-description",
             "require-param-tags",
             "require-returns-description",
@@ -38,7 +41,7 @@ describe("plugin entry", () => {
     });
 
     it("exports all expected presets", () => {
-        expect(Object.keys(plugin.configs ?? {}).toSorted()).toEqual([
+        expect(Object.keys(typedocPlugin.configs ?? {}).toSorted()).toEqual([
             "all",
             "minimal",
             "recommended",

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import plugin from "../src/plugin.js";
+import typedocPlugin from "../src/plugin.js";
 
 describe("preset configs", () => {
     it("uses typedoc namespace rule IDs", () => {
-        for (const preset of Object.values(plugin.configs ?? {})) {
+        for (const preset of Object.values(typedocPlugin.configs ?? {})) {
             const ruleIds = Object.keys(preset.rules ?? {});
 
             for (const ruleId of ruleIds) {
@@ -14,11 +14,12 @@ describe("preset configs", () => {
     });
 
     it("strict includes advanced completeness rules", () => {
-        const strictRules = plugin.configs?.strict?.rules ?? {};
+        const strictRules = typedocPlugin.configs?.strict?.rules ?? {};
 
         expect(strictRules["typedoc/require-code-fence-language"]).toBe(
             "error"
         );
+        expect(strictRules["typedoc/no-empty-example-tag"]).toBe("error");
         expect(strictRules["typedoc/no-duplicate-param-tags"]).toBe("error");
         expect(strictRules["typedoc/no-duplicate-type-param-tags"]).toBe(
             "error"
@@ -26,7 +27,11 @@ describe("preset configs", () => {
         expect(strictRules["typedoc/prefer-package-documentation-tag"]).toBe(
             "error"
         );
+        expect(strictRules["typedoc/require-default-value-tag"]).toBe("error");
         expect(strictRules["typedoc/require-example-tag"]).toBe("error");
+        expect(
+            strictRules["typedoc/require-package-documentation-description"]
+        ).toBe("error");
         expect(strictRules["typedoc/require-package-documentation"]).toBe(
             "error"
         );
@@ -48,7 +53,7 @@ describe("preset configs", () => {
     });
 
     it("minimal excludes strict-only completeness rules", () => {
-        const minimalRules = plugin.configs?.minimal?.rules ?? {};
+        const minimalRules = typedocPlugin.configs?.minimal?.rules ?? {};
 
         expect(minimalRules["typedoc/require-param-tags"]).toBeUndefined();
         expect(minimalRules["typedoc/require-returns-tag"]).toBeUndefined();
@@ -76,6 +81,7 @@ describe("preset configs", () => {
         expect(
             minimalRules["typedoc/require-code-fence-language"]
         ).toBeUndefined();
+        expect(minimalRules["typedoc/no-empty-example-tag"]).toBeUndefined();
         expect(minimalRules["typedoc/no-duplicate-param-tags"]).toBeUndefined();
         expect(
             minimalRules["typedoc/no-duplicate-type-param-tags"]
@@ -83,11 +89,19 @@ describe("preset configs", () => {
         expect(
             minimalRules["typedoc/prefer-package-documentation-tag"]
         ).toBeUndefined();
+        expect(
+            minimalRules["typedoc/require-default-value-tag"]
+        ).toBeUndefined();
+        expect(
+            minimalRules["typedoc/require-package-documentation-description"]
+        ).toBeUndefined();
     });
 
     it("recommended includes stale tag correctness rules", () => {
-        const recommendedRules = plugin.configs?.recommended?.rules ?? {};
+        const recommendedRules =
+            typedocPlugin.configs?.recommended?.rules ?? {};
 
+        expect(recommendedRules["typedoc/no-empty-example-tag"]).toBe("error");
         expect(recommendedRules["typedoc/no-extra-param-tags"]).toBe("error");
         expect(recommendedRules["typedoc/prefer-type-param-tag"]).toBe("error");
         expect(recommendedRules["typedoc/no-duplicate-param-tags"]).toBe(

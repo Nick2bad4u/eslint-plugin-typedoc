@@ -6,7 +6,7 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 const sidebars: SidebarsConfig = {
-    developer: [
+    docs: [
         {
             id: "intro",
             label: "🏁 Developer overview",
@@ -47,12 +47,12 @@ const sidebars: SidebarsConfig = {
                     type: "doc",
                 },
                 {
-                    href: "/eslint-inspector/",
+                    href: "https://nick2bad4u.github.io/eslint-plugin-typedoc/eslint-inspector/",
                     label: "ESLint Inspector output",
                     type: "link",
                 },
                 {
-                    href: "/stylelint-inspector/",
+                    href: "https://nick2bad4u.github.io/eslint-plugin-typedoc/stylelint-inspector/",
                     label: "Stylelint Inspector output",
                     type: "link",
                 },

@@ -20,7 +20,7 @@ type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for requiring @example on documented exported APIs. */
+/** Rule implementation for requiring example-tag coverage on exported APIs. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds

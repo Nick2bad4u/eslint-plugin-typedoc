@@ -19,7 +19,7 @@ type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for requiring @throws tag descriptions. */
+/** Rule implementation for requiring throws-tag descriptions. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
