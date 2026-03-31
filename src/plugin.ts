@@ -14,6 +14,7 @@ import {
     deriveTypeCheckedRuleNameSet,
 } from "./_internal/rule-docs-metadata.js";
 import { typedocRules } from "./_internal/rules-registry.js";
+import { createLocaleSortedStringCopy } from "./_internal/sorted-copy.js";
 import {
     type TypedocConfigName as InternalTypedocConfigName,
     typedocConfigMetadataByName,
@@ -122,9 +123,9 @@ const presetRuleNamesByConfig = (() => {
     }
 
     for (const configName of typedocConfigNames) {
-        map[configName] = dedupeRuleNames(map[configName]).toSorted(
-            (left, right) => left.localeCompare(right)
-        );
+        map[configName] = createLocaleSortedStringCopy(
+            dedupeRuleNames(map[configName])
+        ) as TypedocRuleName[];
     }
 
     return map as Readonly<

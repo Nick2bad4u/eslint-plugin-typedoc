@@ -9,6 +9,7 @@ import styles from "./index.module.css";
 
 type SurfaceCard = Readonly<{
     description: string;
+    icon: string;
     title: string;
     to: string;
 }>;
@@ -39,20 +40,23 @@ const homepageStructuredData = {
     url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/",
 } as const;
 
-const surfaceCards = [
+const homeCards = [
     {
+        icon: "\uf135",
         description:
             "Install the plugin, enable a preset, and start surfacing TypeDoc issues directly in ESLint.",
         title: "Get Started",
         to: "/docs/rules/getting-started",
     },
     {
+        icon: "\ue690",
         description:
             "Compare minimal, recommended, strict, and all presets for gradual documentation policy adoption.",
         title: "Presets",
         to: "/docs/rules/presets",
     },
     {
+        icon: "\uf02d",
         description:
             "Browse the full TypeDoc-focused rule catalog with examples, migration notes, and autofix behavior.",
         title: "Rule Reference",
@@ -70,17 +74,17 @@ const heroStats = [
     {
         description:
             "Coverage for tag hygiene, generic docs, examples, package docs, and markdown snippets.",
-        title: "20+ Documentation Rules",
+        title: "\uf0ca 20+ Documentation Rules",
     },
     {
         description:
             "Start with recommended, tighten with strict, or enable the full rule catalog.",
-        title: "4 Presets",
+        title: "\ue690 4 Presets",
     },
     {
         description:
             "Safe autofixes and suggestions keep docs cleanup practical in normal lint workflows.",
-        title: "DX-first Autofix",
+        title: "\udb80\udc68 DX-first Autofix",
     },
 ] as const satisfies readonly HeroStat[];
 
@@ -163,7 +167,7 @@ export default function Home() {
                                 key={stat.title}
                                 className={styles.heroStatCard}
                             >
-                                <p className={styles.heroStatTitle}>
+                                <p className={styles.heroStatHeading}>
                                     {stat.title}
                                 </p>
                                 <p className={styles.heroStatDescription}>
@@ -178,11 +182,19 @@ export default function Home() {
             <main className={styles.mainContent}>
                 <section className="container">
                     <div className={styles.cardGrid}>
-                        {surfaceCards.map((card) => (
+                        {homeCards.map((card) => (
                             <article key={card.title} className={styles.card}>
-                                <Heading as="h2" className={styles.cardTitle}>
-                                    {card.title}
-                                </Heading>
+                                <div className={styles.cardHeader}>
+                                    <p className={styles.cardIcon}>
+                                        {card.icon}
+                                    </p>
+                                    <Heading
+                                        as="h2"
+                                        className={styles.cardTitle}
+                                    >
+                                        {card.title}
+                                    </Heading>
+                                </div>
                                 <p className={styles.cardDescription}>
                                     {card.description}
                                 </p>

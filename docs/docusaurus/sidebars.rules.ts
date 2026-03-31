@@ -188,6 +188,11 @@ const sidebars = {
                     type: "doc",
                 },
                 {
+                    id: "presets/markdown",
+                    label: "📝 Markdown",
+                    type: "doc",
+                },
+                {
                     href: "/docs/rules/presets/recommended",
                     label: "🟠 Recommended (type-checked)",
                     type: "link",

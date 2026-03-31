@@ -24,7 +24,7 @@ import { generateReadmeRulesSectionFromRules } from "./sync-readme-rules-table.m
  */
 
 /** @typedef {Readonly<Record<string, RuleModule>>} RulesMap */
-/** @typedef {"all" | "minimal" | "recommended" | "strict"} PresetConfigName */
+/** @typedef {"all" | "markdown" | "minimal" | "recommended" | "strict"} PresetConfigName */
 
 const matrixSectionHeading = "## Rule matrix";
 const presetRulesSectionHeading = "## Rules in this preset";
@@ -34,6 +34,7 @@ const presetsDocsDirectoryPath = "docs/rules/presets";
 const presetConfigNames = [
     "minimal",
     "recommended",
+    "markdown",
     "strict",
     "all",
 ];
@@ -41,6 +42,7 @@ const presetConfigNames = [
 /** @type {Readonly<Record<PresetConfigName, string>>} */
 const presetDocSlugByConfigName = {
     all: "all",
+    markdown: "markdown",
     minimal: "minimal",
     recommended: "recommended",
     strict: "strict",

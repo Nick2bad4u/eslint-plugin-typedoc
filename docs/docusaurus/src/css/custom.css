@@ -39,6 +39,11 @@
     border-block-end: 1px solid rgb(139 92 246 / 12%);
 }
 
+.navbar__logo img {
+    filter: drop-shadow(0 10px 24px rgb(20 10 40 / 20%));
+    block-size: initial;
+}
+
 .theme-doc-sidebar-item-link-level-1 {
     font-weight: 600;
 }

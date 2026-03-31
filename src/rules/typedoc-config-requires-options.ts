@@ -295,6 +295,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             requiresTypeChecking: false,
             typedocConfigs: [
                 "typedoc.configs.minimal",
+                "typedoc.configs.markdown",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
                 "typedoc.configs.all",

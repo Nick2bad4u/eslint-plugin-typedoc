@@ -1,6 +1,9 @@
 declare const styles: {
     readonly card: string;
     readonly cardDescription: string;
+    readonly cardHeader: string;
+    readonly cardIcon: string;
+    readonly cardTitle: string;
     readonly cardGrid: string;
     readonly cardLink: string;
     readonly cardTitle: string;
@@ -18,6 +21,7 @@ declare const styles: {
     readonly heroStatCard: string;
     readonly heroStatDescription: string;
     readonly heroStatTitle: string;
+    readonly heroStatHeading: string;
     readonly heroStats: string;
     readonly heroSubtitle: string;
     readonly heroTitle: string;

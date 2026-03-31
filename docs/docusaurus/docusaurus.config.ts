@@ -345,19 +345,19 @@ const config: Config = {
                 {
                     items: [
                         {
-                            to: "/docs/typedoc-pipeline",
-                            label: "🧬 TypeDoc Pipeline",
+                            href: "https://typedoc.org/",
+                            label: "📖 TypeDoc",
                         },
                         {
-                            to: "/docs/developer/api",
-                            label: "🧩 API Reference",
+                            href: "https://eslint.org/",
+                            label: "🔎 ESLint",
                         },
                         {
-                            to: "/docs/inspectors",
-                            label: "🔧 Inspector Workflows",
+                            href: `${siteOrigin}/${projectName}/stylelint-inspector/`,
+                            label: "🎨 Stylelint Inspector",
                         },
                         {
-                            href: `${siteUrl}eslint-inspector/`,
+                            href: `${siteOrigin}/${projectName}/eslint-inspector/`,
                             label: "🔎 ESLint Inspector",
                         },
                     ],
@@ -479,6 +479,10 @@ const config: Config = {
                             to: "/docs/rules/presets/recommended",
                         },
                         {
+                            label: "📝 Markdown",
+                            to: "/docs/rules/presets/markdown",
+                        },
+                        {
                             label: "🟠 Strict",
                             to: "/docs/rules/presets/strict",
                         },
@@ -561,10 +565,10 @@ const config: Config = {
             ],
             logo: {
                 alt: "eslint-plugin-typedoc logo",
-                height: 48,
+                height: 32,
                 href: baseUrl,
-                src: "img/logo_48x48.png",
-                width: 48,
+                src: "img/logo_32x32.png",
+                width: 32,
             },
             style: "dark",
             title: projectName,

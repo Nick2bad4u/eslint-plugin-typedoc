@@ -27,6 +27,7 @@ export default [
 
 - `typedoc.configs.minimal` for baseline TypeDoc hygiene.
 - `typedoc.configs.recommended` for exported API + tag/link validation.
+- `typedoc.configs.markdown` for markdown-oriented output quality with `typedoc-plugin-markdown`.
 - `typedoc.configs.strict` for tighter API doc completeness checks.
 - `typedoc.configs.all` to enable every shipped rule.
 

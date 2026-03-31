@@ -156,7 +156,11 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             frozen: false,
             recommended: false,
             requiresTypeChecking: false,
-            typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            typedocConfigs: [
+                "typedoc.configs.all",
+                "typedoc.configs.markdown",
+                "typedoc.configs.strict",
+            ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-code-fence-language",
         },
         fixable: "code",

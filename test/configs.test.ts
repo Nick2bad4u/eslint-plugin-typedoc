@@ -20,6 +20,7 @@ describe("preset configs", () => {
             "error"
         );
         expect(strictRules["typedoc/no-empty-example-tag"]).toBe("error");
+        expect(strictRules["typedoc/no-empty-remarks-tag"]).toBe("error");
         expect(strictRules["typedoc/no-duplicate-param-tags"]).toBe("error");
         expect(strictRules["typedoc/no-duplicate-type-param-tags"]).toBe(
             "error"
@@ -27,8 +28,14 @@ describe("preset configs", () => {
         expect(strictRules["typedoc/prefer-package-documentation-tag"]).toBe(
             "error"
         );
+        expect(strictRules["typedoc/require-deprecated-tag-description"]).toBe(
+            "error"
+        );
         expect(strictRules["typedoc/require-default-value-tag"]).toBe("error");
         expect(strictRules["typedoc/require-example-tag"]).toBe("error");
+        expect(
+            strictRules["typedoc/require-exported-doc-comment-description"]
+        ).toBe("error");
         expect(
             strictRules["typedoc/require-package-documentation-description"]
         ).toBe("error");
@@ -81,7 +88,11 @@ describe("preset configs", () => {
         expect(
             minimalRules["typedoc/require-code-fence-language"]
         ).toBeUndefined();
+        expect(
+            minimalRules["typedoc/require-deprecated-tag-description"]
+        ).toBeUndefined();
         expect(minimalRules["typedoc/no-empty-example-tag"]).toBeUndefined();
+        expect(minimalRules["typedoc/no-empty-remarks-tag"]).toBeUndefined();
         expect(minimalRules["typedoc/no-duplicate-param-tags"]).toBeUndefined();
         expect(
             minimalRules["typedoc/no-duplicate-type-param-tags"]
@@ -102,8 +113,12 @@ describe("preset configs", () => {
             typedocPlugin.configs?.recommended?.rules ?? {};
 
         expect(recommendedRules["typedoc/no-empty-example-tag"]).toBe("error");
+        expect(recommendedRules["typedoc/no-empty-remarks-tag"]).toBe("error");
         expect(recommendedRules["typedoc/no-extra-param-tags"]).toBe("error");
         expect(recommendedRules["typedoc/prefer-type-param-tag"]).toBe("error");
+        expect(
+            recommendedRules["typedoc/require-deprecated-tag-description"]
+        ).toBe("error");
         expect(recommendedRules["typedoc/no-duplicate-param-tags"]).toBe(
             "error"
         );
@@ -111,7 +126,40 @@ describe("preset configs", () => {
             "error"
         );
         expect(
+            recommendedRules["typedoc/require-exported-doc-comment-description"]
+        ).toBe("error");
+        expect(
             recommendedRules["typedoc/prefer-package-documentation-tag"]
+        ).toBe("error");
+    });
+
+    it("markdown focuses on rendered markdown quality", () => {
+        const markdownRules = typedocPlugin.configs?.markdown?.rules ?? {};
+
+        expect(markdownRules["typedoc/no-empty-example-tag"]).toBe("error");
+        expect(markdownRules["typedoc/no-empty-remarks-tag"]).toBe("error");
+        expect(markdownRules["typedoc/no-malformed-inline-links"]).toBe(
+            "error"
+        );
+        expect(markdownRules["typedoc/no-unknown-tags"]).toBe("error");
+        expect(markdownRules["typedoc/require-code-fence-language"]).toBe(
+            "error"
+        );
+        expect(
+            markdownRules["typedoc/require-deprecated-tag-description"]
+        ).toBe("error");
+        expect(markdownRules["typedoc/require-example-tag"]).toBe("error");
+        expect(markdownRules["typedoc/require-exported-doc-comment"]).toBe(
+            "error"
+        );
+        expect(
+            markdownRules["typedoc/require-exported-doc-comment-description"]
+        ).toBe("error");
+        expect(markdownRules["typedoc/require-package-documentation"]).toBe(
+            "error"
+        );
+        expect(
+            markdownRules["typedoc/require-package-documentation-description"]
         ).toBe("error");
     });
 });

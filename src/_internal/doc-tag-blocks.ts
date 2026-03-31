@@ -68,6 +68,26 @@ export type DocTagBlock = Readonly<{
     tagText: string;
 }>;
 
+const codeFenceDelimiterLinePattern = /^(?:```|~~~)/u;
+
+const isMarkdownDividerLine = (line: string): boolean => {
+    const condensedLine = line.replaceAll(/\s+/gu, "");
+
+    if (condensedLine.length < 3) {
+        return false;
+    }
+
+    const dividerCharacter = condensedLine[0];
+
+    return (
+        dividerCharacter !== undefined &&
+        (dividerCharacter === "-" ||
+            dividerCharacter === "_" ||
+            dividerCharacter === "*") &&
+        [...condensedLine].every((character) => character === dividerCharacter)
+    );
+};
+
 /**
  * Parse ordered `@tag` blocks from a normalized TypeDoc block comment.
  */
@@ -143,4 +163,23 @@ export const hasMeaningfulTagDescription = (
         .trim();
 
     return normalizedDescription.length > 0;
+};
+
+/** Determine whether a block-tag body contains meaningful prose or code. */
+export const hasMeaningfulTagBlockContent = (blockText: string): boolean => {
+    const normalizedLines = blockText
+        .replaceAll("\r\n", "\n")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(
+            (line) =>
+                line.length > 0 &&
+                !codeFenceDelimiterLinePattern.test(line) &&
+                !isMarkdownDividerLine(line)
+        )
+        .map((line) =>
+            line.replace(/^(?:[*+-]|\d+\.)\s*/u, "").replace(/^>\s*/u, "")
+        );
+
+    return normalizedLines.some((line) => hasMeaningfulTagDescription(line));
 };

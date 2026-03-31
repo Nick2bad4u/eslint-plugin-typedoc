@@ -6,12 +6,12 @@ import {
 } from "../_internal/doc-tag-blocks.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "emptyExampleTag";
+type MessageIds = "emptyRemarksTag";
 type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for empty example-tag detection. */
+/** Rule implementation for empty remarks-tag detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -30,7 +30,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "example") {
+                        if (block.tagName !== "remarks") {
                             continue;
                         }
 
@@ -40,7 +40,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         context.report({
                             loc: comment.loc,
-                            messageId: "emptyExampleTag",
+                            messageId: "emptyRemarksTag",
                             node: sourceCode.ast,
                         });
                     }
@@ -52,7 +52,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         deprecated: false,
         docs: {
-            description: "disallow empty `@example` tags in TypeDoc comments.",
+            description: "disallow empty `@remarks` tags in TypeDoc comments.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,
@@ -62,16 +62,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
-            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-example-tag",
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-remarks-tag",
         },
         messages: {
-            emptyExampleTag:
-                "`@example` tags must contain example content, not just an empty block.",
+            emptyRemarksTag:
+                "`@remarks` tags must contain meaningful explanatory content, not just an empty block.",
         },
         schema: [],
         type: "problem",
     },
-    name: "no-empty-example-tag",
+    name: "no-empty-remarks-tag",
 });
 
 export default rule;

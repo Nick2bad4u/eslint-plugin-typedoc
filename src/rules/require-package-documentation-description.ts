@@ -10,7 +10,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [];
 
-const packageDocumentationLinePattern = /^@(?:module|packageDocumentation)\b/u;
 const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/u;
 const defaultOptions = [] as const satisfies Options;
 
@@ -53,7 +52,7 @@ const hasMeaningfulPackageDocumentationDescription = (
         .map((line) => line.trim())
         .filter(
             (line) =>
-                line.length > 0 && !packageDocumentationLinePattern.test(line)
+                line.length > 0 && !packageDocumentationSearchPattern.test(line)
         );
 
     return remainingLines.length > 0;
@@ -108,7 +107,11 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             frozen: false,
             recommended: false,
             requiresTypeChecking: false,
-            typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            typedocConfigs: [
+                "typedoc.configs.all",
+                "typedoc.configs.markdown",
+                "typedoc.configs.strict",
+            ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-package-documentation-description",
         },
         messages: {

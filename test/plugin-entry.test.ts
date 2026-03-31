@@ -18,6 +18,7 @@ describe("plugin entry", () => {
             "no-duplicate-param-tags",
             "no-duplicate-type-param-tags",
             "no-empty-example-tag",
+            "no-empty-remarks-tag",
             "no-extra-param-tags",
             "no-extra-type-param-tags",
             "no-malformed-inline-links",
@@ -26,8 +27,10 @@ describe("plugin entry", () => {
             "prefer-type-param-tag",
             "require-code-fence-language",
             "require-default-value-tag",
+            "require-deprecated-tag-description",
             "require-example-tag",
             "require-exported-doc-comment",
+            "require-exported-doc-comment-description",
             "require-package-documentation",
             "require-package-documentation-description",
             "require-param-tag-description",
@@ -49,6 +52,7 @@ describe("plugin entry", () => {
             )
         ).toEqual([
             "all",
+            "markdown",
             "minimal",
             "recommended",
             "strict",

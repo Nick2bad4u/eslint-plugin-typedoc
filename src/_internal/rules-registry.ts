@@ -8,6 +8,7 @@ import type { TSESLint } from "@typescript-eslint/utils";
 import noDuplicateParamTagsRule from "../rules/no-duplicate-param-tags.js";
 import noDuplicateTypeParamTagsRule from "../rules/no-duplicate-type-param-tags.js";
 import noEmptyExampleTagRule from "../rules/no-empty-example-tag.js";
+import noEmptyRemarksTagRule from "../rules/no-empty-remarks-tag.js";
 import noExtraParamTagsRule from "../rules/no-extra-param-tags.js";
 import noExtraTypeParamTagsRule from "../rules/no-extra-type-param-tags.js";
 import noMalformedInlineLinksRule from "../rules/no-malformed-inline-links.js";
@@ -16,7 +17,9 @@ import preferPackageDocumentationTagRule from "../rules/prefer-package-documenta
 import preferTypeParamTagRule from "../rules/prefer-type-param-tag.js";
 import requireCodeFenceLanguageRule from "../rules/require-code-fence-language.js";
 import requireDefaultValueTagRule from "../rules/require-default-value-tag.js";
+import requireDeprecatedTagDescriptionRule from "../rules/require-deprecated-tag-description.js";
 import requireExampleTagRule from "../rules/require-example-tag.js";
+import requireExportedDocCommentDescriptionRule from "../rules/require-exported-doc-comment-description.js";
 import requireExportedDocCommentRule from "../rules/require-exported-doc-comment.js";
 import requirePackageDocumentationDescriptionRule from "../rules/require-package-documentation-description.js";
 import requirePackageDocumentationRule from "../rules/require-package-documentation.js";
@@ -38,6 +41,7 @@ export type TypedocRuleNamePattern =
     | "no-duplicate-param-tags"
     | "no-duplicate-type-param-tags"
     | "no-empty-example-tag"
+    | "no-empty-remarks-tag"
     | "no-extra-param-tags"
     | "no-extra-type-param-tags"
     | "no-malformed-inline-links"
@@ -46,8 +50,10 @@ export type TypedocRuleNamePattern =
     | "prefer-type-param-tag"
     | "require-code-fence-language"
     | "require-default-value-tag"
+    | "require-deprecated-tag-description"
     | "require-example-tag"
     | "require-exported-doc-comment"
+    | "require-exported-doc-comment-description"
     | "require-package-documentation"
     | "require-package-documentation-description"
     | "require-param-tag-description"
@@ -65,6 +71,7 @@ const typedocRuleRegistry = {
     "no-duplicate-param-tags": noDuplicateParamTagsRule,
     "no-duplicate-type-param-tags": noDuplicateTypeParamTagsRule,
     "no-empty-example-tag": noEmptyExampleTagRule,
+    "no-empty-remarks-tag": noEmptyRemarksTagRule,
     "no-extra-param-tags": noExtraParamTagsRule,
     "no-extra-type-param-tags": noExtraTypeParamTagsRule,
     "no-malformed-inline-links": noMalformedInlineLinksRule,
@@ -73,8 +80,11 @@ const typedocRuleRegistry = {
     "prefer-type-param-tag": preferTypeParamTagRule,
     "require-code-fence-language": requireCodeFenceLanguageRule,
     "require-default-value-tag": requireDefaultValueTagRule,
+    "require-deprecated-tag-description": requireDeprecatedTagDescriptionRule,
     "require-example-tag": requireExampleTagRule,
     "require-exported-doc-comment": requireExportedDocCommentRule,
+    "require-exported-doc-comment-description":
+        requireExportedDocCommentDescriptionRule,
     "require-package-documentation": requirePackageDocumentationRule,
     "require-package-documentation-description":
         requirePackageDocumentationDescriptionRule,

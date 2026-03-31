@@ -9,6 +9,7 @@ import { createSortedCopy } from "./sorted-copy.js";
 export const typedocConfigNames = [
     "minimal",
     "recommended",
+    "markdown",
     "strict",
     "all",
 ] as const;
@@ -18,11 +19,13 @@ export type TypedocConfigName = (typeof typedocConfigNames)[number];
 
 const typedocConfigReferenceToNameValue: Readonly<{
     "typedoc.configs.all": "all";
+    "typedoc.configs.markdown": "markdown";
     "typedoc.configs.minimal": "minimal";
     "typedoc.configs.recommended": "recommended";
     "typedoc.configs.strict": "strict";
 }> = {
     "typedoc.configs.all": "all",
+    "typedoc.configs.markdown": "markdown",
     "typedoc.configs.minimal": "minimal",
     "typedoc.configs.recommended": "recommended",
     "typedoc.configs.strict": "strict",
@@ -49,7 +52,13 @@ const typedocConfigMetadataByNameValue: Readonly<
     all: {
         icon: "🟣",
         presetName: "typedoc/all",
-        readmeOrder: 4,
+        readmeOrder: 5,
+        requiresTypeChecking: false,
+    },
+    markdown: {
+        icon: "📝",
+        presetName: "typedoc/markdown",
+        readmeOrder: 3,
         requiresTypeChecking: false,
     },
     minimal: {
@@ -67,7 +76,7 @@ const typedocConfigMetadataByNameValue: Readonly<
     strict: {
         icon: "🟠",
         presetName: "typedoc/strict",
-        readmeOrder: 3,
+        readmeOrder: 4,
         requiresTypeChecking: false,
     },
 };

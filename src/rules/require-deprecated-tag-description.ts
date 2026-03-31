@@ -6,12 +6,12 @@ import {
 } from "../_internal/doc-tag-blocks.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "emptyExampleTag";
+type MessageIds = "missingDeprecatedDescription";
 type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for empty example-tag detection. */
+/** Rule implementation for requiring deprecated-tag descriptions. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -30,7 +30,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "example") {
+                        if (block.tagName !== "deprecated") {
                             continue;
                         }
 
@@ -40,7 +40,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         context.report({
                             loc: comment.loc,
-                            messageId: "emptyExampleTag",
+                            messageId: "missingDeprecatedDescription",
                             node: sourceCode.ast,
                         });
                     }
@@ -52,7 +52,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         deprecated: false,
         docs: {
-            description: "disallow empty `@example` tags in TypeDoc comments.",
+            description:
+                "require `@deprecated` tags to explain the deprecation and, ideally, the preferred alternative.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,
@@ -62,16 +63,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
-            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-example-tag",
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-deprecated-tag-description",
         },
         messages: {
-            emptyExampleTag:
-                "`@example` tags must contain example content, not just an empty block.",
+            missingDeprecatedDescription:
+                "`@deprecated` tags must explain why the API is deprecated or what to use instead.",
         },
         schema: [],
         type: "problem",
     },
-    name: "no-empty-example-tag",
+    name: "require-deprecated-tag-description",
 });
 
 export default rule;
