@@ -12,13 +12,57 @@ import {
     getDocCommentTagBlocks,
     hasMeaningfulTagDescription,
 } from "../_internal/doc-tag-blocks.js";
+import { createLocaleSortedStringCopy } from "../_internal/sorted-copy.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type MessageIds = "missingParamTagDescription";
 type Options = readonly [];
 
-const paramTagPayloadPattern = /^\s+(\.\.\.)?(\S+)(.*)$/u;
 const defaultOptions = [] as const satisfies Options;
+
+const findFirstWhitespaceIndex = (text: string): number => text.search(/\s/u);
+
+const parseParamTagPayload = (
+    tagText: string
+): null | Readonly<{
+    inlineDescription: string;
+    isRestParam: boolean;
+    rawName: string;
+}> => {
+    const trimmedTagText = tagText.trimStart();
+
+    if (trimmedTagText.length === 0) {
+        return null;
+    }
+
+    const isRestParam = trimmedTagText.startsWith("...");
+    const nameAndDescription = isRestParam
+        ? trimmedTagText.slice(3)
+        : trimmedTagText;
+
+    if (nameAndDescription.length === 0) {
+        return null;
+    }
+
+    const firstWhitespaceIndex = findFirstWhitespaceIndex(nameAndDescription);
+    const rawName =
+        firstWhitespaceIndex === -1
+            ? nameAndDescription
+            : nameAndDescription.slice(0, firstWhitespaceIndex);
+
+    if (rawName.length === 0) {
+        return null;
+    }
+
+    return {
+        inlineDescription:
+            firstWhitespaceIndex === -1
+                ? ""
+                : nameAndDescription.slice(firstWhitespaceIndex),
+        isRestParam,
+        rawName,
+    };
+};
 
 const normalizeParamTagName = (rawName: string): string => {
     const bracketTrimmed = rawName.replace(/^\[/u, "").replace(/\]$/u, "");
@@ -54,19 +98,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     continue;
                 }
 
-                const payloadMatch = paramTagPayloadPattern.exec(block.tagText);
+                const payload = parseParamTagPayload(block.tagText);
 
-                if (payloadMatch === null) {
+                if (payload === null) {
                     continue;
                 }
 
-                const isRestParam = payloadMatch[1] === "...";
-                const rawName = payloadMatch[2];
-                const inlineDescription = payloadMatch[3] ?? "";
-
-                if (typeof rawName !== "string") {
-                    continue;
-                }
+                const { inlineDescription, isRestParam, rawName } = payload;
 
                 const normalizedName = normalizeParamTagName(rawName);
                 const descriptionText =
@@ -87,9 +125,9 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
             context.report({
                 data: {
-                    params: [...new Set(missingDescriptions)]
-                        .toSorted((left, right) => left.localeCompare(right))
-                        .join(", "),
+                    params: createLocaleSortedStringCopy(
+                        new Set(missingDescriptions)
+                    ).join(", "),
                 },
                 messageId: "missingParamTagDescription",
                 node: reportNode,
@@ -124,6 +162,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require each `@param` tag to include a human-readable description.",
@@ -131,6 +170,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-param-tag-description",
         },
         messages: {
             missingParamTagDescription:

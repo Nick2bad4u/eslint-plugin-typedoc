@@ -18,7 +18,7 @@ type MessageIds = "missingTypedocConfigOptions";
 type Options = typeof defaultOptions;
 
 const typedocConfigFileExpression =
-    /(^|\\|\/)(typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
+    /(?:^|\\|\/)(?:typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
 
 const requiredOptionDefaultsByName = {
     entryPoints: '["src/index.ts"]',
@@ -286,6 +286,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require essential options (entryPoints and tsconfig) in TypeDoc config objects.",
@@ -298,6 +299,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.strict",
                 "typedoc.configs.all",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options",
         },
         fixable: "code",
         messages: {

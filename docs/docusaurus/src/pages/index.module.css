@@ -104,7 +104,7 @@
 .heroPanelLogo {
     block-size: auto;
     filter: drop-shadow(0 10px 24px rgb(20 10 40 / 20%));
-    inline-size: min(100%, 520px);
+    inline-size: min(80%, 520px);
 }
 
 .heroLiveBadges {
@@ -222,7 +222,7 @@
     }
 
     .heroPanel {
-        justify-content: flex-start;
+        justify-content: center;
     }
 
     .heroPanelLogo {

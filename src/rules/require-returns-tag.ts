@@ -38,33 +38,30 @@ const isVoidLikeTypeAnnotation = (
         return false;
     }
 
-    switch (typeAnnotation.type) {
-        case AST_NODE_TYPES.TSNeverKeyword:
-        case AST_NODE_TYPES.TSVoidKeyword: {
-            return true;
-        }
-
-        case AST_NODE_TYPES.TSTypeReference: {
-            if (
-                typeAnnotation.typeName.type !== AST_NODE_TYPES.Identifier ||
-                typeAnnotation.typeName.name !== "Promise"
-            ) {
-                return false;
-            }
-
-            const firstTypeParameter =
-                typeAnnotation.typeArguments?.params[0] ?? null;
-
-            return (
-                firstTypeParameter?.type === AST_NODE_TYPES.TSVoidKeyword ||
-                firstTypeParameter?.type === AST_NODE_TYPES.TSUndefinedKeyword
-            );
-        }
-
-        default: {
-            return false;
-        }
+    if (
+        typeAnnotation.type === AST_NODE_TYPES.TSNeverKeyword ||
+        typeAnnotation.type === AST_NODE_TYPES.TSVoidKeyword
+    ) {
+        return true;
     }
+
+    if (typeAnnotation.type !== AST_NODE_TYPES.TSTypeReference) {
+        return false;
+    }
+
+    if (
+        typeAnnotation.typeName.type !== AST_NODE_TYPES.Identifier ||
+        typeAnnotation.typeName.name !== "Promise"
+    ) {
+        return false;
+    }
+
+    const firstTypeParameter = typeAnnotation.typeArguments?.params[0] ?? null;
+
+    return (
+        firstTypeParameter?.type === AST_NODE_TYPES.TSVoidKeyword ||
+        firstTypeParameter?.type === AST_NODE_TYPES.TSUndefinedKeyword
+    );
 };
 
 const requiresReturnsTag = (node: Readonly<FunctionLikeNode>): boolean => {
@@ -143,6 +140,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require @returns tags for documented declarations with non-void return types.",
@@ -150,6 +148,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.strict", "typedoc.configs.all"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-returns-tag",
         },
         fixable: "code",
         messages: {

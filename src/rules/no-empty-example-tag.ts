@@ -59,6 +59,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description: "disallow empty `@example` tags in TypeDoc comments.",
             frozen: false,
@@ -69,6 +70,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-example-tag",
         },
         messages: {
             emptyExampleTag:

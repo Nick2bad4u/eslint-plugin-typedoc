@@ -96,6 +96,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@example` tags on documented exported declarations.",
@@ -103,6 +104,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-example-tag",
         },
         fixable: "code",
         messages: {

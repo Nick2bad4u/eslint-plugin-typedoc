@@ -126,6 +126,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@typeParam` tags for all declared generic type parameters.",
@@ -133,6 +134,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-type-param-tags",
         },
         fixable: "code",
         messages: {

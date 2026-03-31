@@ -3,6 +3,8 @@
  * sync.
  */
 
+import { createSortedCopy } from "./sorted-copy.js";
+
 /** Supported preset keys exported by the plugin. */
 export const typedocConfigNames = [
     "minimal",
@@ -76,12 +78,13 @@ export const typedocConfigMetadataByName: typeof typedocConfigMetadataByNameValu
 
 /** Preset keys sorted in the order they should appear in README/docs tables. */
 export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
-    ...typedocConfigNames,
-].toSorted(
-    (left, right) =>
-        typedocConfigMetadataByName[left].readmeOrder -
-        typedocConfigMetadataByName[right].readmeOrder
-);
+    ...createSortedCopy(
+        typedocConfigNames,
+        (left, right) =>
+            typedocConfigMetadataByName[left].readmeOrder -
+            typedocConfigMetadataByName[right].readmeOrder
+    ),
+];
 
 const typedocConfigNameSet = new Set<TypedocConfigName>(typedocConfigNames);
 

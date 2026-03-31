@@ -37,61 +37,55 @@ const functionBodyContainsThrow = (
             continue;
         }
 
-        switch (statement.type) {
-            case AST_NODE_TYPES.BlockStatement: {
-                statementStack.push(...statement.body);
-                break;
+        if (statement.type === AST_NODE_TYPES.ThrowStatement) {
+            return true;
+        }
+
+        if (statement.type === AST_NODE_TYPES.BlockStatement) {
+            statementStack.push(...statement.body);
+            continue;
+        }
+
+        if (
+            statement.type === AST_NODE_TYPES.DoWhileStatement ||
+            statement.type === AST_NODE_TYPES.ForInStatement ||
+            statement.type === AST_NODE_TYPES.ForOfStatement ||
+            statement.type === AST_NODE_TYPES.ForStatement ||
+            statement.type === AST_NODE_TYPES.LabeledStatement ||
+            statement.type === AST_NODE_TYPES.WhileStatement ||
+            statement.type === AST_NODE_TYPES.WithStatement
+        ) {
+            statementStack.push(statement.body);
+            continue;
+        }
+
+        if (statement.type === AST_NODE_TYPES.IfStatement) {
+            statementStack.push(statement.consequent);
+
+            if (statement.alternate !== null) {
+                statementStack.push(statement.alternate);
             }
 
-            case AST_NODE_TYPES.DoWhileStatement:
-            case AST_NODE_TYPES.ForInStatement:
-            case AST_NODE_TYPES.ForOfStatement:
-            case AST_NODE_TYPES.ForStatement:
-            case AST_NODE_TYPES.LabeledStatement:
-            case AST_NODE_TYPES.WhileStatement:
-            case AST_NODE_TYPES.WithStatement: {
-                statementStack.push(statement.body);
-                break;
+            continue;
+        }
+
+        if (statement.type === AST_NODE_TYPES.SwitchStatement) {
+            for (const switchCase of statement.cases) {
+                statementStack.push(...switchCase.consequent);
             }
 
-            case AST_NODE_TYPES.IfStatement: {
-                statementStack.push(statement.consequent);
+            continue;
+        }
 
-                if (statement.alternate !== null) {
-                    statementStack.push(statement.alternate);
-                }
+        if (statement.type === AST_NODE_TYPES.TryStatement) {
+            statementStack.push(...statement.block.body);
 
-                break;
+            if (statement.handler !== null) {
+                statementStack.push(...statement.handler.body.body);
             }
 
-            case AST_NODE_TYPES.SwitchStatement: {
-                for (const switchCase of statement.cases) {
-                    statementStack.push(...switchCase.consequent);
-                }
-
-                break;
-            }
-
-            case AST_NODE_TYPES.ThrowStatement: {
-                return true;
-            }
-
-            case AST_NODE_TYPES.TryStatement: {
-                statementStack.push(...statement.block.body);
-
-                if (statement.handler !== null) {
-                    statementStack.push(...statement.handler.body.body);
-                }
-
-                if (statement.finalizer !== null) {
-                    statementStack.push(...statement.finalizer.body);
-                }
-
-                break;
-            }
-
-            default: {
-                break;
+            if (statement.finalizer !== null) {
+                statementStack.push(...statement.finalizer.body);
             }
         }
     }
@@ -177,6 +171,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@throws` tags when documented functions and methods contain throw statements.",
@@ -184,6 +179,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-throws-tag",
         },
         fixable: "code",
         messages: {

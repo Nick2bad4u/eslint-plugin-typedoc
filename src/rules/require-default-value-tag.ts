@@ -22,19 +22,19 @@ const defaultOptions = [] as const satisfies Options;
 const isSimpleDefaultValueExpression = (
     expression: Readonly<TSESTree.Expression>
 ): boolean => {
-    switch (expression.type) {
-        case AST_NODE_TYPES.ArrayExpression:
-        case AST_NODE_TYPES.Literal:
-        case AST_NODE_TYPES.ObjectExpression: {
-            return true;
-        }
-        case AST_NODE_TYPES.TemplateLiteral: {
-            return expression.expressions.length === 0;
-        }
-        default: {
-            return false;
-        }
+    if (
+        expression.type === AST_NODE_TYPES.ArrayExpression ||
+        expression.type === AST_NODE_TYPES.Literal ||
+        expression.type === AST_NODE_TYPES.ObjectExpression
+    ) {
+        return true;
     }
+
+    if (expression.type === AST_NODE_TYPES.TemplateLiteral) {
+        return expression.expressions.length === 0;
+    }
+
+    return false;
 };
 
 /**
@@ -128,6 +128,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require documented exported const values to include `@defaultValue` tags when they declare simple defaults.",
@@ -135,6 +136,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-default-value-tag",
         },
         fixable: "code",
         messages: {

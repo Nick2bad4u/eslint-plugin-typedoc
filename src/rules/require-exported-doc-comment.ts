@@ -93,6 +93,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require a leading TypeDoc block comment for exported declarations.",
@@ -105,6 +106,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment",
         },
         fixable: "code",
         messages: {

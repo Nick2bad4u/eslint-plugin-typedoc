@@ -10,27 +10,18 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [];
 
-const packageDocumentationLinePattern = /^@(module|packageDocumentation)\b/u;
-const packageDocumentationSearchPattern = /@(module|packageDocumentation)\b/u;
+const packageDocumentationLinePattern = /^@(?:module|packageDocumentation)\b/u;
+const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/u;
 const defaultOptions = [] as const satisfies Options;
 
 const isExportStatement = (
     statement: Readonly<TSESTree.ProgramStatement>
-): boolean => {
-    switch (statement.type) {
-        case AST_NODE_TYPES.ExportAllDeclaration:
-        case AST_NODE_TYPES.ExportDefaultDeclaration:
-        case AST_NODE_TYPES.ExportNamedDeclaration:
-        case AST_NODE_TYPES.TSExportAssignment:
-        case AST_NODE_TYPES.TSNamespaceExportDeclaration: {
-            return true;
-        }
-
-        default: {
-            return false;
-        }
-    }
-};
+): boolean =>
+    statement.type === AST_NODE_TYPES.ExportAllDeclaration ||
+    statement.type === AST_NODE_TYPES.ExportDefaultDeclaration ||
+    statement.type === AST_NODE_TYPES.ExportNamedDeclaration ||
+    statement.type === AST_NODE_TYPES.TSExportAssignment ||
+    statement.type === AST_NODE_TYPES.TSNamespaceExportDeclaration;
 
 const getPackageDocumentationComment = (
     sourceCode: TSESLint.SourceCode,
@@ -110,6 +101,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require top-level `@packageDocumentation` comments to include descriptive prose.",
@@ -117,6 +109,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-package-documentation-description",
         },
         messages: {
             missingPackageDocumentationDescription:

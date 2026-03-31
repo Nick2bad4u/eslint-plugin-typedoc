@@ -69,6 +69,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "enforce using `@packageDocumentation` over `@module` for package-level TypeDoc comments.",
@@ -80,6 +81,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-package-documentation-tag",
         },
         fixable: "code",
         messages: {

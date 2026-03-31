@@ -22,21 +22,15 @@ export const isDocumentableExportDeclaration = (
         return false;
     }
 
-    switch (value.type) {
-        case AST_NODE_TYPES.ClassDeclaration:
-        case AST_NODE_TYPES.FunctionDeclaration:
-        case AST_NODE_TYPES.TSEnumDeclaration:
-        case AST_NODE_TYPES.TSInterfaceDeclaration:
-        case AST_NODE_TYPES.TSModuleDeclaration:
-        case AST_NODE_TYPES.TSTypeAliasDeclaration:
-        case AST_NODE_TYPES.VariableDeclaration: {
-            return true;
-        }
-
-        default: {
-            return false;
-        }
-    }
+    return (
+        value.type === AST_NODE_TYPES.ClassDeclaration ||
+        value.type === AST_NODE_TYPES.FunctionDeclaration ||
+        value.type === AST_NODE_TYPES.TSEnumDeclaration ||
+        value.type === AST_NODE_TYPES.TSInterfaceDeclaration ||
+        value.type === AST_NODE_TYPES.TSModuleDeclaration ||
+        value.type === AST_NODE_TYPES.TSTypeAliasDeclaration ||
+        value.type === AST_NODE_TYPES.VariableDeclaration
+    );
 };
 
 /** Resolve a stable human-readable name for an exported declaration. */

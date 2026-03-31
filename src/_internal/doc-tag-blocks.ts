@@ -2,8 +2,63 @@ import type { TSESTree } from "@typescript-eslint/utils";
 
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
-const docTagLinePattern = /^@([A-Za-z][\w-]*)(.*)$/u;
 const nextTagLinePattern = /^\s*@[A-Za-z][\w-]*/u;
+
+type ParsedDocTagLine = Readonly<{
+    tagName: string;
+    tagText: string;
+}>;
+
+const isAsciiLetter = (character: string): boolean => {
+    const codePoint = character.codePointAt(0);
+
+    return (
+        codePoint !== undefined &&
+        ((codePoint >= 65 && codePoint <= 90) ||
+            (codePoint >= 97 && codePoint <= 122))
+    );
+};
+
+const isDocTagNameCharacter = (character: string): boolean => {
+    const codePoint = character.codePointAt(0);
+
+    return (
+        codePoint !== undefined &&
+        (isAsciiLetter(character) ||
+            (codePoint >= 48 && codePoint <= 57) ||
+            character === "_" ||
+            character === "-")
+    );
+};
+
+const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
+    if (!line.startsWith("@")) {
+        return null;
+    }
+
+    const firstTagCharacter = line[1];
+
+    if (firstTagCharacter === undefined || !isAsciiLetter(firstTagCharacter)) {
+        return null;
+    }
+
+    let tagEndIndex = 2;
+
+    while (tagEndIndex < line.length) {
+        const character = line[tagEndIndex];
+
+        if (character === undefined || !isDocTagNameCharacter(character)) {
+            break;
+        }
+
+        tagEndIndex += 1;
+    }
+
+    return {
+        tagName: line.slice(1, tagEndIndex),
+        tagText: line.slice(tagEndIndex),
+    };
+};
 
 /** Parsed representation of one contiguous TypeDoc block-tag section. */
 export type DocTagBlock = Readonly<{
@@ -33,21 +88,14 @@ export const getDocCommentTagBlocks = (
         }
 
         const trimmedLine = line.trimStart();
-        const tagMatch = docTagLinePattern.exec(trimmedLine);
+        const parsedTagLine = parseDocTagLine(trimmedLine);
 
-        if (tagMatch === null) {
+        if (parsedTagLine === null) {
             lineIndex += 1;
             continue;
         }
 
-        const tagName = tagMatch[1];
-
-        if (typeof tagName !== "string") {
-            lineIndex += 1;
-            continue;
-        }
-
-        const tagText = tagMatch[2] ?? "";
+        const { tagName, tagText } = parsedTagLine;
         const continuationLines: string[] = [];
         let continuationIndex = lineIndex + 1;
 

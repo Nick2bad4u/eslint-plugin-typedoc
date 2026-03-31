@@ -9,10 +9,10 @@ import {
     type TSESTree,
 } from "@typescript-eslint/utils";
 
-const docTagPattern = /@([A-Za-z][\w-]*)/gu;
-const inlineLinkPattern = /\{@link\s*([^}]*)\}/gu;
-const paramTagPattern = /@param\s+(\.\.\.)?(\S+)/gu;
-const typeParamTagPattern = /@(template|typeParam)\s+(\S+)/gu;
+const docTagPattern = /@(?<tagName>[A-Za-z][\w-]*)/gu;
+const paramTagPattern = /@param\s+(?<restParameter>\.\.\.)?(?<rawName>\S+)/gu;
+const typeParamTagPattern = /@(?:template|typeParam)\s+(?<rawName>\S+)/gu;
+const inlineLinkPrefix = "{@link";
 
 const normalizeTagNameToken = (rawName: string): string => {
     const normalizedName = rawName
@@ -125,7 +125,7 @@ export const getDocCommentTagMatches = (
 
     for (const match of commentText.matchAll(docTagPattern)) {
         const fullMatch = match[0];
-        const tagName = match[1];
+        const tagName = match.groups?.["tagName"];
         const relativeStart = match.index;
 
         if (
@@ -169,8 +169,8 @@ export const getDocCommentParamTagNameList = (
     const commentBody = normalizeDocCommentLines(comment).join("\n");
 
     for (const match of commentBody.matchAll(paramTagPattern)) {
-        const isRestParameter = match[1] === "...";
-        const rawName = match[2];
+        const isRestParameter = match.groups?.["restParameter"] === "...";
+        const rawName = match.groups?.["rawName"];
 
         if (typeof rawName !== "string") {
             continue;
@@ -205,7 +205,7 @@ export const getDocCommentTypeParamTagNameList = (
     const commentBody = normalizeDocCommentLines(comment).join("\n");
 
     for (const match of commentBody.matchAll(typeParamTagPattern)) {
-        const rawName = match[2];
+        const rawName = match.groups?.["rawName"];
 
         if (typeof rawName !== "string") {
             continue;
@@ -238,26 +238,63 @@ export const getInlineLinkMatches = (
     const commentText = sourceCode.getText(comment);
     const matches: InlineLinkMatch[] = [];
 
-    for (const match of commentText.matchAll(inlineLinkPattern)) {
-        const fullMatch = match[0];
-        const content = match[1];
-        const relativeStart = match.index;
+    let searchStartIndex = 0;
 
-        if (
-            typeof fullMatch !== "string" ||
-            typeof content !== "string" ||
-            typeof relativeStart !== "number"
-        ) {
-            continue;
+    while (searchStartIndex < commentText.length) {
+        const relativeStart = commentText.indexOf(
+            inlineLinkPrefix,
+            searchStartIndex
+        );
+
+        if (relativeStart === -1) {
+            break;
         }
 
-        const absoluteStart = comment.range[0] + relativeStart;
+        let cursor = relativeStart + inlineLinkPrefix.length;
+        let didReachLineBreak = false;
 
-        matches.push({
-            absoluteRange: [absoluteStart, absoluteStart + fullMatch.length],
-            content,
-            fullText: fullMatch,
-        });
+        while (cursor < commentText.length) {
+            const currentCharacter = commentText[cursor];
+
+            if (currentCharacter === undefined) {
+                break;
+            }
+
+            if (currentCharacter === "\n" || currentCharacter === "\r") {
+                didReachLineBreak = true;
+                break;
+            }
+
+            if (currentCharacter === "}") {
+                const fullMatch = commentText.slice(relativeStart, cursor + 1);
+                const content = commentText
+                    .slice(relativeStart + inlineLinkPrefix.length, cursor)
+                    .trimStart();
+                const absoluteStart = comment.range[0] + relativeStart;
+
+                matches.push({
+                    absoluteRange: [
+                        absoluteStart,
+                        absoluteStart + fullMatch.length,
+                    ],
+                    content,
+                    fullText: fullMatch,
+                });
+
+                searchStartIndex = cursor + 1;
+                break;
+            }
+
+            cursor += 1;
+        }
+
+        if (cursor >= commentText.length) {
+            break;
+        }
+
+        if (didReachLineBreak) {
+            searchStartIndex = relativeStart + inlineLinkPrefix.length;
+        }
     }
 
     return matches;

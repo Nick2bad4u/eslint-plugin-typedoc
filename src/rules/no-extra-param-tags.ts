@@ -129,6 +129,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow `@param` tags that do not map to real function parameters.",
@@ -140,6 +141,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-extra-param-tags",
         },
         messages: {
             extraParamTags:

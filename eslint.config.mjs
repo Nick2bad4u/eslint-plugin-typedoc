@@ -3140,22 +3140,6 @@ export default defineConfig([
         },
     },
     {
-        files: ["src/**/*.{ts,tsx}", "plugin.mjs"],
-        name: "Plugin source migration compatibility",
-        rules: {
-            "@typescript-eslint/switch-exhaustiveness-check": "off",
-            "canonical/no-use-extend-native": "off",
-            "default-case": "off",
-            "eslint-plugin/require-meta-docs-url": "off",
-            "prefer-named-capture-group": "off",
-            "regexp/no-super-linear-backtracking": "off",
-            "regexp/no-unused-capturing-group": "off",
-            "regexp/prefer-named-capture-group": "off",
-            "sonarjs/slow-regex": "off",
-            "typedoc/no-unknown-tags": "off",
-        },
-    },
-    {
         files: [
             "test/**/*.{ts,tsx}",
             "**/*.test.{ts,tsx}",

@@ -9,6 +9,7 @@ import {
     getDocCommentParamTagNameList,
     getLeadingDocComment,
 } from "../_internal/doc-comments.js";
+import { createLocaleSortedStringCopy } from "../_internal/sorted-copy.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type MessageIds = "duplicateParamTags";
@@ -29,7 +30,7 @@ const getDuplicateNames = (names: readonly string[]): readonly string[] => {
         seen.add(name);
     }
 
-    return [...duplicates].toSorted((left, right) => left.localeCompare(right));
+    return createLocaleSortedStringCopy(duplicates);
 };
 
 /** Rule implementation for duplicate parameter-tag detection. */
@@ -95,6 +96,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow duplicate `@param` tags for the same parameter name.",
@@ -106,6 +108,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-param-tags",
         },
         messages: {
             duplicateParamTags:

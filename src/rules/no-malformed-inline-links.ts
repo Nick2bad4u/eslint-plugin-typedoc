@@ -98,6 +98,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow malformed inline {@link ...} tags in TypeDoc comments.",
@@ -110,6 +111,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.strict",
                 "typedoc.configs.all",
             ],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links",
         },
         hasSuggestions: true,
         messages: {

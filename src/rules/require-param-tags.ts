@@ -28,31 +28,23 @@ const getParameterName = (
     parameter: Readonly<TSESTree.Parameter>,
     parameterIndex: number
 ): string => {
-    switch (parameter.type) {
-        case AST_NODE_TYPES.AssignmentPattern: {
-            if (parameter.left.type === AST_NODE_TYPES.Identifier) {
-                return parameter.left.name;
-            }
-
-            return `param${parameterIndex + 1}`;
-        }
-
-        case AST_NODE_TYPES.Identifier: {
-            return parameter.name;
-        }
-
-        case AST_NODE_TYPES.RestElement: {
-            if (parameter.argument.type === AST_NODE_TYPES.Identifier) {
-                return `...${parameter.argument.name}`;
-            }
-
-            return `param${parameterIndex + 1}`;
-        }
-
-        default: {
-            return `param${parameterIndex + 1}`;
-        }
+    if (parameter.type === AST_NODE_TYPES.AssignmentPattern) {
+        return parameter.left.type === AST_NODE_TYPES.Identifier
+            ? parameter.left.name
+            : `param${parameterIndex + 1}`;
     }
+
+    if (parameter.type === AST_NODE_TYPES.Identifier) {
+        return parameter.name;
+    }
+
+    if (parameter.type === AST_NODE_TYPES.RestElement) {
+        return parameter.argument.type === AST_NODE_TYPES.Identifier
+            ? `...${parameter.argument.name}`
+            : `param${parameterIndex + 1}`;
+    }
+
+    return `param${parameterIndex + 1}`;
 };
 
 /** Rule implementation for missing parameter-tag coverage. */
@@ -149,6 +141,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require documented declarations to include @param tags for every parameter.",
@@ -156,6 +149,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: ["typedoc.configs.strict", "typedoc.configs.all"],
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-param-tags",
         },
         fixable: "code",
         messages: {
