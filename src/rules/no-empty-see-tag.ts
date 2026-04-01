@@ -6,12 +6,12 @@ import {
 } from "../_internal/doc-tag-blocks.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "emptyRemarksTag";
+type MessageIds = "emptySeeTag";
 type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for empty remarks-tag detection. */
+/** Rule implementation for empty see-tag detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -30,7 +30,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "remarks") {
+                        if (block.tagName !== "see") {
                             continue;
                         }
 
@@ -40,7 +40,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         context.report({
                             loc: comment.loc,
-                            messageId: "emptyRemarksTag",
+                            messageId: "emptySeeTag",
                             node: sourceCode.ast,
                         });
                     }
@@ -52,27 +52,27 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         deprecated: false,
         docs: {
-            description: "disallow empty `@remarks` tags in TypeDoc comments.",
+            description: "disallow empty `@see` tags in TypeDoc comments.",
             frozen: false,
             recommended: true,
             requiresTypeChecking: false,
             typedocConfigs: [
                 "typedoc.configs.all",
-                "typedoc.configs.markdown",
+                "typedoc.configs.jsdoc",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
                 "typedoc.configs.tsdoc",
             ],
-            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-remarks-tag",
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-see-tag",
         },
         messages: {
-            emptyRemarksTag:
-                "`@remarks` tags must contain meaningful explanatory content, not just an empty block.",
+            emptySeeTag:
+                "`@see` tags must reference something — a URL, a symbol, or a `{@link}` expression. Remove the tag or add a reference.",
         },
         schema: [],
         type: "problem",
     },
-    name: "no-empty-remarks-tag",
+    name: "no-empty-see-tag",
 });
 
 export default rule;

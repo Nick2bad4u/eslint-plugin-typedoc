@@ -81,6 +81,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 "typedoc.configs.markdown",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
+                "typedoc.configs.tsdoc",
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-package-documentation-tag",
         },

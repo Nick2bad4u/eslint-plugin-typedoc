@@ -11,7 +11,6 @@ import packageJson from "../package.json" with { type: "json" };
 import {
     deriveRuleDocsMetadataByName,
     deriveRulePresetMembershipByRuleName,
-    deriveTypeCheckedRuleNameSet,
 } from "./_internal/rule-docs-metadata.js";
 import { typedocRules } from "./_internal/rules-registry.js";
 import { createLocaleSortedStringCopy } from "./_internal/sorted-copy.js";
@@ -87,9 +86,6 @@ const ruleDocsMetadataByRuleName = deriveRuleDocsMetadataByName(typedocRules);
 const rulePresetMembershipByRuleName = deriveRulePresetMembershipByRuleName(
     ruleDocsMetadataByRuleName
 );
-const typeCheckedRuleNames = deriveTypeCheckedRuleNameSet(
-    ruleDocsMetadataByRuleName
-);
 
 const createEmptyPresetRuleMap = (): Record<
     TypedocConfigName,
@@ -145,17 +141,12 @@ const errorRulesFor = (ruleNames: readonly TypedocRuleName[]): RulesConfig => {
 
 const withTypedocPlugin = (
     config: Readonly<TypedocPresetConfig>,
-    plugin: Readonly<ESLint.Plugin>,
-    options: Readonly<{ requiresTypeChecking: boolean }>
+    plugin: Readonly<ESLint.Plugin>
 ): TypedocPresetConfig => {
     const existingLanguageOptions = config.languageOptions ?? {};
     const parserOptions = normalizeParserOptions(
         existingLanguageOptions["parserOptions"]
     );
-
-    if (options.requiresTypeChecking && !("projectService" in parserOptions)) {
-        Reflect.set(parserOptions, "projectService", true);
-    }
 
     const languageOptions: FlatLanguageOptions = {
         ...existingLanguageOptions,
@@ -184,21 +175,13 @@ const createTypedocConfigsDefinition = (): TypedocConfigsContract => {
     for (const configName of typedocConfigNames) {
         const configMetadata = typedocConfigMetadataByName[configName];
         const presetRuleNames = presetRuleNamesByConfig[configName];
-        const requiresTypeChecking =
-            configMetadata.requiresTypeChecking ||
-            presetRuleNames.some((ruleName) =>
-                typeCheckedRuleNames.has(ruleName)
-            );
 
         configs[configName] = withTypedocPlugin(
             {
                 name: configMetadata.presetName,
                 rules: errorRulesFor(presetRuleNames),
             },
-            pluginForConfigs,
-            {
-                requiresTypeChecking,
-            }
+            pluginForConfigs
         );
     }
 

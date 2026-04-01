@@ -13,42 +13,106 @@ const defaultOptions = [] as const;
 type MessageIds = "unknownTag";
 type Options = typeof defaultOptions;
 
-const allowedTags = new Set([
+const supportedTypeDocTagNames = [
+    "abstract",
     "alpha",
+    "author",
+    "augments",
     "beta",
+    "callback",
     "category",
+    "categoryDescription",
+    "class",
+    "default",
     "defaultValue",
     "deprecated",
+    "disableGroups",
+    "document",
+    "enum",
     "event",
+    "eventProperty",
     "example",
+    "expand",
+    "expandType",
     "experimental",
+    "extends",
+    "function",
     "group",
+    "groupDescription",
     "hidden",
+    "hideCategories",
+    "hideGroups",
+    "hideconstructor",
     "ignore",
+    "import",
+    "include",
+    "includeCode",
     "inheritDoc",
     "inline",
+    "inlineType",
+    "interface",
     "internal",
+    "jsx",
     "label",
     "license",
     "link",
+    "linkcode",
+    "linkplain",
+    "mergeModuleWith",
     "module",
+    "namespace",
+    "overload",
+    "override",
     "packageDocumentation",
     "param",
+    "preventExpand",
+    "preventInline",
+    "primaryExport",
+    "private",
     "privateRemarks",
+    "prop",
+    "property",
+    "protected",
+    "public",
+    "readonly",
     "remarks",
+    "return",
     "returns",
+    "satisfies",
+    "sealed",
     "see",
+    "showCategories",
+    "showGroups",
+    "since",
+    "sortStrategy",
+    "summary",
     "template",
+    "this",
     "throws",
+    "type",
+    "typedef",
     "typeParam",
+    "useDeclaredType",
     "virtual",
-]);
+    "yields",
+] as const satisfies readonly string[];
 
 const aliasTagsByUnknownTag = {
     arg: "param",
     argument: "param",
+    inheritdoc: "inheritDoc",
     return: "returns",
 } as const satisfies Record<string, string>;
+
+const tagsHandledByAliasFixes = new Set<string>(
+    Object.keys(aliasTagsByUnknownTag)
+);
+
+const allowedTags = new Set<string>(
+    supportedTypeDocTagNames.filter(
+        (tagName) => !tagsHandledByAliasFixes.has(tagName)
+    )
+);
 
 /** Rule implementation for unknown TypeDoc tag detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -132,10 +196,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             requiresTypeChecking: false,
             typedocConfigs: [
                 "typedoc.configs.minimal",
+                "typedoc.configs.jsdoc",
                 "typedoc.configs.markdown",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
                 "typedoc.configs.all",
+                "typedoc.configs.tsdoc",
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags",
         },

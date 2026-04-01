@@ -39,6 +39,8 @@
 - [`typedoc.configs.minimal`](./presets/minimal.md)
 - [`typedoc.configs.recommended`](./presets/recommended.md)
 - [`typedoc.configs.markdown`](./presets/markdown.md)
+- [`typedoc.configs.tsdoc`](./presets/tsdoc.md)
+- [`typedoc.configs.jsdoc`](./presets/jsdoc.md)
 - [`typedoc.configs.strict`](./presets/strict.md)
 - [`typedoc.configs.all`](./presets/all.md)
 

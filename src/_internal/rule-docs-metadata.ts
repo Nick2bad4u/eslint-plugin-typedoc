@@ -153,25 +153,3 @@ export const deriveRulePresetMembershipByRuleName = <TRuleName extends string>(
 
     return membershipMap;
 };
-
-/**
- * Collect the set of rules that require type-checker parser services.
- */
-export const deriveTypeCheckedRuleNameSet = <TRuleName extends string>(
-    metadataByRuleName: Readonly<Record<TRuleName, RuleDocsMetadata>>
-): ReadonlySet<TRuleName> => {
-    const names = new Set<TRuleName>();
-
-    for (const [rawRuleName, metadataValue] of Object.entries(
-        metadataByRuleName
-    )) {
-        const ruleName = rawRuleName as TRuleName;
-        const metadata = metadataValue as RuleDocsMetadata;
-
-        if (metadata.requiresTypeChecking) {
-            names.add(ruleName);
-        }
-    }
-
-    return names;
-};

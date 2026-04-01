@@ -8,7 +8,9 @@ import type { TSESLint } from "@typescript-eslint/utils";
 import noDuplicateParamTagsRule from "../rules/no-duplicate-param-tags.js";
 import noDuplicateTypeParamTagsRule from "../rules/no-duplicate-type-param-tags.js";
 import noEmptyExampleTagRule from "../rules/no-empty-example-tag.js";
+import noEmptyPrivateRemarksTagRule from "../rules/no-empty-private-remarks-tag.js";
 import noEmptyRemarksTagRule from "../rules/no-empty-remarks-tag.js";
+import noEmptySeeTagRule from "../rules/no-empty-see-tag.js";
 import noExtraParamTagsRule from "../rules/no-extra-param-tags.js";
 import noExtraTypeParamTagsRule from "../rules/no-extra-type-param-tags.js";
 import noMalformedInlineLinksRule from "../rules/no-malformed-inline-links.js";
@@ -27,6 +29,8 @@ import requireParamTagDescriptionRule from "../rules/require-param-tag-descripti
 import requireParamTagsRule from "../rules/require-param-tags.js";
 import requireReturnsDescriptionRule from "../rules/require-returns-description.js";
 import requireReturnsTagRule from "../rules/require-returns-tag.js";
+import requireSeeTagLinkRule from "../rules/require-see-tag-link.js";
+import requireSinceTagDescriptionRule from "../rules/require-since-tag-description.js";
 import requireThrowsDescriptionRule from "../rules/require-throws-description.js";
 import requireThrowsTagRule from "../rules/require-throws-tag.js";
 import requireTypeParamTagDescriptionRule from "../rules/require-type-param-tag-description.js";
@@ -41,7 +45,9 @@ export type TypedocRuleNamePattern =
     | "no-duplicate-param-tags"
     | "no-duplicate-type-param-tags"
     | "no-empty-example-tag"
+    | "no-empty-private-remarks-tag"
     | "no-empty-remarks-tag"
+    | "no-empty-see-tag"
     | "no-extra-param-tags"
     | "no-extra-type-param-tags"
     | "no-malformed-inline-links"
@@ -60,6 +66,8 @@ export type TypedocRuleNamePattern =
     | "require-param-tags"
     | "require-returns-description"
     | "require-returns-tag"
+    | "require-see-tag-link"
+    | "require-since-tag-description"
     | "require-throws-description"
     | "require-throws-tag"
     | "require-type-param-tag-description"
@@ -71,7 +79,9 @@ const typedocRuleRegistry = {
     "no-duplicate-param-tags": noDuplicateParamTagsRule,
     "no-duplicate-type-param-tags": noDuplicateTypeParamTagsRule,
     "no-empty-example-tag": noEmptyExampleTagRule,
+    "no-empty-private-remarks-tag": noEmptyPrivateRemarksTagRule,
     "no-empty-remarks-tag": noEmptyRemarksTagRule,
+    "no-empty-see-tag": noEmptySeeTagRule,
     "no-extra-param-tags": noExtraParamTagsRule,
     "no-extra-type-param-tags": noExtraTypeParamTagsRule,
     "no-malformed-inline-links": noMalformedInlineLinksRule,
@@ -92,6 +102,8 @@ const typedocRuleRegistry = {
     "require-param-tags": requireParamTagsRule,
     "require-returns-description": requireReturnsDescriptionRule,
     "require-returns-tag": requireReturnsTagRule,
+    "require-see-tag-link": requireSeeTagLinkRule,
+    "require-since-tag-description": requireSinceTagDescriptionRule,
     "require-throws-description": requireThrowsDescriptionRule,
     "require-throws-tag": requireThrowsTagRule,
     "require-type-param-tag-description": requireTypeParamTagDescriptionRule,

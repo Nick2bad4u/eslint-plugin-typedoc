@@ -45,5 +45,32 @@ ruleTester.run("no-unknown-tags", getPluginRule("no-unknown-tags"), {
                 "}",
             ].join("\n"),
         },
+        {
+            code: [
+                "/**",
+                " * @public",
+                " * @summary Create a widget.",
+                " * @deprecated Use {@link ModernWidget} instead.",
+                " */",
+                "export function createWidget(): void {}",
+            ].join("\n"),
+        },
+        {
+            code: [
+                "/**",
+                " * {@linkcode Widget}",
+                " * {@linkplain Widget|widget docs}",
+                " */",
+                "export type WidgetName = string;",
+            ].join("\n"),
+        },
+        {
+            code: [
+                "/**",
+                " * @typedef {string | number} Scalar",
+                " */",
+                "export type Scalar = string | number;",
+            ].join("\n"),
+        },
     ],
 });

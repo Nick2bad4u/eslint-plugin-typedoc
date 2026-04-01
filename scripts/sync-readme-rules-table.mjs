@@ -40,19 +40,23 @@ const presetDocsUrlBase =
 /** @type {Readonly<Record<PresetName, string>>} */
 const presetDocSlugByName = {
     all: "all",
+    jsdoc: "jsdoc",
     markdown: "markdown",
     minimal: "minimal",
     recommended: "recommended",
     strict: "strict",
+    tsdoc: "tsdoc",
 };
 
 /** @type {Readonly<Record<PresetName, string>>} */
 const presetConfigReferenceByName = {
     all: "typedoc.configs.all",
+    jsdoc: "typedoc.configs.jsdoc",
     markdown: "typedoc.configs.markdown",
     minimal: "typedoc.configs.minimal",
     recommended: "typedoc.configs.recommended",
     strict: "typedoc.configs.strict",
+    tsdoc: "typedoc.configs.tsdoc",
 };
 
 /**

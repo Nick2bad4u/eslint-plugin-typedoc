@@ -10,6 +10,8 @@ export const typedocConfigNames = [
     "minimal",
     "recommended",
     "markdown",
+    "tsdoc",
+    "jsdoc",
     "strict",
     "all",
 ] as const;
@@ -19,16 +21,20 @@ export type TypedocConfigName = (typeof typedocConfigNames)[number];
 
 const typedocConfigReferenceToNameValue: Readonly<{
     "typedoc.configs.all": "all";
+    "typedoc.configs.jsdoc": "jsdoc";
     "typedoc.configs.markdown": "markdown";
     "typedoc.configs.minimal": "minimal";
     "typedoc.configs.recommended": "recommended";
     "typedoc.configs.strict": "strict";
+    "typedoc.configs.tsdoc": "tsdoc";
 }> = {
     "typedoc.configs.all": "all",
+    "typedoc.configs.jsdoc": "jsdoc",
     "typedoc.configs.markdown": "markdown",
     "typedoc.configs.minimal": "minimal",
     "typedoc.configs.recommended": "recommended",
     "typedoc.configs.strict": "strict",
+    "typedoc.configs.tsdoc": "tsdoc",
 };
 
 /** Canonical string references used inside rule metadata to indicate presets. */
@@ -40,7 +46,6 @@ export type TypedocConfigMetadata = Readonly<{
     icon: string;
     presetName: string;
     readmeOrder: number;
-    requiresTypeChecking: boolean;
 }>;
 
 /** String-literal references accepted in rule metadata for preset membership. */
@@ -52,32 +57,37 @@ const typedocConfigMetadataByNameValue: Readonly<
     all: {
         icon: "🟣",
         presetName: "typedoc/all",
+        readmeOrder: 7,
+    },
+    jsdoc: {
+        icon: "📘",
+        presetName: "typedoc/jsdoc",
         readmeOrder: 5,
-        requiresTypeChecking: false,
     },
     markdown: {
         icon: "📝",
         presetName: "typedoc/markdown",
         readmeOrder: 3,
-        requiresTypeChecking: false,
     },
     minimal: {
         icon: "🟢",
         presetName: "typedoc/minimal",
         readmeOrder: 1,
-        requiresTypeChecking: false,
     },
     recommended: {
         icon: "🔵",
         presetName: "typedoc/recommended",
         readmeOrder: 2,
-        requiresTypeChecking: false,
     },
     strict: {
         icon: "🟠",
         presetName: "typedoc/strict",
+        readmeOrder: 6,
+    },
+    tsdoc: {
+        icon: "📗",
+        presetName: "typedoc/tsdoc",
         readmeOrder: 4,
-        requiresTypeChecking: false,
     },
 };
 

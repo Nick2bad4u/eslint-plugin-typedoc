@@ -193,9 +193,14 @@ const sidebars = {
                     type: "doc",
                 },
                 {
-                    href: "/docs/rules/presets/recommended",
-                    label: "🟠 Recommended (type-checked)",
-                    type: "link",
+                    id: "presets/tsdoc",
+                    label: "📗 TSDoc",
+                    type: "doc",
+                },
+                {
+                    id: "presets/jsdoc",
+                    label: "📘 JSDoc",
+                    type: "doc",
                 },
                 {
                     id: "presets/strict",

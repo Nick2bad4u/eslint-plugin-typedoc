@@ -162,4 +162,39 @@ describe("preset configs", () => {
             markdownRules["typedoc/require-package-documentation-description"]
         ).toBe("error");
     });
+
+    it("tsdoc focuses on canonical TSDoc-compatible authoring", () => {
+        const tsdocRules = typedocPlugin.configs?.tsdoc?.rules ?? {};
+
+        expect(tsdocRules["typedoc/no-empty-example-tag"]).toBe("error");
+        expect(tsdocRules["typedoc/no-empty-remarks-tag"]).toBe("error");
+        expect(tsdocRules["typedoc/no-malformed-inline-links"]).toBe("error");
+        expect(tsdocRules["typedoc/no-unknown-tags"]).toBe("error");
+        expect(tsdocRules["typedoc/prefer-package-documentation-tag"]).toBe(
+            "error"
+        );
+        expect(tsdocRules["typedoc/prefer-type-param-tag"]).toBe("error");
+        expect(tsdocRules["typedoc/require-deprecated-tag-description"]).toBe(
+            "error"
+        );
+        expect(
+            tsdocRules["typedoc/require-exported-doc-comment"]
+        ).toBeUndefined();
+    });
+
+    it("jsdoc focuses on the TypeDoc-supported JSDoc subset", () => {
+        const jsdocRules = typedocPlugin.configs?.jsdoc?.rules ?? {};
+
+        expect(jsdocRules["typedoc/no-empty-example-tag"]).toBe("error");
+        expect(jsdocRules["typedoc/no-malformed-inline-links"]).toBe("error");
+        expect(jsdocRules["typedoc/no-unknown-tags"]).toBe("error");
+        expect(jsdocRules["typedoc/require-deprecated-tag-description"]).toBe(
+            "error"
+        );
+        expect(jsdocRules["typedoc/no-empty-remarks-tag"]).toBeUndefined();
+        expect(
+            jsdocRules["typedoc/prefer-package-documentation-tag"]
+        ).toBeUndefined();
+        expect(jsdocRules["typedoc/prefer-type-param-tag"]).toBeUndefined();
+    });
 });

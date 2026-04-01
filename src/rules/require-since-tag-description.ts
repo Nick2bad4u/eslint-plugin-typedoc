@@ -6,12 +6,12 @@ import {
 } from "../_internal/doc-tag-blocks.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "emptyRemarksTag";
+type MessageIds = "missingSinceDescription";
 type Options = readonly [];
 
 const defaultOptions = [] as const satisfies Options;
 
-/** Rule implementation for empty remarks-tag detection. */
+/** Rule implementation for requiring since-tag descriptions. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
     MessageIds
@@ -30,7 +30,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "remarks") {
+                        if (block.tagName !== "since") {
                             continue;
                         }
 
@@ -40,7 +40,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         context.report({
                             loc: comment.loc,
-                            messageId: "emptyRemarksTag",
+                            messageId: "missingSinceDescription",
                             node: sourceCode.ast,
                         });
                     }
@@ -52,27 +52,26 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     meta: {
         deprecated: false,
         docs: {
-            description: "disallow empty `@remarks` tags in TypeDoc comments.",
+            description:
+                "require `@since` tags to specify a version or introductory context.",
             frozen: false,
-            recommended: true,
+            recommended: false,
             requiresTypeChecking: false,
             typedocConfigs: [
                 "typedoc.configs.all",
-                "typedoc.configs.markdown",
-                "typedoc.configs.recommended",
                 "typedoc.configs.strict",
                 "typedoc.configs.tsdoc",
             ],
-            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-remarks-tag",
+            url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-since-tag-description",
         },
         messages: {
-            emptyRemarksTag:
-                "`@remarks` tags must contain meaningful explanatory content, not just an empty block.",
+            missingSinceDescription:
+                "`@since` tags must specify a version string or introductory context (e.g. `@since 1.4.0`).",
         },
         schema: [],
         type: "problem",
     },
-    name: "no-empty-remarks-tag",
+    name: "require-since-tag-description",
 });
 
 export default rule;

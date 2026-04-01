@@ -18,7 +18,9 @@ describe("plugin entry", () => {
             "no-duplicate-param-tags",
             "no-duplicate-type-param-tags",
             "no-empty-example-tag",
+            "no-empty-private-remarks-tag",
             "no-empty-remarks-tag",
+            "no-empty-see-tag",
             "no-extra-param-tags",
             "no-extra-type-param-tags",
             "no-malformed-inline-links",
@@ -37,6 +39,8 @@ describe("plugin entry", () => {
             "require-param-tags",
             "require-returns-description",
             "require-returns-tag",
+            "require-see-tag-link",
+            "require-since-tag-description",
             "require-throws-description",
             "require-throws-tag",
             "require-type-param-tag-description",
@@ -52,10 +56,12 @@ describe("plugin entry", () => {
             )
         ).toEqual([
             "all",
+            "jsdoc",
             "markdown",
             "minimal",
             "recommended",
             "strict",
+            "tsdoc",
         ]);
     });
 });

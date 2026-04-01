@@ -107,10 +107,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             requiresTypeChecking: false,
             typedocConfigs: [
                 "typedoc.configs.minimal",
+                "typedoc.configs.jsdoc",
                 "typedoc.configs.markdown",
                 "typedoc.configs.recommended",
                 "typedoc.configs.strict",
                 "typedoc.configs.all",
+                "typedoc.configs.tsdoc",
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links",
         },
