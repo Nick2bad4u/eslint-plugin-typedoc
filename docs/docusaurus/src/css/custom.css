@@ -1,3 +1,49 @@
+/**
+ * Global CSS overrides for Docusaurus documentation site.
+ *
+ * Purpose:
+ *   - This file contains global styles that apply to all pages and components.
+ *   - It customizes and extends the default Infima CSS framework bundled with Docusaurus.
+ *   - Use this file to implement advanced design features, accessibility improvements,
+ *     and maintain consistent branding across the documentation.
+ *
+ * Scope:
+ *   - All CSS rules here are global and affect the entire documentation site.
+ *   - Overrides Infima variables, resets, and component styles as needed.
+ *   - Maintainers should review changes for compatibility with Docusaurus updates and
+ *     ensure that customizations do not break core functionality.
+ *
+ * Note:
+ *   - Prefer using CSS variables and utility classes for maintainability.
+ *   - Document any major changes or overrides for future maintainers.
+ */
+
+/* You can override the default Infima variables here. */
+
+@font-face {
+    font-display: swap;
+    font-family: "NerdFontSymbols Nerd Font Symbols";
+    font-style: normal;
+    font-weight: 400;
+    src:
+        local("NerdFontSymbols Nerd Font Symbols"),
+        local("Symbols Nerd Font"),
+        url("https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFont-Regular.ttf")
+            format("truetype");
+}
+
+@font-face {
+    font-display: swap;
+    font-family: "Symbols Nerd Font Mono";
+    font-style: normal;
+    font-weight: 400;
+    src:
+        local("Symbols Nerd Font Mono"),
+        local("Symbols Nerd Font"),
+        url("https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFont-Regular.ttf")
+            format("truetype");
+}
+
 :root {
     --ifm-color-primary: #8b5cf6;
     --ifm-color-primary-dark: #7c3aed;
@@ -40,8 +86,9 @@
 }
 
 .navbar__logo img {
-    filter: drop-shadow(0 10px 24px rgb(20 10 40 / 20%));
     block-size: initial;
+
+    filter: drop-shadow(0 10px 24px rgb(20 10 40 / 20%));
 }
 
 .theme-doc-sidebar-item-link-level-1 {
