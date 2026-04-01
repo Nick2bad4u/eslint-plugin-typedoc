@@ -83,7 +83,10 @@
     padding: 0.25rem 0.72rem;
     border: 1px solid rgb(237 233 254 / 35%);
     border-radius: 999px;
-    background: rgb(255 255 255 / 12%);
+    /* Opaque dark-purple background — provides 15:1+ contrast ratio for the
+     * white text above, satisfying WCAG AAA. The colour blends naturally with
+     * the hero banner's `#1e0a36 → #110524` gradient. */
+    background: #2d1464;
     color: #ffffff;
     font-size: 0.875rem;
     font-weight: 600;

@@ -230,6 +230,39 @@ export const getDocCommentTypeParamTagNames = (
     comment: Readonly<TSESTree.Comment>
 ): ReadonlySet<string> => new Set(getDocCommentTypeParamTagNameList(comment));
 
+/** Discriminated-union result from the inner brace-scanner helper. */
+type InlineLinkScanResult =
+    | Readonly<{ closingIndex: number; kind: "found" }>
+    | Readonly<{ kind: "exhausted" }>
+    | Readonly<{ kind: "linebreak" }>;
+
+/**
+ * Scan `text` forwards from `startOffset` looking for a closing `}`.
+ *
+ * Returns `"found"` with the closing index, `"linebreak"` if a line-ending is
+ * encountered first, or `"exhausted"` if the string ends without finding
+ * either. Extracted from `getInlineLinkMatches` to keep each function's
+ * cognitive complexity within the allowed threshold.
+ */
+const scanForClosingBrace = (
+    text: string,
+    startOffset: number
+): InlineLinkScanResult => {
+    for (let index = startOffset; index < text.length; index++) {
+        const character = text[index];
+
+        if (character === "\n" || character === "\r") {
+            return { kind: "linebreak" };
+        }
+
+        if (character === "}") {
+            return { closingIndex: index, kind: "found" };
+        }
+    }
+
+    return { kind: "exhausted" };
+};
+
 /** Collect all inline `{@link ...}` matches from a comment. */
 export const getInlineLinkMatches = (
     sourceCode: TSESLint.SourceCode,
@@ -250,50 +283,36 @@ export const getInlineLinkMatches = (
             break;
         }
 
-        let cursor = relativeStart + inlineLinkPrefix.length;
-        let didReachLineBreak = false;
+        const cursorStart = relativeStart + inlineLinkPrefix.length;
+        const scan = scanForClosingBrace(commentText, cursorStart);
 
-        while (cursor < commentText.length) {
-            const currentCharacter = commentText[cursor];
-
-            if (currentCharacter === undefined) {
-                break;
-            }
-
-            if (currentCharacter === "\n" || currentCharacter === "\r") {
-                didReachLineBreak = true;
-                break;
-            }
-
-            if (currentCharacter === "}") {
-                const fullMatch = commentText.slice(relativeStart, cursor + 1);
-                const content = commentText
-                    .slice(relativeStart + inlineLinkPrefix.length, cursor)
-                    .trimStart();
-                const absoluteStart = comment.range[0] + relativeStart;
-
-                matches.push({
-                    absoluteRange: [
-                        absoluteStart,
-                        absoluteStart + fullMatch.length,
-                    ],
-                    content,
-                    fullText: fullMatch,
-                });
-
-                searchStartIndex = cursor + 1;
-                break;
-            }
-
-            cursor += 1;
-        }
-
-        if (cursor >= commentText.length) {
+        if (scan.kind === "exhausted") {
             break;
         }
 
-        if (didReachLineBreak) {
-            searchStartIndex = relativeStart + inlineLinkPrefix.length;
+        if (scan.kind === "found") {
+            const fullMatch = commentText.slice(
+                relativeStart,
+                scan.closingIndex + 1
+            );
+            const content = commentText
+                .slice(cursorStart, scan.closingIndex)
+                .trimStart();
+            const absoluteStart = comment.range[0] + relativeStart;
+
+            matches.push({
+                absoluteRange: [
+                    absoluteStart,
+                    absoluteStart + fullMatch.length,
+                ],
+                content,
+                fullText: fullMatch,
+            });
+
+            searchStartIndex = scan.closingIndex + 1;
+        } else {
+            // Linebreak encountered — skip past the link prefix and resume scanning.
+            searchStartIndex = cursorStart;
         }
     }
 
