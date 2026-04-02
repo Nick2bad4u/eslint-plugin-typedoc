@@ -150,7 +150,6 @@ const countMessages = (lintResults) =>
  *   is zero.
  */
 const safeDivide = (numerator, denominator) =>
-    // eslint-disable-next-line total-functions/no-partial-division -- Denominator is explicitly guarded and undefined is returned for zero.
     denominator === 0 ? undefined : numerator / denominator;
 
 /**

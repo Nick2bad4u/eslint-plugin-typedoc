@@ -8,10 +8,20 @@ import type { TSESLint } from "@typescript-eslint/utils";
 import { getDocCommentTagMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
+/** Shape of the optional first config element accepted by this rule. */
+type AdditionalTagsOption = {
+    /**
+     * Extra tag names (without `@`) to allow in addition to TypeDoc's built-in
+     * supported tag set. Use this when your project defines custom tags via
+     * plugins or a `tsdoc.json` configuration.
+     */
+    readonly additionalTags?: readonly string[];
+};
 
 type MessageIds = "unknownTag";
-type Options = typeof defaultOptions;
+type Options = readonly [AdditionalTagsOption?];
+
+const defaultOptions = [] as const satisfies Options;
 
 const supportedTypeDocTagNames = [
     "abstract",
@@ -121,6 +131,11 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create: (context) => {
         const { sourceCode } = context;
+        const userTags = context.options[0]?.additionalTags ?? [];
+        const effectiveAllowedTags =
+            userTags.length > 0
+                ? new Set([...allowedTags, ...userTags])
+                : allowedTags;
 
         return {
             Program: (): void => {
@@ -136,7 +151,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                         sourceCode,
                         comment
                     )) {
-                        if (allowedTags.has(tagMatch.name)) {
+                        if (effectiveAllowedTags.has(tagMatch.name)) {
                             continue;
                         }
 
@@ -187,6 +202,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -210,7 +226,21 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             unknownTag:
                 "Unknown TypeDoc tag '{{tag}}'. Replace it with a supported TypeDoc tag.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    additionalTags: {
+                        description:
+                            "Extra tag names (without @) to allow in addition to TypeDoc's built-in supported tag set.",
+                        items: { type: "string" },
+                        type: "array",
+                        uniqueItems: true,
+                    },
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "no-unknown-tags",

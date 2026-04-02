@@ -7,6 +7,7 @@ ruleTester.run(
     getPluginRule("require-returns-description"),
     {
         invalid: [
+            // FunctionDeclaration with empty @returns (baseline)
             {
                 code: [
                     "/**",
@@ -21,8 +22,35 @@ ruleTester.run(
                 ].join("\n"),
                 errors: [{ messageId: "missingReturnsDescription" }],
             },
+            // MethodDefinition with empty @returns: exercises MethodDefinition handler
+            {
+                code: [
+                    "export class Calculator {",
+                    "    /**",
+                    "     * Multiply two numbers.",
+                    "     * @returns {number}",
+                    "     */",
+                    "    multiply(left: number, right: number): number {",
+                    "        return left * right;",
+                    "    }",
+                    "}",
+                ].join("\n"),
+                errors: [{ messageId: "missingReturnsDescription" }],
+            },
+            // TSDeclareFunction with empty @returns: exercises TSDeclareFunction handler
+            {
+                code: [
+                    "/**",
+                    " * Load resource from API.",
+                    " * @returns {Promise<void>}",
+                    " */",
+                    "declare function load(): Promise<void>;",
+                ].join("\n"),
+                errors: [{ messageId: "missingReturnsDescription" }],
+            },
         ],
         valid: [
+            // FunctionDeclaration with description (baseline)
             {
                 code: [
                     "/**",
@@ -34,6 +62,57 @@ ruleTester.run(
                     "export function add(left: number, right: number): number {",
                     "    return left + right;",
                     "}",
+                ].join("\n"),
+            },
+            // FunctionDeclaration without any JSDoc comment: no error; covers line 96
+            // (getLeadingDocComment returns null → early return)
+            {
+                code: "export function add(left: number, right: number): number { return left + right; }",
+            },
+            // FunctionExpression without JSDoc: exercises FunctionExpression handler + line 96
+            {
+                code: "export const fn = function() {};",
+            },
+            // ArrowFunctionExpression without JSDoc: exercises ArrowFunctionExpression handler + line 96
+            {
+                code: "export const arrow = (x: number) => x * 2;",
+            },
+            // MethodDefinition with @returns description: exercises MethodDefinition handler (no error)
+            {
+                code: [
+                    "export class Calculator {",
+                    "    /**",
+                    "     * Multiply two numbers.",
+                    "     * @returns {number} The product of left and right.",
+                    "     */",
+                    "    multiply(left: number, right: number): number {",
+                    "        return left * right;",
+                    "    }",
+                    "}",
+                ].join("\n"),
+            },
+            // MethodDefinition without any @returns tag: no error (hasTag stays false)
+            {
+                code: [
+                    "export class Logger {",
+                    "    /**",
+                    "     * Write a message to the log.",
+                    "     * @param message Message text.",
+                    "     */",
+                    "    log(message: string): void {",
+                    "        console.log(message);",
+                    "    }",
+                    "}",
+                ].join("\n"),
+            },
+            // TSDeclareFunction with @returns description
+            {
+                code: [
+                    "/**",
+                    " * Load resource from API.",
+                    " * @returns {Promise<void>} Resolves when load completes.",
+                    " */",
+                    "declare function load(): Promise<void>;",
                 ].join("\n"),
             },
         ],

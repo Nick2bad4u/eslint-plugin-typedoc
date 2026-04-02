@@ -33,6 +33,19 @@ ruleTester.run("no-unknown-tags", getPluginRule("no-unknown-tags"), {
             errors: [{ messageId: "unknownTag" }],
             output: null,
         },
+        // AdditionalTags option: unlisted tags are still reported even when additionalTags is set
+        {
+            code: [
+                "/**",
+                " * @myCustomTag Allowed tag.",
+                " * @stillUnknown Still reported.",
+                " */",
+                "export function run(): void {}",
+            ].join("\n"),
+            errors: [{ messageId: "unknownTag" }],
+            options: [{ additionalTags: ["myCustomTag"] }],
+            output: null,
+        },
     ],
     valid: [
         {
@@ -71,6 +84,27 @@ ruleTester.run("no-unknown-tags", getPluginRule("no-unknown-tags"), {
                 " */",
                 "export type Scalar = string | number;",
             ].join("\n"),
+        },
+        // AdditionalTags option: custom tags should not be reported
+        {
+            code: [
+                "/**",
+                " * @myCustomTag Some custom tag.",
+                " */",
+                "export function run(): void {}",
+            ].join("\n"),
+            options: [{ additionalTags: ["myCustomTag"] }],
+        },
+        // AdditionalTags option: multiple custom tags allowed simultaneously
+        {
+            code: [
+                "/**",
+                " * @pluginTagA First custom tag.",
+                " * @pluginTagB Second custom tag.",
+                " */",
+                "export function run(): void {}",
+            ].join("\n"),
+            options: [{ additionalTags: ["pluginTagA", "pluginTagB"] }],
         },
     ],
 });

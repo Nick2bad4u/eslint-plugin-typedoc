@@ -45,5 +45,39 @@ ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
                 "}",
             ].join("\n"),
         },
+        // ArrowFunctionExpression without JSDoc: exercises ArrowFunctionExpression handler
+        {
+            code: "export const add = (left: number, right: number) => left + right;",
+        },
+        // FunctionExpression without JSDoc: exercises FunctionExpression handler
+        {
+            code: "export const fn = function(x: number) { return x; };",
+        },
+        // MethodDefinition: exercises MethodDefinition handler
+        {
+            code: [
+                "export class Calculator {",
+                "    /**",
+                "     * Multiply two numbers.",
+                "     * @param left Left value.",
+                "     * @param right Right value.",
+                "     */",
+                "    multiply(left: number, right: number): number {",
+                "        return left * right;",
+                "    }",
+                "}",
+            ].join("\n"),
+        },
+        // TSDeclareFunction: exercises TSDeclareFunction handler
+        {
+            code: [
+                "/**",
+                " * Combine two strings.",
+                " * @param a First string.",
+                " * @param b Second string.",
+                " */",
+                "declare function combine(a: string, b: string): string;",
+            ].join("\n"),
+        },
     ],
 });

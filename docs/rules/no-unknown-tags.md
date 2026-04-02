@@ -55,7 +55,37 @@ export function normalize(value: string): string {
 
 Use autofix for known aliases, then manually resolve any remaining unknown tags to valid TypeDoc tags.
 
-This rule validates against TypeDoc's built-in tag list. If your project adds custom tags via `tsdoc.json` or TypeDoc config options, those custom tags may still be reported here.
+### `additionalTags` option
+
+You can extend the built-in allowed tag set with the `additionalTags` option. This is the primary escape hatch for projects that define extra tags via TypeDoc plugins or a `tsdoc.json` configuration file.
+
+```jsonc
+// eslint.config.mjs
+{
+    "typedoc/no-unknown-tags": [
+        "error",
+        { "additionalTags": ["customTag", "myPluginTag"] }
+    ]
+}
+```
+
+In TypeScript flat config:
+
+```ts
+import typedocPlugin from "eslint-plugin-typedoc";
+
+export default [
+    {
+        plugins: { typedoc: typedocPlugin },
+        rules: {
+            "typedoc/no-unknown-tags": [
+                "error",
+                { additionalTags: ["customTag", "myPluginTag"] },
+            ],
+        },
+    },
+];
+```
 
 ## ESLint flat config example
 
@@ -74,7 +104,9 @@ export default [
 
 ## When not to use it
 
-Disable this rule only when your team intentionally uses custom non-TypeDoc tags and accepts that generated docs may ignore them.
+Disable this rule only when your team intentionally uses custom non-TypeDoc tags
+and accepts that generated docs may ignore them. Prefer the `additionalTags`
+option over disabling the rule entirely.
 
 ## Package documentation
 
