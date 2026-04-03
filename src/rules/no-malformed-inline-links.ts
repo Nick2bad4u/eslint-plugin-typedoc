@@ -98,7 +98,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "disallow malformed inline {@link ...} tags in TypeDoc comments.",

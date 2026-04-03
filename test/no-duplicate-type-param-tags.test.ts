@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports duplicateTypeParamTags when @typeParam and @template declare the same type parameter",
                 code: [
                     "/**",
                     " * Identity helper.",
@@ -25,6 +26,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when each type parameter has exactly one @typeParam tag",
                 code: [
                     "/**",
                     " * Identity helper.",

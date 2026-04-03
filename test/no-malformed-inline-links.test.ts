@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports malformedInlineLink when {@link} is missing the target symbol and suggests a placeholder fix",
                 code: [
                     "/**",
                     " * See {@link}.",
@@ -34,6 +35,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when {@link} includes a target symbol and display text",
                 code: [
                     "/**",
                     " * See {@link run|run helper}.",

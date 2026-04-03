@@ -171,7 +171,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "require `@throws` tags when documented functions and methods contain throw statements.",

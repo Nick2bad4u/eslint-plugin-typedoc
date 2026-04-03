@@ -161,7 +161,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "require each `@typeParam`/`@template` tag to include a human-readable description.",

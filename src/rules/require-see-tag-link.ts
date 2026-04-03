@@ -66,7 +66,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "require `@see` tags to contain a URL or a `{@link}` reference.",

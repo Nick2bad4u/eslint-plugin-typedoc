@@ -109,6 +109,61 @@ describe("plugin entry", () => {
                 ).toBeGreaterThan(0);
             }
         );
+
+        it.each(rules)('"%s" has a boolean docs.recommended', (_name, rule) => {
+            // Every rule must explicitly declare whether it belongs to the
+            // recommended preset.  This mirrors the `require-meta-docs-recommended`
+            // lint rule but as a hard contract test so the check cannot be
+            // downgraded below "error" without failing the test suite.
+            expect(
+                typeof (
+                    rule.meta?.docs as Record<string, unknown> | undefined
+                )?.["recommended"]
+            ).toBe("boolean");
+        });
+
+        it.each(rules)(
+            '"%s" has a boolean docs.requiresTypeChecking',
+            (_name, rule) => {
+                // Every rule must explicitly declare whether it requires access
+                // to the TypeScript type-checker.  Rules that call parser
+                // services must set this to `true`; rules that only analyse
+                // syntax set it to `false`.
+                expect(
+                    typeof (
+                        rule.meta?.docs as Record<string, unknown> | undefined
+                    )?.["requiresTypeChecking"]
+                ).toBe("boolean");
+            }
+        );
+
+        it.each(rules)('"%s" has a boolean docs.frozen', (_name, rule) => {
+            // Every rule must explicitly declare whether it is frozen
+            // (i.e. the rule API is considered stable and will not
+            // receive breaking changes in a patch release).
+            // This property drives the frozen-indicator in the docs site.
+            expect(
+                typeof (
+                    rule.meta?.docs as Record<string, unknown> | undefined
+                )?.["frozen"]
+            ).toBe("boolean");
+        });
+
+        it.each(rules)(
+            '"%s" has an array docs.typedocConfigs',
+            (_name, rule) => {
+                // Every rule must declare which TypeDoc configuration properties
+                // it relates to.  The array may be empty for rules that are not
+                // tied to a specific TypeDoc config option, but the property
+                // must always be present so the docs site can render it
+                // consistently.
+                const docs = rule.meta?.docs as
+                    | Record<string, unknown>
+                    | undefined;
+
+                expect(Array.isArray(docs?.["typedocConfigs"])).toBeTruthy();
+            }
+        );
     });
 
     describe("preset contracts", () => {

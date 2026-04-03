@@ -89,7 +89,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "require top-level `@packageDocumentation` comments in modules that export API.",

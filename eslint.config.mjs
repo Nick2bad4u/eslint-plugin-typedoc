@@ -1337,11 +1337,23 @@ export default defineConfig([
             "eslint-plugin/prefer-output-null": "error",
             "eslint-plugin/prefer-placeholders": "warn",
             "eslint-plugin/prefer-replace-text": "error",
-            "eslint-plugin/report-message-format": "warn",
+            "eslint-plugin/report-message-format": [
+                "warn",
+                // Messages must start with an uppercase letter or a backtick-
+                // quoted tag name (e.g. "`@param` tags must…") and end with a
+                // sentence-terminating period.
+                "^[`A-Z].*\\.$",
+            ],
             "eslint-plugin/require-meta-default-options": "error",
             "eslint-plugin/require-meta-docs-description": "warn",
             "eslint-plugin/require-meta-docs-recommended": "warn",
-            "eslint-plugin/require-meta-docs-url": "error",
+            "eslint-plugin/require-meta-docs-url": [
+                "error",
+                {
+                    pattern:
+                        "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/{{name}}",
+                },
+            ],
             "eslint-plugin/require-meta-fixable": "error",
             "eslint-plugin/require-meta-has-suggestions": "error",
             "eslint-plugin/require-meta-schema": "error",
@@ -1571,6 +1583,10 @@ export default defineConfig([
             "no-underscore-dangle": "off",
             "no-use-before-define": "off",
             "one-var": "off",
+            // Test-case objects must follow the semantic ordering enforced by
+            // eslint-plugin/test-case-property-ordering (name → code → output →
+            // errors), so alphabetical property sorting is disabled here.
+            "perfectionist/sort-objects": "off",
             "sort-imports": "off",
             "unicorn/import-style": "off",
             "unicorn/no-array-callback-reference": "off",

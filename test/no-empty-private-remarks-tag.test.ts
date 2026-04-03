@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports emptyPrivateRemarksTag when @privateRemarks tag has no content",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -20,6 +21,7 @@ ruleTester.run(
                 errors: [{ messageId: "emptyPrivateRemarksTag" }],
             },
             {
+                name: "reports emptyPrivateRemarksTag when @privateRemarks tag contains only an empty code fence",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -36,6 +38,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @privateRemarks tag has inline content on same line",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -47,6 +50,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when @privateRemarks tag is followed by multi-line prose",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -60,6 +64,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid for exported constant without @privateRemarks tag",
                 code: [
                     "/**",
                     " * A public constant with no private remarks.",

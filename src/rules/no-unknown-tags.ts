@@ -203,7 +203,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     defaultOptions,
     meta: {
         defaultOptions: [{}],
-        deprecated: false,
         docs: {
             description:
                 "disallow unknown TypeDoc tags and normalize common aliases.",

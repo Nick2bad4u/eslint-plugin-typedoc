@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
     invalid: [
         {
+            name: "reports emptySeeTag when @see tag has no content on a function",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -17,6 +18,7 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
             errors: [{ messageId: "emptySeeTag" }],
         },
         {
+            name: "reports emptySeeTag when @see tag contains only an empty code fence on a class",
             code: [
                 "/**",
                 " * Widget component.",
@@ -31,6 +33,7 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
     ],
     valid: [
         {
+            name: "is valid when @see tag contains a URL",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -42,6 +45,7 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
             ].join("\n"),
         },
         {
+            name: "is valid when @see tag contains an inline link",
             code: [
                 "/**",
                 " * Widget component.",
@@ -51,6 +55,7 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
             ].join("\n"),
         },
         {
+            name: "is valid for exported constant without @see tag",
             code: [
                 "/**",
                 " * A constant with no see tag.",

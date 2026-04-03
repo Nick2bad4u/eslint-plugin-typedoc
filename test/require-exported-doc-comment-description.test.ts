@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingExportedDocCommentDescription when JSDoc has only tag block but no description",
                 code: [
                     "/**",
                     " * @param input Parsed input value.",
@@ -20,6 +21,7 @@ ruleTester.run(
                 errors: [{ messageId: "missingExportedDocCommentDescription" }],
             },
             {
+                name: "reports missingExportedDocCommentDescription when JSDoc has only @remarks but no leading description",
                 code: [
                     "/**",
                     " * @remarks Advanced configuration surface.",
@@ -33,6 +35,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when JSDoc has a leading description before the tag block",
                 code: [
                     "/**",
                     " * Normalize user-provided input before rendering output.",
@@ -45,6 +48,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when JSDoc has a description followed by @remarks",
                 code: [
                     "/**",
                     " * Public options used to configure markdown generation.",
@@ -57,6 +61,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid for unexported function without any JSDoc comment",
                 code: [
                     "function normalize(input: string): string {",
                     "    return input.trim();",

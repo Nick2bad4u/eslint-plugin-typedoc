@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingTypeParamTags and auto-adds TODO stub for undocumented generic type parameter",
                 code: [
                     "/**",
                     " * Map one value into another type.",
@@ -44,6 +45,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when all generic type parameters have @typeParam tags",
                 code: [
                     "/**",
                     " * Build a pair.",
@@ -59,6 +61,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when @template tag documents a generic type parameter",
                 code: [
                     "/**",
                     " * Format a value.",

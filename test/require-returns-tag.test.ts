@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
     invalid: [
         {
+            name: "reports missingReturnsTag and auto-adds TODO @returns for a non-void function without one",
             code: [
                 "/**",
                 " * Build a cache key.",
@@ -27,6 +28,7 @@ ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
     ],
     valid: [
         {
+            name: "is valid when non-void function has a @returns tag with description",
             code: [
                 "/**",
                 " * Build a cache key.",
@@ -38,6 +40,7 @@ ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
             ].join("\n"),
         },
         {
+            name: "is valid for void function without @returns tag",
             code: [
                 "/**",
                 " * Log an action.",

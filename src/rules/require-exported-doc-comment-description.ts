@@ -71,7 +71,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "require documented exported declarations to start with a meaningful summary paragraph before block tags.",

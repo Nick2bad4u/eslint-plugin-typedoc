@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingTypeParamTagDescription when @typeParam tag has no description",
                 code: [
                     "/**",
                     " * Identity helper.",
@@ -24,6 +25,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @typeParam tag includes a description",
                 code: [
                     "/**",
                     " * Identity helper.",
@@ -37,6 +39,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when @template description continues on the next indented line (multiline)",
                 code: [
                     "/**",
                     " * Identity helper.",

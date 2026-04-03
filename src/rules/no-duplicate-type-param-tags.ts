@@ -105,7 +105,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description:
                 "disallow duplicate `@typeParam`/`@template` tags for the same type-parameter name.",

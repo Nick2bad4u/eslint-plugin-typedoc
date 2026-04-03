@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("no-empty-remarks-tag", getPluginRule("no-empty-remarks-tag"), {
     invalid: [
         {
+            name: "reports emptyRemarksTag when @remarks tag has no content",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -17,6 +18,7 @@ ruleTester.run("no-empty-remarks-tag", getPluginRule("no-empty-remarks-tag"), {
             errors: [{ messageId: "emptyRemarksTag" }],
         },
         {
+            name: "reports emptyRemarksTag when @remarks tag contains only an empty code fence",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -33,6 +35,7 @@ ruleTester.run("no-empty-remarks-tag", getPluginRule("no-empty-remarks-tag"), {
     ],
     valid: [
         {
+            name: "is valid when @remarks tag has inline prose",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -44,6 +47,7 @@ ruleTester.run("no-empty-remarks-tag", getPluginRule("no-empty-remarks-tag"), {
             ].join("\n"),
         },
         {
+            name: "is valid when @remarks tag contains a non-empty code fence",
             code: [
                 "/**",
                 " * Normalize user-provided input.",

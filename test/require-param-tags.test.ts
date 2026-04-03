@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
     invalid: [
         {
+            name: "reports missingParamTags and auto-adds TODO stub for undocumented parameter",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -29,6 +30,7 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
     ],
     valid: [
         {
+            name: "is valid when all function parameters have @param tags",
             code: [
                 "/**",
                 " * Add two numbers.",

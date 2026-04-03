@@ -50,7 +50,6 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     },
     defaultOptions,
     meta: {
-        deprecated: false,
         docs: {
             description: "disallow empty `@see` tags in TypeDoc comments.",
             frozen: false,

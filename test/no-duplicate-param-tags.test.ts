@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports duplicateParamTags when a @param tag name is repeated",
                 code: [
                     "/**",
                     " * Add two numbers.",
@@ -25,6 +26,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when each @param tag has a unique parameter name",
                 code: [
                     "/**",
                     " * Add two numbers.",
@@ -39,14 +41,17 @@ ruleTester.run(
             },
             // ArrowFunctionExpression without JSDoc: exercises ArrowFunctionExpression handler
             {
+                name: "is valid for arrow function without JSDoc (exercises ArrowFunctionExpression handler)",
                 code: "export const add = (left: number, right: number) => left + right;",
             },
             // FunctionExpression without JSDoc: exercises FunctionExpression handler
             {
+                name: "is valid for function expression without JSDoc (exercises FunctionExpression handler)",
                 code: "export const fn = function(x: number) { return x; };",
             },
             // MethodDefinition with valid unique @param tags: exercises MethodDefinition handler
             {
+                name: "is valid for class method with unique @param tags (exercises MethodDefinition handler)",
                 code: [
                     "export class Calculator {",
                     "    /**",
@@ -63,6 +68,7 @@ ruleTester.run(
             },
             // TSDeclareFunction with valid unique @param tags: exercises TSDeclareFunction handler
             {
+                name: "is valid for declare function with unique @param tags (exercises TSDeclareFunction handler)",
                 code: [
                     "/**",
                     " * Merge two records.",

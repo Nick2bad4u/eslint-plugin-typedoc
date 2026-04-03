@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingParamTagDescription when @param tag has a name but no description",
                 code: [
                     "/**",
                     " * Add two values.",
@@ -24,6 +25,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @param tag uses dash separator before description",
                 code: [
                     "/**",
                     " * Add two values.",
@@ -37,6 +39,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when @param description continues on the next indented line (multiline)",
                 code: [
                     "/**",
                     " * Normalize list.",

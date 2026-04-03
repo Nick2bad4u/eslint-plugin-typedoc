@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingPackageDocumentationDescription when @packageDocumentation has no description",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -24,6 +25,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @packageDocumentation is followed by a description",
                 code: [
                     "/**",
                     " * @packageDocumentation",

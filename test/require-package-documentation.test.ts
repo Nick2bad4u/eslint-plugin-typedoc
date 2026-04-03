@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingPackageDocumentation and auto-adds @packageDocumentation for file without one",
                 code: [
                     "export function add(left: number, right: number): number {",
                     "    return left + right;",
@@ -26,6 +27,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when file already has a @packageDocumentation tag",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -37,6 +39,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid for file with no exports (no package doc required)",
                 code: [
                     "function internalOnly(value: string): string {",
                     "    return value.trim();",

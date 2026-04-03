@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingDeprecatedDescription when @deprecated tag has no content",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -18,6 +19,7 @@ ruleTester.run(
                 errors: [{ messageId: "missingDeprecatedDescription" }],
             },
             {
+                name: "reports missingDeprecatedDescription when @deprecated tag contains only an empty code fence",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -32,6 +34,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @deprecated tag has inline explanation",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -41,6 +44,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid when @deprecated tag is followed by multi-line migration guidance",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -52,6 +56,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid for class without @deprecated tag",
                 code: [
                     "/**",
                     " * Modern widget implementation.",

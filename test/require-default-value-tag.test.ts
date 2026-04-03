@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingDefaultValueTag and auto-adds @defaultValue for an exported const without one",
                 code: [
                     "/**",
                     " * Default theme color used by the docs site.",
@@ -26,6 +27,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when exported const already has @defaultValue tag",
                 code: [
                     "/**",
                     " * Default theme color used by the docs site.",
@@ -35,6 +37,7 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid for exported arrow function (no @defaultValue required)",
                 code: [
                     "/**",
                     " * Runtime parser helper.",

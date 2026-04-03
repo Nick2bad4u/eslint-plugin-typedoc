@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports preferPackageDocumentationTag and auto-fixes @module to @packageDocumentation",
                 code: [
                     "/**",
                     " * @module",
@@ -29,6 +30,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @packageDocumentation tag is used",
                 code: [
                     "/**",
                     " * @packageDocumentation",

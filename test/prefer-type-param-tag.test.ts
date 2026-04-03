@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports preferTypeParamTag and auto-fixes @template to @typeParam",
                 code: [
                     "/**",
                     " * Identity helper.",
@@ -35,6 +36,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @typeParam is used instead of @template",
                 code: [
                     "/**",
                     " * Identity helper.",

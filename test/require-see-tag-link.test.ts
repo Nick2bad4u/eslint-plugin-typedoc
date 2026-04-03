@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
     invalid: [
         {
+            name: "reports missingSeeLinkOrUrl when @see tag contains prose but no URL or {@link}",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -17,6 +18,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
             errors: [{ messageId: "missingSeeLinkOrUrl" }],
         },
         {
+            name: "reports missingSeeLinkOrUrl when @see contains multi-line prose description without a link",
             code: [
                 "/**",
                 " * Widget component.",
@@ -30,6 +32,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
     ],
     valid: [
         {
+            name: "is valid when @see tag contains an absolute HTTPS URL",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -41,6 +44,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
             ].join("\n"),
         },
         {
+            name: "is valid when @see tag contains an inline {@link} reference",
             code: [
                 "/**",
                 " * Widget component.",
@@ -50,6 +54,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
             ].join("\n"),
         },
         {
+            name: "is valid when @see tag contains an FTP URL",
             code: [
                 "/**",
                 " * Fetch data from the remote API.",
@@ -61,6 +66,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
             ].join("\n"),
         },
         {
+            name: "is valid for constant without @see tag",
             // Empty @see is handled by no-empty-see-tag, not this rule
             code: [
                 "/**",
@@ -70,6 +76,7 @@ ruleTester.run("require-see-tag-link", getPluginRule("require-see-tag-link"), {
             ].join("\n"),
         },
         {
+            name: "is valid when @see tag is empty (handled by no-empty-see-tag, out of scope here)",
             // Empty @see is out of scope for this rule
             code: [
                 "/**",

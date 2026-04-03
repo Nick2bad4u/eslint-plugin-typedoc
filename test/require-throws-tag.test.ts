@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-throws-tag", getPluginRule("require-throws-tag"), {
     invalid: [
         {
+            name: "reports missingThrowsTag and auto-adds TODO @throws for a throwing function without one",
             code: [
                 "/**",
                 " * Parse JSON content.",
@@ -39,6 +40,7 @@ ruleTester.run("require-throws-tag", getPluginRule("require-throws-tag"), {
     ],
     valid: [
         {
+            name: "is valid when throwing function has a @throws tag",
             code: [
                 "/**",
                 " * Parse JSON content.",

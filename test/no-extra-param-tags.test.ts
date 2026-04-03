@@ -5,6 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
     invalid: [
         {
+            name: "reports extraParamTags when a @param tag names a non-existent parameter",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -22,6 +23,7 @@ ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
     ],
     valid: [
         {
+            name: "is valid when all @param tags correspond to actual parameters",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -35,6 +37,7 @@ ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
             ].join("\n"),
         },
         {
+            name: "is valid when parameter uses destructuring pattern",
             code: [
                 "/**",
                 " * Normalize options.",
@@ -47,14 +50,17 @@ ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
         },
         // ArrowFunctionExpression without JSDoc: exercises ArrowFunctionExpression handler
         {
+            name: "is valid for arrow function without JSDoc (exercises ArrowFunctionExpression handler)",
             code: "export const add = (left: number, right: number) => left + right;",
         },
         // FunctionExpression without JSDoc: exercises FunctionExpression handler
         {
+            name: "is valid for function expression without JSDoc (exercises FunctionExpression handler)",
             code: "export const fn = function(x: number) { return x; };",
         },
         // MethodDefinition: exercises MethodDefinition handler
         {
+            name: "is valid for class method with matching @param tags (exercises MethodDefinition handler)",
             code: [
                 "export class Calculator {",
                 "    /**",
@@ -70,6 +76,7 @@ ruleTester.run("no-extra-param-tags", getPluginRule("no-extra-param-tags"), {
         },
         // TSDeclareFunction: exercises TSDeclareFunction handler
         {
+            name: "is valid for declare function with matching @param tags (exercises TSDeclareFunction handler)",
             code: [
                 "/**",
                 " * Combine two strings.",

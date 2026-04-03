@@ -8,6 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
+                name: "reports missingThrowsDescription when @throws tag has only an error type but no description",
                 code: [
                     "/**",
                     " * Parse value.",
@@ -27,6 +28,7 @@ ruleTester.run(
         ],
         valid: [
             {
+                name: "is valid when @throws tag includes both an error type and a description",
                 code: [
                     "/**",
                     " * Parse value.",
