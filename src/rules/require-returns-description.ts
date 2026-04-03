@@ -7,6 +7,7 @@ const rule: TSESLint.RuleModule<"missingReturnsDescription", readonly []> =
     createRequireFunctionTagDescriptionRule({
         messageId: "missingReturnsDescription",
         meta: {
+            deprecated: false,
             docs: {
                 description:
                     "require `@returns` tags to include human-readable descriptions.",

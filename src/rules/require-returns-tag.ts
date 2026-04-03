@@ -20,8 +20,6 @@ import {
 } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
-
 type FunctionLikeNode =
     | TSESTree.FunctionDeclaration
     | TSESTree.FunctionExpression
@@ -29,7 +27,7 @@ type FunctionLikeNode =
     | TSESTree.TSEmptyBodyFunctionExpression;
 type MessageIds = "missingReturnsTag";
 
-type Options = typeof defaultOptions;
+type Options = readonly [];
 
 const isVoidLikeTypeAnnotation = (
     typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
@@ -138,8 +136,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require @returns tags for documented declarations with non-void return types.",

@@ -14,12 +14,10 @@ import {
 } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingThrowsTag";
-type Options = readonly [];
-
-const defaultOptions = [] as const satisfies Options;
-
 type FunctionLikeBody = null | TSESTree.BlockStatement | TSESTree.Expression;
+type MessageIds = "missingThrowsTag";
+
+type Options = readonly [];
 
 const functionBodyContainsThrow = (
     body: Readonly<FunctionLikeBody>
@@ -169,8 +167,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@throws` tags when documented functions and methods contain throw statements.",

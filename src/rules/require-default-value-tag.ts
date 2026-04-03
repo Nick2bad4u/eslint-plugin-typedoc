@@ -17,8 +17,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingDefaultValueTag";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 const isSimpleDefaultValueExpression = (
     expression: Readonly<TSESTree.Expression>
 ): boolean => {
@@ -126,8 +124,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require documented exported const values to include `@defaultValue` tags when they declare simple defaults.",

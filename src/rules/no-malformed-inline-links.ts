@@ -8,10 +8,8 @@ import type { TSESLint } from "@typescript-eslint/utils";
 import { getInlineLinkMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
-
 type MessageIds = "malformedInlineLink" | "replaceWithPlaceholder";
-type Options = typeof defaultOptions;
+type Options = readonly [];
 
 const isMalformedInlineLinkContent = (rawContent: string): boolean => {
     const content = rawContent.trim();
@@ -96,8 +94,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow malformed inline {@link ...} tags in TypeDoc comments.",

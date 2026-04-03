@@ -9,8 +9,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "emptyExampleTag";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 /** Rule implementation for empty example-tag detection. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
@@ -48,8 +46,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description: "disallow empty `@example` tags in TypeDoc comments.",
             frozen: false,

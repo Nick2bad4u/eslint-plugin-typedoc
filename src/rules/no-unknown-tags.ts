@@ -21,8 +21,6 @@ type AdditionalTagsOption = {
 type MessageIds = "unknownTag";
 type Options = readonly [AdditionalTagsOption?];
 
-const defaultOptions = [] as const satisfies Options;
-
 const supportedTypeDocTagNames = [
     "abstract",
     "alpha",
@@ -200,9 +198,9 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
         defaultOptions: [{}],
+        deprecated: false,
         docs: {
             description:
                 "disallow unknown TypeDoc tags and normalize common aliases.",

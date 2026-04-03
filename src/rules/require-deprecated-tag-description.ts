@@ -7,6 +7,7 @@ const rule: TSESLint.RuleModule<"missingDeprecatedDescription", readonly []> =
     createRequireCommentTagDescriptionRule({
         messageId: "missingDeprecatedDescription",
         meta: {
+            deprecated: false,
             docs: {
                 description:
                     "require `@deprecated` tags to explain the deprecation and, ideally, the preferred alternative.",

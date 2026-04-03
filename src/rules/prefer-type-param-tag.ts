@@ -8,6 +8,7 @@ const rule: TSESLint.RuleModule<"preferTypeParamTag", readonly []> =
         fromTag: "template",
         messageId: "preferTypeParamTag",
         meta: {
+            deprecated: false,
             docs: {
                 description:
                     "enforce using `@typeParam` over `@template` for generic TypeDoc documentation.",

@@ -18,8 +18,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingExampleTag";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 /** Rule implementation for requiring example-tag coverage on exported APIs. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
@@ -94,8 +92,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@example` tags on documented exported declarations.",

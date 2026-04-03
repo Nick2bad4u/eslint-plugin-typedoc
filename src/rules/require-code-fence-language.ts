@@ -10,7 +10,6 @@ type MessageIds = "missingFenceLanguage";
 
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
 const lineBreakPattern = /\r\n|\n|\r/gu;
 
 const hasDocFencePrefix = (prefix: string): boolean => {
@@ -147,8 +146,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require Markdown fenced code blocks in TypeDoc comments to declare a language.",

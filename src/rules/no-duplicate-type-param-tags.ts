@@ -15,8 +15,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "duplicateTypeParamTags";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 const getDuplicateNames = (names: readonly string[]): readonly string[] => {
     const seen = new Set<string>();
     const duplicates = new Set<string>();
@@ -103,8 +101,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow duplicate `@typeParam`/`@template` tags for the same type-parameter name.",

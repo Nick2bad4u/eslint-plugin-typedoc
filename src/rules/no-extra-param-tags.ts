@@ -14,8 +14,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "extraParamTags";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 const getParameterNameFromNode = (
     node: Readonly<TSESTree.Parameter>
 ): null | string => {
@@ -127,8 +125,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "disallow `@param` tags that do not map to real function parameters.",

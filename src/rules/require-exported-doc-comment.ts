@@ -15,8 +15,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingDocComment";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 const createDocCommentText = (
     declarationName: string,
     indentation: string,
@@ -91,8 +89,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require a leading TypeDoc block comment for exported declarations.",

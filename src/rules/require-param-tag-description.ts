@@ -18,8 +18,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingParamTagDescription";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 const findFirstWhitespaceIndex = (text: string): number => text.search(/\s/u);
 
 const parseParamTagPayload = (
@@ -160,8 +158,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require each `@param` tag to include a human-readable description.",

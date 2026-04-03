@@ -8,6 +8,7 @@ const rule: TSESLint.RuleModule<"preferPackageDocumentationTag", readonly []> =
         fromTag: "module",
         messageId: "preferPackageDocumentationTag",
         meta: {
+            deprecated: false,
             docs: {
                 description:
                     "enforce using `@packageDocumentation` over `@module` for package-level TypeDoc comments.",

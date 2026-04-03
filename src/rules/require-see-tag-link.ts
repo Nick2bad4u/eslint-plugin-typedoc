@@ -9,8 +9,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingSeeLinkOrUrl";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 /**
  * Matches a URL (common scheme + `://`) or a `{@link ...}` inline-tag expression
  * anywhere within the see-tag block text.
@@ -64,8 +62,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@see` tags to contain a URL or a `{@link}` reference.",

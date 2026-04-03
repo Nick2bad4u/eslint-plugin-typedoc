@@ -7,6 +7,7 @@ const rule: TSESLint.RuleModule<"missingSinceDescription", readonly []> =
     createRequireCommentTagDescriptionRule({
         messageId: "missingSinceDescription",
         meta: {
+            deprecated: false,
             docs: {
                 description:
                     "require `@since` tags to specify a version or introductory context.",

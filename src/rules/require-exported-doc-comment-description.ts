@@ -15,8 +15,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingExportedDocCommentDescription";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 /** Rule implementation for exported declaration summary requirements. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
@@ -69,8 +67,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require documented exported declarations to start with a meaningful summary paragraph before block tags.",

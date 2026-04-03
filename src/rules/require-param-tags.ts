@@ -19,10 +19,8 @@ import {
 } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
-
 type MessageIds = "missingParamTags";
-type Options = typeof defaultOptions;
+type Options = readonly [];
 
 const getParameterName = (
     parameter: Readonly<TSESTree.Parameter>,
@@ -139,8 +137,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require documented declarations to include @param tags for every parameter.",

@@ -12,10 +12,8 @@ import {
 import { getPreferredLineEnding } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-const defaultOptions = [] as const;
-
 type MessageIds = "missingTypedocConfigOptions";
-type Options = typeof defaultOptions;
+type Options = readonly [];
 
 const typedocConfigFileExpression =
     /(?:^|\\|\/)(?:typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
@@ -284,8 +282,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require essential options (entryPoints and tsconfig) in TypeDoc config objects.",

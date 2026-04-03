@@ -11,8 +11,6 @@ type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [];
 
 const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/u;
-const defaultOptions = [] as const satisfies Options;
-
 const isExportStatement = (
     statement: Readonly<TSESTree.ProgramStatement>
 ): boolean =>
@@ -98,8 +96,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require top-level `@packageDocumentation` comments to include descriptive prose.",

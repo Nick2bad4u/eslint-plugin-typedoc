@@ -21,8 +21,6 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingTypeParamTags";
 type Options = readonly [];
 
-const defaultOptions = [] as const satisfies Options;
-
 /** Rule implementation for missing type-parameter-tag coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
@@ -124,8 +122,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             },
         };
     },
-    defaultOptions,
     meta: {
+        deprecated: false,
         docs: {
             description:
                 "require `@typeParam` tags for all declared generic type parameters.",
