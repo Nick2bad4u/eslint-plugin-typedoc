@@ -40,7 +40,29 @@ export function buildProfile(name: string, isActive: boolean): string {
 
 ## Behavior and migration notes
 
-Autofix appends missing `@param` tags with TODO descriptions immediately before the closing `*/` of the existing comment block.
+This rule does **not** apply changes during `--fix`.
+
+It provides an editor suggestion that inserts missing `@param` tags without placeholder TODO prose.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` to skip declaration files such as `.d.ts` / `.d.mts`.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

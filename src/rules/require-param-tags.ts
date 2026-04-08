@@ -17,10 +17,15 @@ import {
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingParamTags";
-type Options = readonly [];
+type MessageIds = "addParamTagsSuggestion" | "missingParamTags";
+type Options = readonly [RequireCommentFileOptions?];
 
 const getParameterName = (
     parameter: Readonly<TSESTree.Parameter>,
@@ -51,6 +56,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create: (context) => {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const { sourceCode } = context;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -82,26 +93,31 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 data: {
                     params: missingParamNames.join(", "),
                 },
-                fix: (fixer) => {
-                    const insertionIndex = getDocCommentClosingLineStartIndex(
-                        sourceCode,
-                        docComment
-                    );
-
-                    return fixer.insertTextBeforeRange(
-                        [insertionIndex, insertionIndex],
-                        buildDocCommentTagInsertion(
-                            docComment,
-                            missingParamNames.map(
-                                (paramName) =>
-                                    `@param ${paramName} TODO describe ${paramName}.`
-                            ),
-                            lineEnding
-                        )
-                    );
-                },
                 messageId: "missingParamTags",
                 node: reportNode,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const insertionIndex =
+                                getDocCommentClosingLineStartIndex(
+                                    sourceCode,
+                                    docComment
+                                );
+
+                            return fixer.insertTextBeforeRange(
+                                [insertionIndex, insertionIndex],
+                                buildDocCommentTagInsertion(
+                                    docComment,
+                                    missingParamNames.map(
+                                        (paramName) => `@param ${paramName}`
+                                    ),
+                                    lineEnding
+                                )
+                            );
+                        },
+                        messageId: "addParamTagsSuggestion",
+                    },
+                ],
             });
         };
 
@@ -138,6 +154,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -148,12 +165,22 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.strict", "typedoc.configs.all"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-param-tags",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addParamTagsSuggestion:
+                "Insert missing `@param` tags into this documentation block.",
             missingParamTags:
                 "Add @param tags for missing parameters: {{params}}.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-param-tags",

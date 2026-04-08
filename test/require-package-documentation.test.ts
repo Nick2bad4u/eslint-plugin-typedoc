@@ -8,21 +8,30 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingPackageDocumentation and auto-adds @packageDocumentation for file without one",
+                name: "reports missingPackageDocumentation and suggests @packageDocumentation for file without one",
                 code: [
                     "export function add(left: number, right: number): number {",
                     "    return left + right;",
                     "}",
                 ].join("\n"),
-                errors: [{ messageId: "missingPackageDocumentation" }],
-                output: [
-                    "/**",
-                    " * @packageDocumentation",
-                    " */",
-                    "export function add(left: number, right: number): number {",
-                    "    return left + right;",
-                    "}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingPackageDocumentation",
+                        suggestions: [
+                            {
+                                messageId: "addPackageDocumentationSuggestion",
+                                output: [
+                                    "/**",
+                                    " * @packageDocumentation",
+                                    " */",
+                                    "export function add(left: number, right: number): number {",
+                                    "    return left + right;",
+                                    "}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
         ],
         valid: [
@@ -45,6 +54,17 @@ ruleTester.run(
                     "    return value.trim();",
                     "}",
                 ].join("\n"),
+            },
+            {
+                name: "is valid by default in test/ paths",
+                filename: "test/module-without-package-doc.ts",
+                code: "export const exposed = 1;",
+            },
+            {
+                name: "is valid when declaration files are ignored via option",
+                filename: "types/public-api.d.ts",
+                options: [{ ignoreDeclarationFiles: true }],
+                code: "export declare const exposed: number;",
             },
         ],
     }

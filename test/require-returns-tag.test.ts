@@ -5,7 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
     invalid: [
         {
-            name: "reports missingReturnsTag and auto-adds TODO @returns for a non-void function without one",
+            name: "reports missingReturnsTag and suggests adding bare @returns",
             code: [
                 "/**",
                 " * Build a cache key.",
@@ -14,16 +14,25 @@ ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
                 "    return `key:${id}`;",
                 "}",
             ].join("\n"),
-            errors: [{ messageId: "missingReturnsTag" }],
-            output: [
-                "/**",
-                " * Build a cache key.",
-                " * @returns TODO describe the return value.",
-                " */",
-                "export function toCacheKey(id: string): string {",
-                "    return `key:${id}`;",
-                "}",
-            ].join("\n"),
+            errors: [
+                {
+                    messageId: "missingReturnsTag",
+                    suggestions: [
+                        {
+                            messageId: "addReturnsTagSuggestion",
+                            output: [
+                                "/**",
+                                " * Build a cache key.",
+                                " * @returns",
+                                " */",
+                                "export function toCacheKey(id: string): string {",
+                                "    return `key:${id}`;",
+                                "}",
+                            ].join("\n"),
+                        },
+                    ],
+                },
+            ],
         },
     ],
     valid: [
@@ -48,6 +57,29 @@ ruleTester.run("require-returns-tag", getPluginRule("require-returns-tag"), {
                 "export function logAction(action: string): void {",
                 "    console.info(action);",
                 "}",
+            ].join("\n"),
+        },
+        {
+            name: "is valid by default in test/ paths",
+            filename: "test/require-returns-tag.ts",
+            code: [
+                "/**",
+                " * Build a cache key.",
+                " */",
+                "export function toCacheKey(id: string): string {",
+                "    return `key:${id}`;",
+                "}",
+            ].join("\n"),
+        },
+        {
+            name: "is valid when declaration files are ignored via option",
+            filename: "types/public-api.d.ts",
+            options: [{ ignoreDeclarationFiles: true }],
+            code: [
+                "/**",
+                " * Build a cache key.",
+                " */",
+                "export declare function toCacheKey(id: string): string;",
             ].join("\n"),
         },
     ],

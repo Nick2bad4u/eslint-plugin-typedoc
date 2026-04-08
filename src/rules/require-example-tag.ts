@@ -13,10 +13,15 @@ import {
     getDeclarationName,
     isDocumentableExportDeclaration,
 } from "../_internal/exported-declarations.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingExampleTag";
-type Options = readonly [];
+type MessageIds = "addExampleTagSuggestion" | "missingExampleTag";
+type Options = readonly [RequireCommentFileOptions?];
 
 /** Rule implementation for requiring example-tag coverage on exported APIs. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -24,6 +29,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -49,25 +60,31 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 data: {
                     declarationName,
                 },
-                fix: (fixer) => {
-                    const insertionIndex = getDocCommentClosingLineStartIndex(
-                        sourceCode,
-                        docComment
-                    );
-
-                    return fixer.insertTextBeforeRange(
-                        [insertionIndex, insertionIndex],
-                        buildDocCommentTagInsertion(
-                            docComment,
-                            [
-                                `@example TODO add usage example for ${declarationName}.`,
-                            ],
-                            lineEnding
-                        )
-                    );
-                },
                 messageId: "missingExampleTag",
                 node: declaration,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const insertionIndex =
+                                getDocCommentClosingLineStartIndex(
+                                    sourceCode,
+                                    docComment
+                                );
+
+                            return fixer.insertTextBeforeRange(
+                                [insertionIndex, insertionIndex],
+                                buildDocCommentTagInsertion(
+                                    docComment,
+                                    [
+                                        `@example Example usage for ${declarationName}.`,
+                                    ],
+                                    lineEnding
+                                )
+                            );
+                        },
+                        messageId: "addExampleTagSuggestion",
+                    },
+                ],
             });
         };
 
@@ -93,6 +110,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -107,12 +125,22 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-example-tag",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addExampleTagSuggestion:
+                "Add an `@example` tag with starter example text.",
             missingExampleTag:
                 "Documented exported declaration '{{declarationName}}' should include an `@example` tag.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "suggestion",
     },
     name: "require-example-tag",

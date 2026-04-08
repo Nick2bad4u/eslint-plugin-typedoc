@@ -145,7 +145,6 @@ const HIDE_PROGRESS_FILENAMES = ESLINT_PROGRESS_MODE === "nofile";
 /** @type {import("eslint").Linter.Config} */
 const fileProgressOverridesConfig = {
     name: "CLI: file progress overrides",
-    plugins: { "file-progress": progress },
     rules: {
         // The preset already auto-hides on CI, but we also support explicit
         // local toggles.

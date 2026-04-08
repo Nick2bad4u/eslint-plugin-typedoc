@@ -35,6 +35,17 @@ ruleTester.run("no-unknown-tags", getPluginRule("no-unknown-tags"), {
             errors: [{ messageId: "unknownTag" }],
             output: null,
         },
+        {
+            name: "reports unknownTag for unknown inline tags written with brace syntax",
+            code: [
+                "/**",
+                " * See {@notARealInlineTag Unsupported inline tag}.",
+                " */",
+                "export type Value = string;",
+            ].join("\n"),
+            errors: [{ messageId: "unknownTag" }],
+            output: null,
+        },
         // AdditionalTags option: unlisted tags are still reported even when additionalTags is set
         {
             name: "reports unknownTag for tags not in the additionalTags allowlist",
@@ -81,6 +92,27 @@ ruleTester.run("no-unknown-tags", getPluginRule("no-unknown-tags"), {
                 " * {@linkplain Widget|widget docs}",
                 " */",
                 "export type WidgetName = string;",
+            ].join("\n"),
+        },
+        {
+            name: "is valid when prose references scoped package names with @ inside backticks",
+            code: [
+                "/**",
+                " * Configure linting with `@typescript-eslint/parser`.",
+                " */",
+                'export const parserName = "@typescript-eslint/parser";',
+            ].join("\n"),
+        },
+        {
+            name: "is valid when fenced code blocks include @-prefixed strings",
+            code: [
+                "/**",
+                " * Example setup:",
+                " * ```ts",
+                ' * const parser = "@typescript-eslint/parser";',
+                " * ```",
+                " */",
+                'export const parserName = "@typescript-eslint/parser";',
             ].join("\n"),
         },
         {

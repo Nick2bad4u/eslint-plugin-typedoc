@@ -13,13 +13,18 @@ import {
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
 import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
+import {
     getTypeParameterNames,
     type TypeParameterizedNode,
 } from "../_internal/type-parameters.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingTypeParamTags";
-type Options = readonly [];
+type MessageIds = "addTypeParamTagsSuggestion" | "missingTypeParamTags";
+type Options = readonly [RequireCommentFileOptions?];
 
 /** Rule implementation for missing type-parameter-tag coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -27,6 +32,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -64,26 +75,32 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 data: {
                     params: missingTypeParameterNames.join(", "),
                 },
-                fix: (fixer) => {
-                    const insertionIndex = getDocCommentClosingLineStartIndex(
-                        sourceCode,
-                        docComment
-                    );
-
-                    return fixer.insertTextBeforeRange(
-                        [insertionIndex, insertionIndex],
-                        buildDocCommentTagInsertion(
-                            docComment,
-                            missingTypeParameterNames.map(
-                                (typeParameterName) =>
-                                    `@typeParam ${typeParameterName} TODO describe ${typeParameterName}.`
-                            ),
-                            lineEnding
-                        )
-                    );
-                },
                 messageId: "missingTypeParamTags",
                 node: reportNode,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const insertionIndex =
+                                getDocCommentClosingLineStartIndex(
+                                    sourceCode,
+                                    docComment
+                                );
+
+                            return fixer.insertTextBeforeRange(
+                                [insertionIndex, insertionIndex],
+                                buildDocCommentTagInsertion(
+                                    docComment,
+                                    missingTypeParameterNames.map(
+                                        (typeParameterName) =>
+                                            `@typeParam ${typeParameterName}`
+                                    ),
+                                    lineEnding
+                                )
+                            );
+                        },
+                        messageId: "addTypeParamTagsSuggestion",
+                    },
+                ],
             });
         };
 
@@ -123,6 +140,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -133,12 +151,22 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-type-param-tags",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addTypeParamTagsSuggestion:
+                "Insert missing `@typeParam` tags into this documentation block.",
             missingTypeParamTags:
                 "Generic type parameters must be documented with @typeParam tags. Missing: {{params}}.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-type-param-tags",

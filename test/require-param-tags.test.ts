@@ -5,7 +5,7 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
     invalid: [
         {
-            name: "reports missingParamTags and auto-adds TODO stub for undocumented parameter",
+            name: "reports missingParamTags and suggests adding bare @param tags",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -15,17 +15,26 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
-            errors: [{ messageId: "missingParamTags" }],
-            output: [
-                "/**",
-                " * Add two numbers.",
-                " * @param left First value.",
-                " * @param right TODO describe right.",
-                " */",
-                "export function add(left: number, right: number): number {",
-                "    return left + right;",
-                "}",
-            ].join("\n"),
+            errors: [
+                {
+                    messageId: "missingParamTags",
+                    suggestions: [
+                        {
+                            messageId: "addParamTagsSuggestion",
+                            output: [
+                                "/**",
+                                " * Add two numbers.",
+                                " * @param left First value.",
+                                " * @param right",
+                                " */",
+                                "export function add(left: number, right: number): number {",
+                                "    return left + right;",
+                                "}",
+                            ].join("\n"),
+                        },
+                    ],
+                },
+            ],
         },
     ],
     valid: [
@@ -40,6 +49,29 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
                 "export function add(left: number, right: number): number {",
                 "    return left + right;",
                 "}",
+            ].join("\n"),
+        },
+        {
+            name: "is valid by default in test/ paths",
+            filename: "test/require-param-tags.ts",
+            code: [
+                "/**",
+                " * Add two numbers.",
+                " */",
+                "export function add(left: number, right: number): number {",
+                "    return left + right;",
+                "}",
+            ].join("\n"),
+        },
+        {
+            name: "is valid when declaration files are ignored via option",
+            filename: "types/public-api.d.ts",
+            options: [{ ignoreDeclarationFiles: true }],
+            code: [
+                "/**",
+                " * Add two numbers.",
+                " */",
+                "export declare function add(left: number, right: number): number;",
             ].join("\n"),
         },
     ],

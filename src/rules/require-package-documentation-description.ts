@@ -5,10 +5,15 @@ import {
 } from "@typescript-eslint/utils";
 
 import { normalizeDocCommentLines } from "../_internal/doc-comments.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type MessageIds = "missingPackageDocumentationDescription";
-type Options = readonly [];
+type Options = readonly [RequireCommentFileOptions?];
 
 const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/u;
 const isExportStatement = (
@@ -62,6 +67,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
 
         return {
@@ -97,6 +108,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -115,7 +127,15 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             missingPackageDocumentationDescription:
                 "`@packageDocumentation` comments must include a module-level description.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-package-documentation-description",

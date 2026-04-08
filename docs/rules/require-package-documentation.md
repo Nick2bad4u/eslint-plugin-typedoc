@@ -36,7 +36,29 @@ export function parseValue(value: string): number {
 
 ## Behavior and migration notes
 
-Autofix inserts a minimal package documentation block at the top of the file.
+This rule does **not** apply changes during `--fix`.
+
+It provides an editor suggestion that inserts a minimal `@packageDocumentation` block, so teams can review and refine module-level docs intentionally.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override the defaults, and `ignoreDeclarationFiles: true` when declaration outputs should be skipped.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

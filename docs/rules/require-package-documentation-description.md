@@ -43,6 +43,26 @@ export function add(left: number, right: number): number {
 
 This rule intentionally does not autofix because module descriptions should be written intentionally.
 
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` to skip declaration files such as `.d.ts` / `.d.mts`.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
+
 ## ESLint flat config example
 
 ```ts

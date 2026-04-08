@@ -18,6 +18,11 @@ import {
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type FunctionLikeNode =
@@ -25,9 +30,9 @@ type FunctionLikeNode =
     | TSESTree.FunctionExpression
     | TSESTree.TSDeclareFunction
     | TSESTree.TSEmptyBodyFunctionExpression;
-type MessageIds = "missingReturnsTag";
+type MessageIds = "addReturnsTagSuggestion" | "missingReturnsTag";
 
-type Options = readonly [];
+type Options = readonly [RequireCommentFileOptions?];
 
 const isVoidLikeTypeAnnotation = (
     typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
@@ -76,6 +81,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create: (context) => {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const { sourceCode } = context;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -100,23 +111,29 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             }
 
             context.report({
-                fix: (fixer) => {
-                    const insertionIndex = getDocCommentClosingLineStartIndex(
-                        sourceCode,
-                        docComment
-                    );
-
-                    return fixer.insertTextBeforeRange(
-                        [insertionIndex, insertionIndex],
-                        buildDocCommentTagInsertion(
-                            docComment,
-                            ["@returns TODO describe the return value."],
-                            lineEnding
-                        )
-                    );
-                },
                 messageId: "missingReturnsTag",
                 node: docNode,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const insertionIndex =
+                                getDocCommentClosingLineStartIndex(
+                                    sourceCode,
+                                    docComment
+                                );
+
+                            return fixer.insertTextBeforeRange(
+                                [insertionIndex, insertionIndex],
+                                buildDocCommentTagInsertion(
+                                    docComment,
+                                    ["@returns"],
+                                    lineEnding
+                                )
+                            );
+                        },
+                        messageId: "addReturnsTagSuggestion",
+                    },
+                ],
             });
         };
 
@@ -137,6 +154,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -147,12 +165,21 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.strict", "typedoc.configs.all"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-returns-tag",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addReturnsTagSuggestion: "Insert a bare `@returns` tag.",
             missingReturnsTag:
                 "Add an @returns tag so TypeDoc output includes explicit return-value documentation.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-returns-tag",

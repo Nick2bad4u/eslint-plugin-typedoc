@@ -7,90 +7,145 @@ ruleTester.run(
     getPluginRule("require-exported-doc-comment"),
     {
         invalid: [
-            // FunctionDeclaration (named): baseline case
             {
-                name: "reports missingDocComment and auto-adds TODO stub for FunctionDeclaration (baseline)",
+                name: "reports missingDocComment and suggests doc stub for FunctionDeclaration (baseline)",
                 code: "export function buildClient(): void {}",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document buildClient.",
-                    " */",
-                    "export function buildClient(): void {}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * buildClient API documentation.",
+                                    " */",
+                                    "export function buildClient(): void {}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // VariableDeclaration: covers getDeclarationName VariableDeclaration branch
             {
-                name: "reports missingDocComment and auto-adds TODO stub for VariableDeclaration",
+                name: "reports missingDocComment and suggests doc stub for VariableDeclaration",
                 code: "export const version = '1.0.0';",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document version.",
-                    " */",
-                    "export const version = '1.0.0';",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * version API documentation.",
+                                    " */",
+                                    "export const version = '1.0.0';",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // ClassDeclaration: covers getDeclarationName with class name
             {
-                name: "reports missingDocComment and auto-adds TODO stub for ClassDeclaration",
+                name: "reports missingDocComment and suggests doc stub for ClassDeclaration",
                 code: "export class MyService {}",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document MyService.",
-                    " */",
-                    "export class MyService {}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * MyService API documentation.",
+                                    " */",
+                                    "export class MyService {}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // TSEnumDeclaration: covers getDeclarationName with enum name
             {
-                name: "reports missingDocComment and auto-adds TODO stub for TSEnumDeclaration",
+                name: "reports missingDocComment and suggests doc stub for TSEnumDeclaration",
                 code: "export enum Status { Active, Inactive }",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document Status.",
-                    " */",
-                    "export enum Status { Active, Inactive }",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * Status API documentation.",
+                                    " */",
+                                    "export enum Status { Active, Inactive }",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // TSTypeAliasDeclaration: covers getDeclarationName with type alias name
             {
-                name: "reports missingDocComment and auto-adds TODO stub for TSTypeAliasDeclaration",
+                name: "reports missingDocComment and suggests doc stub for TSTypeAliasDeclaration",
                 code: "export type MyAlias = string;",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document MyAlias.",
-                    " */",
-                    "export type MyAlias = string;",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * MyAlias API documentation.",
+                                    " */",
+                                    "export type MyAlias = string;",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // TSModuleDeclaration (namespace): covers getDeclarationName with namespace name
             {
-                name: "reports missingDocComment and auto-adds TODO stub for TSModuleDeclaration (namespace)",
+                name: "reports missingDocComment and suggests doc stub for TSModuleDeclaration (namespace)",
                 code: "export namespace Utils {}",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document Utils.",
-                    " */",
-                    "export namespace Utils {}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * Utils API documentation.",
+                                    " */",
+                                    "export namespace Utils {}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
-            // ExportDefaultDeclaration with anonymous FunctionDeclaration (id === null):
-            // covers getDeclarationName null-id fallback (line 50 in exported-declarations.ts)
             {
                 name: "reports missingDocComment for anonymous default export function (covers null-id fallback)",
                 code: "export default function() {}",
-                errors: [{ messageId: "missingDocComment" }],
-                output: [
-                    "/**",
-                    " * TODO: Document exported declaration.",
-                    " */",
-                    "export default function() {}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingDocComment",
+                        suggestions: [
+                            {
+                                messageId: "addDocCommentSuggestion",
+                                output: [
+                                    "/**",
+                                    " * exported declaration API documentation.",
+                                    " */",
+                                    "export default function() {}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
         ],
         valid: [
@@ -129,6 +184,17 @@ ruleTester.run(
                     " */",
                     "export const version = '1.0.0';",
                 ].join("\n"),
+            },
+            {
+                name: "is valid by default in test/ paths",
+                filename: "test/exported-doc-comment.ts",
+                code: "export function undocumented(): void {}",
+            },
+            {
+                name: "is valid when declaration files are ignored via option",
+                filename: "types/public-api.d.ts",
+                options: [{ ignoreDeclarationFiles: true }],
+                code: "export declare function undocumented(): void;",
             },
         ],
     }

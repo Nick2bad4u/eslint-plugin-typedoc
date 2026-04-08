@@ -39,7 +39,29 @@ export function toCacheKey(userId: string): string {
 
 ## Behavior and migration notes
 
-Autofix inserts a TODO `@returns` line into the existing doc block so teams can capture missing return semantics incrementally.
+This rule does **not** apply changes during `--fix`.
+
+It provides an editor suggestion that inserts a minimal `@returns` tag, so authors can add a meaningful return description deliberately.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` to skip declaration files such as `.d.ts` / `.d.mts`.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

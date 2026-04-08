@@ -8,7 +8,7 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingTypeParamTags and auto-adds TODO stub for undocumented generic type parameter",
+                name: "reports missingTypeParamTags and suggests adding bare @typeParam tags",
                 code: [
                     "/**",
                     " * Map one value into another type.",
@@ -24,23 +24,32 @@ ruleTester.run(
                     "    return mapper(input);",
                     "}",
                 ].join("\n"),
-                errors: [{ messageId: "missingTypeParamTags" }],
-                output: [
-                    "/**",
-                    " * Map one value into another type.",
-                    " * @typeParam TInput Input value type.",
-                    " * @param input Input value.",
-                    " * @param mapper Mapping function.",
-                    " * @returns Mapped value.",
-                    " * @typeParam TOutput TODO describe TOutput.",
-                    " */",
-                    "export function mapValue<TInput, TOutput>(",
-                    "    input: TInput,",
-                    "    mapper: (value: TInput) => TOutput",
-                    "): TOutput {",
-                    "    return mapper(input);",
-                    "}",
-                ].join("\n"),
+                errors: [
+                    {
+                        messageId: "missingTypeParamTags",
+                        suggestions: [
+                            {
+                                messageId: "addTypeParamTagsSuggestion",
+                                output: [
+                                    "/**",
+                                    " * Map one value into another type.",
+                                    " * @typeParam TInput Input value type.",
+                                    " * @param input Input value.",
+                                    " * @param mapper Mapping function.",
+                                    " * @returns Mapped value.",
+                                    " * @typeParam TOutput",
+                                    " */",
+                                    "export function mapValue<TInput, TOutput>(",
+                                    "    input: TInput,",
+                                    "    mapper: (value: TInput) => TOutput",
+                                    "): TOutput {",
+                                    "    return mapper(input);",
+                                    "}",
+                                ].join("\n"),
+                            },
+                        ],
+                    },
+                ],
             },
         ],
         valid: [
@@ -72,6 +81,29 @@ ruleTester.run(
                     "export function formatValue<TValue>(value: TValue): string {",
                     "    return String(value);",
                     "}",
+                ].join("\n"),
+            },
+            {
+                name: "is valid by default in test/ paths",
+                filename: "test/require-type-param-tags.ts",
+                code: [
+                    "/**",
+                    " * Map one value into another type.",
+                    " */",
+                    "export function mapValue<TInput, TOutput>(input: TInput, mapper: (value: TInput) => TOutput): TOutput {",
+                    "    return mapper(input);",
+                    "}",
+                ].join("\n"),
+            },
+            {
+                name: "is valid when declaration files are ignored via option",
+                filename: "types/public-api.d.ts",
+                options: [{ ignoreDeclarationFiles: true }],
+                code: [
+                    "/**",
+                    " * Map one value into another type.",
+                    " */",
+                    "export declare function mapValue<TInput, TOutput>(input: TInput): TOutput;",
                 ].join("\n"),
             },
         ],

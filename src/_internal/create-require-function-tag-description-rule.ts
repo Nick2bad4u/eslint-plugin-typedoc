@@ -21,10 +21,6 @@ import {
 } from "./doc-tag-blocks.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-type Options = readonly [];
-
-const defaultOptions = [] as const satisfies Options;
-
 /**
  * Configuration for a rule created via
  * {@link createRequireFunctionTagDescriptionRule}.
@@ -52,6 +48,8 @@ export type RequireFunctionTagDescriptionRuleConfig<TMessageId extends string> =
          */
         tagNames: readonly string[];
     }>;
+
+type Options = readonly [];
 
 /**
  * Creates an ESLint rule that requires function-level JSDoc tags to carry
@@ -147,7 +145,6 @@ export function createRequireFunctionTagDescriptionRule<
                 },
             };
         },
-        defaultOptions,
         meta,
         name,
     });

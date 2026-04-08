@@ -22,6 +22,6 @@ Balanced TypeDoc lint preset for most projects. Includes baseline checks plus ex
 | [`prefer-package-documentation-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-package-documentation-tag) | 🔧 |
 | [`prefer-type-param-tag`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-type-param-tag) | 🔧 |
 | [`require-deprecated-tag-description`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-deprecated-tag-description) | — |
-| [`require-exported-doc-comment`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment) | 🔧 |
+| [`require-exported-doc-comment`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment) | 💡 |
 | [`require-exported-doc-comment-description`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment-description) | — |
 | [`typedoc-config-requires-options`](https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options) | 🔧 |

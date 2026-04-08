@@ -8,10 +8,6 @@ import type { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 import { getDocCommentTagMatches } from "./doc-comments.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-type Options = readonly [];
-
-const defaultOptions = [] as const satisfies Options;
-
 /** Configuration for a prefer-tag rule created via {@link createPreferTagRule}. */
 export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
     /**
@@ -44,6 +40,8 @@ export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
      */
     toTag: string;
 }>;
+
+type Options = readonly [];
 
 /**
  * Creates an ESLint rule that enforces a canonical tag name over a deprecated
@@ -120,7 +118,6 @@ export function createPreferTagRule<TMessageId extends string>(
                 },
             };
         },
-        defaultOptions,
         meta,
         name,
     });

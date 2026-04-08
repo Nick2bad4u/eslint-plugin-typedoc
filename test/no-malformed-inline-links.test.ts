@@ -21,12 +21,7 @@ ruleTester.run(
                         suggestions: [
                             {
                                 messageId: "replaceWithPlaceholder",
-                                output: [
-                                    "/**",
-                                    " * See {@link TODO}.",
-                                    " */",
-                                    "export function run(): void {}",
-                                ].join("\n"),
+                                output: "/**\n * See {@link reference}.\n */\nexport function run(): void {}",
                             },
                         ],
                     },

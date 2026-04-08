@@ -9,10 +9,104 @@ import {
     type TSESTree,
 } from "@typescript-eslint/utils";
 
-const docTagPattern = /@(?<tagName>[A-Za-z][\w-]*)/gu;
+const inlineTagPattern = /\{@(?<tagName>[A-Za-z][\w-]*)\b/gu;
 const paramTagPattern = /@param\s+(?<restParameter>\.\.\.)?(?<rawName>\S+)/gu;
 const typeParamTagPattern = /@(?:template|typeParam)\s+(?<rawName>\S+)/gu;
 const inlineLinkPrefix = "{@link";
+const leadingCommentStarPattern = /^\s*\*/u;
+const fencedCodeFencePrefix = "```";
+
+const isAsciiLetter = (value: string): boolean => {
+    const codePoint = value.codePointAt(0);
+
+    if (codePoint === undefined) {
+        return false;
+    }
+
+    return (
+        (codePoint >= 0x41 && codePoint <= 0x5a) ||
+        (codePoint >= 0x61 && codePoint <= 0x7a)
+    );
+};
+
+const isTagNameCharacter = (value: string): boolean => {
+    const codePoint = value.codePointAt(0);
+
+    if (codePoint === undefined) {
+        return false;
+    }
+
+    return (
+        value === "-" ||
+        value === "_" ||
+        (codePoint >= 0x30 && codePoint <= 0x39) ||
+        (codePoint >= 0x41 && codePoint <= 0x5a) ||
+        (codePoint >= 0x61 && codePoint <= 0x7a)
+    );
+};
+
+const getBlockTagMatchFromLine = (
+    lineText: string
+): null | {
+    readonly end: number;
+    readonly name: string;
+    readonly start: number;
+} => {
+    let cursor = 0;
+
+    while (
+        cursor < lineText.length &&
+        (lineText[cursor] === " " || lineText[cursor] === "\t")
+    ) {
+        cursor += 1;
+    }
+
+    if (lineText[cursor] === "*") {
+        cursor += 1;
+
+        while (
+            cursor < lineText.length &&
+            (lineText[cursor] === " " || lineText[cursor] === "\t")
+        ) {
+            cursor += 1;
+        }
+    }
+
+    if (lineText[cursor] !== "@") {
+        return null;
+    }
+
+    const nameStart = cursor + 1;
+    const firstNameCharacter = lineText[nameStart];
+
+    if (
+        typeof firstNameCharacter !== "string" ||
+        !isAsciiLetter(firstNameCharacter)
+    ) {
+        return null;
+    }
+
+    let nameEnd = nameStart + 1;
+
+    while (nameEnd < lineText.length) {
+        const nextCharacter = lineText[nameEnd];
+
+        if (
+            typeof nextCharacter !== "string" ||
+            !isTagNameCharacter(nextCharacter)
+        ) {
+            break;
+        }
+
+        nameEnd += 1;
+    }
+
+    return {
+        end: nameEnd,
+        name: lineText.slice(nameStart, nameEnd),
+        start: cursor,
+    };
+};
 
 const normalizeTagNameToken = (rawName: string): string => {
     const normalizedName = rawName
@@ -122,26 +216,81 @@ export const getDocCommentTagMatches = (
 ): readonly DocTagMatch[] => {
     const commentText = sourceCode.getText(comment);
     const matches: DocTagMatch[] = [];
+    let inFencedCodeBlock = false;
+    let lineStartOffset = 0;
+    const rawLines = commentText.split("\n");
 
-    for (const match of commentText.matchAll(docTagPattern)) {
-        const fullMatch = match[0];
-        const tagName = match.groups?.["tagName"];
-        const relativeStart = match.index;
+    // Walk the raw comment text line-by-line so we can:
+    // 1) match block tags only at line starts,
+    // 2) still support inline tags like {@link ...}, and
+    // 3) ignore fenced code blocks where @-prefixed tokens are just code.
+    for (const [lineIndex, rawLine] of rawLines.entries()) {
+        const tokenText = rawLine.endsWith("\r")
+            ? rawLine.slice(0, -1)
+            : rawLine;
+        const hasTrailingCarriageReturn = rawLine.endsWith("\r");
 
-        if (
-            typeof fullMatch !== "string" ||
-            typeof tagName !== "string" ||
-            typeof relativeStart !== "number"
-        ) {
-            continue;
+        const normalizedLine = tokenText
+            .replace(leadingCommentStarPattern, "")
+            .trimStart();
+
+        if (normalizedLine.startsWith(fencedCodeFencePrefix)) {
+            inFencedCodeBlock = !inFencedCodeBlock;
+        } else if (!inFencedCodeBlock) {
+            const lineMatches: {
+                readonly end: number;
+                readonly name: string;
+                readonly start: number;
+            }[] = [];
+
+            const blockTagMatch = getBlockTagMatchFromLine(tokenText);
+
+            if (blockTagMatch !== null) {
+                lineMatches.push(blockTagMatch);
+            }
+
+            for (const inlineTagMatch of tokenText.matchAll(inlineTagPattern)) {
+                const inlineTagName = inlineTagMatch.groups?.["tagName"];
+                const inlineTagIndex = inlineTagMatch.index;
+
+                if (
+                    typeof inlineTagName !== "string" ||
+                    typeof inlineTagIndex !== "number"
+                ) {
+                    continue;
+                }
+
+                // Inline tags match as "{@tag"; normalize ranges to start at '@'.
+                const inlineTagStart = inlineTagIndex + 1;
+
+                lineMatches.push({
+                    end: inlineTagStart + inlineTagName.length + 1,
+                    name: inlineTagName,
+                    start: inlineTagStart,
+                });
+            }
+
+            lineMatches.sort((left, right) => left.start - right.start);
+
+            for (const lineMatch of lineMatches) {
+                const absoluteStart =
+                    comment.range[0] + lineStartOffset + lineMatch.start;
+
+                matches.push({
+                    absoluteRange: [
+                        absoluteStart,
+                        absoluteStart + (lineMatch.end - lineMatch.start),
+                    ],
+                    name: lineMatch.name,
+                });
+            }
         }
 
-        const absoluteStart = comment.range[0] + relativeStart;
+        const hasTrailingLineFeed = lineIndex < rawLines.length - 1;
 
-        matches.push({
-            absoluteRange: [absoluteStart, absoluteStart + fullMatch.length],
-            name: tagName,
-        });
+        lineStartOffset +=
+            tokenText.length +
+            (hasTrailingLineFeed ? (hasTrailingCarriageReturn ? 2 : 1) : 0);
     }
 
     return matches;

@@ -5,10 +5,17 @@ import {
 } from "@typescript-eslint/utils";
 
 import { getPreferredLineEnding } from "../_internal/doc-comments.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingPackageDocumentation";
-type Options = readonly [];
+type MessageIds =
+    | "addPackageDocumentationSuggestion"
+    | "missingPackageDocumentation";
+type Options = readonly [RequireCommentFileOptions?];
 
 const packageDocumentationTagPattern = /@(?:module|packageDocumentation)\b/u;
 const isExportStatement = (
@@ -47,6 +54,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -65,27 +78,34 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 }
 
                 context.report({
-                    fix: (fixer) => {
-                        const insertionIndex = program.body[0]?.range[0] ?? 0;
-                        const packageDocumentationComment = [
-                            "/**",
-                            " * @packageDocumentation",
-                            " */",
-                            "",
-                        ].join(lineEnding);
-
-                        return fixer.insertTextBeforeRange(
-                            [insertionIndex, insertionIndex],
-                            packageDocumentationComment
-                        );
-                    },
                     messageId: "missingPackageDocumentation",
                     node: program,
+                    suggest: [
+                        {
+                            fix: (fixer) => {
+                                const insertionIndex =
+                                    program.body[0]?.range[0] ?? 0;
+                                const packageDocumentationComment = [
+                                    "/**",
+                                    " * @packageDocumentation",
+                                    " */",
+                                    "",
+                                ].join(lineEnding);
+
+                                return fixer.insertTextBeforeRange(
+                                    [insertionIndex, insertionIndex],
+                                    packageDocumentationComment
+                                );
+                            },
+                            messageId: "addPackageDocumentationSuggestion",
+                        },
+                    ],
                 });
             },
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -100,12 +120,22 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-package-documentation",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addPackageDocumentationSuggestion:
+                "Add a top-level `@packageDocumentation` comment block.",
             missingPackageDocumentation:
                 "Modules that export API should include a top-level `@packageDocumentation` comment.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "suggestion",
     },
     name: "require-package-documentation",

@@ -61,6 +61,17 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
+                name: "is valid by default in test/ paths",
+                filename: "test/exported-doc-comment-description.ts",
+                code: "export interface Widget { id: string; }",
+            },
+            {
+                name: "is valid when declaration files are ignored via option",
+                filename: "types/public-api.d.ts",
+                options: [{ ignoreDeclarationFiles: true }],
+                code: "export interface Widget { id: string; }",
+            },
+            {
                 name: "is valid for unexported function without any JSDoc comment",
                 code: [
                     "function normalize(input: string): string {",

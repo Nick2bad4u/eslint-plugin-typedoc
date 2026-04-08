@@ -10,10 +10,15 @@ import {
     getDeclarationName,
     isDocumentableExportDeclaration,
 } from "../_internal/exported-declarations.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type MessageIds = "missingExportedDocCommentDescription";
-type Options = readonly [];
+type Options = readonly [RequireCommentFileOptions?];
 
 /** Rule implementation for exported declaration summary requirements. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -21,6 +26,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
 
         const reportIfMissingDescription = (
@@ -68,6 +79,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -87,7 +99,15 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             missingExportedDocCommentDescription:
                 "Documented exported declaration '{{declarationName}}' must include a summary paragraph before TypeDoc block tags.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-exported-doc-comment-description",

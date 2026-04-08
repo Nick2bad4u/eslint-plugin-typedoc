@@ -11,10 +11,6 @@ import {
 } from "./doc-tag-blocks.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-type Options = readonly [];
-
-const defaultOptions = [] as const satisfies Options;
-
 /**
  * Configuration for a rule created via
  * {@link createRequireCommentTagDescriptionRule}.
@@ -41,6 +37,8 @@ export type RequireCommentTagDescriptionRuleConfig<TMessageId extends string> =
          */
         tagName: string;
     }>;
+
+type Options = readonly [];
 
 /**
  * Creates an ESLint rule that requires a specific JSDoc block-comment tag to
@@ -95,7 +93,6 @@ export function createRequireCommentTagDescriptionRule<
                 },
             };
         },
-        defaultOptions,
         meta,
         name,
     });

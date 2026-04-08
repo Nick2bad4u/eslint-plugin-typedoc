@@ -12,12 +12,17 @@ import {
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type FunctionLikeBody = null | TSESTree.BlockStatement | TSESTree.Expression;
-type MessageIds = "missingThrowsTag";
+type MessageIds = "addThrowsTagSuggestion" | "missingThrowsTag";
 
-type Options = readonly [];
+type Options = readonly [RequireCommentFileOptions?];
 
 const functionBodyContainsThrow = (
     body: Readonly<FunctionLikeBody>
@@ -97,6 +102,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -124,23 +135,29 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             }
 
             context.report({
-                fix: (fixer) => {
-                    const insertionIndex = getDocCommentClosingLineStartIndex(
-                        sourceCode,
-                        docComment
-                    );
-
-                    return fixer.insertTextBeforeRange(
-                        [insertionIndex, insertionIndex],
-                        buildDocCommentTagInsertion(
-                            docComment,
-                            ["@throws TODO describe thrown errors."],
-                            lineEnding
-                        )
-                    );
-                },
                 messageId: "missingThrowsTag",
                 node: reportNode,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const insertionIndex =
+                                getDocCommentClosingLineStartIndex(
+                                    sourceCode,
+                                    docComment
+                                );
+
+                            return fixer.insertTextBeforeRange(
+                                [insertionIndex, insertionIndex],
+                                buildDocCommentTagInsertion(
+                                    docComment,
+                                    ["@throws"],
+                                    lineEnding
+                                )
+                            );
+                        },
+                        messageId: "addThrowsTagSuggestion",
+                    },
+                ],
             });
         };
 
@@ -168,6 +185,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -178,12 +196,21 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-throws-tag",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addThrowsTagSuggestion: "Insert a bare `@throws` tag.",
             missingThrowsTag:
                 "Functions that throw should document thrown errors with an `@throws` tag.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-throws-tag",

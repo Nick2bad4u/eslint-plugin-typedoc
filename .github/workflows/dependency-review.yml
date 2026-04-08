@@ -1,7 +1,7 @@
 # Dependency Review Action
 #
-# This Action will scan dependency manifest files that change as part of a pull request,
-# surfacing known-vulnerable versions of the packages declared or updated in the PR.
+# This Action scans dependency manifests changed in pull requests and reports
+# known vulnerabilities for updated or introduced packages.
 
 # yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
 name: Dependency Review
@@ -36,3 +36,5 @@ jobs:
 
             - name: Dependency Review
               uses: actions/dependency-review-action@05fe4576374b728f0c523d6a13d64c25081e0803 # v4.8.3
+              with:
+                  fail-on-severity: moderate

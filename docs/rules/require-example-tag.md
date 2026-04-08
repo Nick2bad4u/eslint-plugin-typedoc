@@ -53,7 +53,32 @@ export function add(left: number, right: number): number {
 
 ## Behavior and migration notes
 
-Autofix appends a TODO `@example` block line. Replace placeholder text with a realistic snippet before publishing docs.
+This rule does **not** apply changes during `--fix`.
+
+It offers an editor suggestion that inserts a minimal `@example` tag stub (`@example Example usage for <name>.`) and expects authors to replace it with a real, context-specific example.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+You can override this behavior with:
+
+- `ignorePatterns`: custom glob patterns
+- `ignoreDeclarationFiles`: skip declaration files such as `.d.ts` and `.d.mts`
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

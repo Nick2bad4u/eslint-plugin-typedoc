@@ -83,7 +83,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                                     fix: (fixer) =>
                                         fixer.replaceTextRange(
                                             [absoluteStart, absoluteEnd],
-                                            "{@link TODO}"
+                                            "{@link reference}"
                                         ),
                                     messageId: "replaceWithPlaceholder",
                                 },
@@ -118,7 +118,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             malformedInlineLink:
                 "Inline link '{{link}}' is malformed. Provide a non-empty target and optional label (for example `{@link Symbol}` or `{@link Symbol|Label}`).",
             replaceWithPlaceholder:
-                "Replace this malformed inline link with a TODO placeholder.",
+                "Replace this malformed inline link with `{@link reference}` and then fill in the target.",
         },
         schema: [],
         type: "problem",

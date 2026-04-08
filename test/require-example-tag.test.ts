@@ -17,19 +17,28 @@ ruleTester.run("require-example-tag", getPluginRule("require-example-tag"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
-            errors: [{ messageId: "missingExampleTag" }],
-            output: [
-                "/**",
-                " * Add two numbers.",
-                " * @param left Left value.",
-                " * @param right Right value.",
-                " * @returns Sum.",
-                " * @example TODO add usage example for add.",
-                " */",
-                "export function add(left: number, right: number): number {",
-                "    return left + right;",
-                "}",
-            ].join("\n"),
+            errors: [
+                {
+                    messageId: "missingExampleTag",
+                    suggestions: [
+                        {
+                            messageId: "addExampleTagSuggestion",
+                            output: [
+                                "/**",
+                                " * Add two numbers.",
+                                " * @param left Left value.",
+                                " * @param right Right value.",
+                                " * @returns Sum.",
+                                " * @example Example usage for add.",
+                                " */",
+                                "export function add(left: number, right: number): number {",
+                                "    return left + right;",
+                                "}",
+                            ].join("\n"),
+                        },
+                    ],
+                },
+            ],
         },
     ],
     valid: [
@@ -52,6 +61,21 @@ ruleTester.run("require-example-tag", getPluginRule("require-example-tag"), {
         {
             name: "is valid for undocumented function without JSDoc comment",
             code: ["export function undocumented(): void {}"].join("\n"),
+        },
+        {
+            name: "is valid by default in test/ paths",
+            filename: "test/require-example.ts",
+            code: [
+                "export function add(left: number, right: number): number { return left + right; }",
+            ].join("\n"),
+        },
+        {
+            name: "is valid when declaration files are ignored via option",
+            filename: "types/public-api.d.ts",
+            options: [{ ignoreDeclarationFiles: true }],
+            code: [
+                "export declare function add(left: number, right: number): number;",
+            ].join("\n"),
         },
     ],
 });

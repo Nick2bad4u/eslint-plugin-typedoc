@@ -1,4 +1,4 @@
-import type { TSESLint } from "@typescript-eslint/utils";
+import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import {
     getDocCommentAnchorNode,
@@ -10,10 +10,15 @@ import {
     getDeclarationName,
     isDocumentableExportDeclaration,
 } from "../_internal/exported-declarations.js";
+import {
+    type RequireCommentFileOptions,
+    requireCommentFileOptionsSchemaProperties,
+    shouldIgnoreRequireCommentFile,
+} from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type MessageIds = "missingDocComment";
-type Options = readonly [];
+type MessageIds = "addDocCommentSuggestion" | "missingDocComment";
+type Options = readonly [RequireCommentFileOptions?];
 
 const createDocCommentText = (
     declarationName: string,
@@ -22,7 +27,7 @@ const createDocCommentText = (
 ): string =>
     [
         `${indentation}/**`,
-        `${indentation} * TODO: Document ${declarationName}.`,
+        `${indentation} * ${declarationName} API documentation.`,
         `${indentation} */`,
         "",
     ].join(lineEnding);
@@ -33,6 +38,12 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     MessageIds
 >({
     create(context) {
+        if (
+            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+        ) {
+            return {};
+        }
+
         const sourceCode = context.sourceCode;
         const lineEnding = getPreferredLineEnding(sourceCode);
 
@@ -51,25 +62,35 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 data: {
                     declarationName,
                 },
-                fix: (fixer) => {
-                    const indentation = " ".repeat(
-                        docAnchorNode.loc?.start.column ?? 0
-                    );
-                    const docComment = createDocCommentText(
-                        declarationName,
-                        indentation,
-                        lineEnding
-                    );
-
-                    return fixer.insertTextBefore(docAnchorNode, docComment);
-                },
                 messageId: "missingDocComment",
                 node: declaration,
+                suggest: [
+                    {
+                        fix: (fixer) => {
+                            const indentation = " ".repeat(
+                                docAnchorNode.loc?.start.column ?? 0
+                            );
+                            const docComment = createDocCommentText(
+                                declarationName,
+                                indentation,
+                                lineEnding
+                            );
+
+                            return fixer.insertTextBefore(
+                                docAnchorNode,
+                                docComment
+                            );
+                        },
+                        messageId: "addDocCommentSuggestion",
+                    },
+                ],
             });
         };
 
         return {
-            ExportDefaultDeclaration: (node): void => {
+            ExportDefaultDeclaration(
+                node: Readonly<TSESTree.ExportDefaultDeclaration>
+            ): void {
                 const declaration = node.declaration;
 
                 if (!isDocumentableExportDeclaration(declaration)) {
@@ -78,7 +99,9 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                 reportIfMissingDocComment(declaration);
             },
-            ExportNamedDeclaration: (node): void => {
+            ExportNamedDeclaration(
+                node: Readonly<TSESTree.ExportNamedDeclaration>
+            ): void {
                 const declaration = node.declaration;
 
                 if (!isDocumentableExportDeclaration(declaration)) {
@@ -90,6 +113,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         };
     },
     meta: {
+        defaultOptions: [{}],
         deprecated: false,
         docs: {
             description:
@@ -106,12 +130,22 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment",
         },
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
+            addDocCommentSuggestion:
+                "Add a documentation comment stub for this export.",
             missingDocComment:
                 "Exported declaration '{{declarationName}}' must have a leading TypeDoc comment.",
         },
-        schema: [],
+        schema: [
+            {
+                additionalProperties: false,
+                properties: {
+                    ...requireCommentFileOptionsSchemaProperties,
+                },
+                type: "object",
+            },
+        ],
         type: "problem",
     },
     name: "require-exported-doc-comment",

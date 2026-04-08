@@ -37,6 +37,17 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
             },
+            {
+                name: "is valid by default in test/ paths",
+                filename: "test/package-doc-description.ts",
+                code: "export const value = 1;",
+            },
+            {
+                name: "is valid when declaration files are ignored via option",
+                filename: "types/public-api.d.ts",
+                options: [{ ignoreDeclarationFiles: true }],
+                code: "export declare const value: number;",
+            },
         ],
     }
 );

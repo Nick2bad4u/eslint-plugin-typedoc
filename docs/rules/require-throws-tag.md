@@ -51,7 +51,29 @@ export function parseJson(input: string): unknown {
 
 ## Behavior and migration notes
 
-Autofix appends a TODO `@throws` line. Then replace the placeholder with concrete error semantics.
+This rule does **not** apply changes during `--fix`.
+
+It provides an editor suggestion that inserts a minimal `@throws` tag, so authors can document real error conditions intentionally.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` to skip declaration files such as `.d.ts` / `.d.mts`.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

@@ -50,6 +50,19 @@ export function normalize(input: string): string {
 - This rule intentionally ignores exports that do not have a TypeDoc comment yet. Use it together with `require-exported-doc-comment` when you want full exported-API documentation coverage.
 - A `@remarks` section does not replace the lead summary paragraph. The summary should still come first.
 - This rule does not autofix because summaries should be written intentionally, not generated mechanically.
+- By default, this rule ignores non-production paths: `test/**`, `tests/**`, `benchmark/**`, `benchmarks/**`, `fixture/**`, `fixtures/**`, `temp/**`, `coverage/**`, `dist/**`, `build/**`, and `generated/**`.
+- Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` to skip declaration files such as `.d.ts` / `.d.mts`.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 

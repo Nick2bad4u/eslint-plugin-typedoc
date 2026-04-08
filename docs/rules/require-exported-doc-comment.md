@@ -35,7 +35,29 @@ export function createClient(): void {}
 
 ## Behavior and migration notes
 
-The autofix inserts a minimal TODO TypeDoc block so teams can quickly mark undocumented exports and fill details incrementally.
+This rule does **not** apply changes during `--fix`.
+
+It provides an editor suggestion that inserts a minimal documentation stub (for example: `buildClient API documentation.`) so authors can replace it with real API intent.
+
+By default, this rule ignores non-production paths:
+
+- `test/**`, `tests/**`
+- `benchmark/**`, `benchmarks/**`
+- `fixture/**`, `fixtures/**`
+- `temp/**`, `coverage/**`, `dist/**`, `build/**`, `generated/**`
+
+Use `ignorePatterns` to override those defaults, and `ignoreDeclarationFiles: true` when declaration outputs should be skipped.
+
+Rule options:
+
+```ts
+type RuleOptions = [
+    {
+        ignoreDeclarationFiles?: boolean;
+        ignorePatterns?: string[];
+    }?
+];
+```
 
 ## ESLint flat config example
 
@@ -70,4 +92,4 @@ TypeDoc package documentation:
 
 ## Adoption resources
 
-- Start with `typedoc.configs.recommended` and combine autofix with targeted follow-up docs review.
+- Start with `typedoc.configs.recommended` and apply suggestions during docs review, not blanket `--fix` runs.
