@@ -21,10 +21,7 @@ import {
 } from "./doc-tag-blocks.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-/**
- * Configuration for a rule created via
- * {@link createRequireFunctionTagDescriptionRule}.
- */
+/** Configuration for a generated function-tag description rule. */
 export type RequireFunctionTagDescriptionRuleConfig<TMessageId extends string> =
     Readonly<{
         /** The message ID to report when the tag lacks a description. */
@@ -43,8 +40,6 @@ export type RequireFunctionTagDescriptionRuleConfig<TMessageId extends string> =
         /**
          * Tag names to look for (without `@`). Multiple alternatives may be
          * provided for tags that have a canonical and a legacy spelling.
-         *
-         * @example Returns , "return"
          */
         tagNames: readonly string[];
     }>;
@@ -57,8 +52,8 @@ type Options = readonly [];
  *
  * The rule visits every function-like node in the AST, retrieves the leading
  * JSDoc comment, and checks whether any tag whose name is in `tagNames` is
- * present but lacks description text (as defined by
- * {@link hasMeaningfulTagDescription}).
+ * present but lacks description text according to the shared
+ * `hasMeaningfulTagDescription` helper.
  *
  * Visited node types:
  *
@@ -67,11 +62,6 @@ type Options = readonly [];
  * - `FunctionExpression`
  * - `MethodDefinition` (only when the value is a function expression)
  * - `TSDeclareFunction`
- *
- * @param config - Rule configuration including tag names, message ID, and
- *   metadata.
- *
- * @returns A fully-configured ESLint rule module.
  */
 export function createRequireFunctionTagDescriptionRule<
     TMessageId extends string,

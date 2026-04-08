@@ -8,12 +8,10 @@ import type { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 import { getDocCommentTagMatches } from "./doc-comments.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-/** Configuration for a prefer-tag rule created via {@link createPreferTagRule}. */
+/** Configuration for a prefer-tag rule created by this helper. */
 export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
     /**
      * The deprecated tag name to replace (without `@`).
-     *
-     * @example Module
      */
     fromTag: string;
 
@@ -35,8 +33,6 @@ export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
 
     /**
      * The canonical tag name to enforce (without `@`).
-     *
-     * @example PackageDocumentation
      */
     toTag: string;
 }>;
@@ -48,13 +44,8 @@ type Options = readonly [];
  * alias.
  *
  * The rule scans every JSDoc block comment in a file, finds any occurrence of
- * `@{fromTag}`, and reports it with an autofix that replaces it with
- * `@{toTag}`.
- *
- * @param config - Rule configuration including tag names, message ID, and
- *   metadata.
- *
- * @returns A fully-configured ESLint rule module with autofix support.
+ * the configured deprecated tag name, and reports it with an autofix that
+ * replaces it with the configured canonical tag name.
  */
 export function createPreferTagRule<TMessageId extends string>(
     config: PreferTagRuleConfig<TMessageId>

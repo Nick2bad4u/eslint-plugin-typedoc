@@ -1,8 +1,3 @@
-/**
- * @packageDocumentation
- * Factory for rules that require doc-comment tags to have meaningful content.
- */
-
 import type { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
 import {
@@ -11,10 +6,7 @@ import {
 } from "./doc-tag-blocks.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
 
-/**
- * Configuration for a rule created via
- * {@link createRequireCommentTagDescriptionRule}.
- */
+/** Configuration for a generated tag-description rule. */
 export type RequireCommentTagDescriptionRuleConfig<TMessageId extends string> =
     Readonly<{
         /** The message ID to report when the tag is missing content. */
@@ -30,28 +22,15 @@ export type RequireCommentTagDescriptionRuleConfig<TMessageId extends string> =
         /** Canonical ESLint rule name. */
         name: string;
 
-        /**
-         * The tag name to check (without `@`).
-         *
-         * @example Deprecated
-         */
+        /** Target tag name without a leading at-sign. */
         tagName: string;
     }>;
 
 type Options = readonly [];
 
 /**
- * Creates an ESLint rule that requires a specific JSDoc block-comment tag to
- * have meaningful content.
- *
- * The rule walks every JSDoc block comment across the whole file (via the
- * `Program` visitor) and reports any occurrence of `@{tagName}` whose body
- * fails the {@link hasMeaningfulTagBlockContent} check.
- *
- * @param config - Rule configuration including the target tag, message ID, and
- *   metadata.
- *
- * @returns A fully-configured ESLint rule module.
+ * Creates an ESLint rule that requires configured tag blocks to include
+ * meaningful descriptive text.
  */
 export function createRequireCommentTagDescriptionRule<
     TMessageId extends string,
