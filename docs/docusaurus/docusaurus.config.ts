@@ -101,7 +101,7 @@ const futureConfig = {
     },
 } satisfies Config["future"];
 
-const config: Config = {
+const config = {
     baseUrl,
     baseUrlIssueBanner: true,
     clientModules: [modernEnhancementsClientModule],
@@ -409,14 +409,6 @@ const config: Config = {
                 content: projectName,
                 property: "og:site_name",
             },
-            {
-                content: socialCardImageUrl,
-                property: "og:image",
-            },
-            {
-                content: socialCardImageUrl,
-                name: "twitter:image",
-            },
         ],
         navbar: {
             hideOnScroll: true,
@@ -460,7 +452,7 @@ const config: Config = {
                     ],
                     label: "📜 Rules",
                     position: "left",
-                    to: "/docs/rules/overview",
+                    to: "/docs/rules",
                     type: "dropdown",
                 },
                 {
@@ -628,6 +620,6 @@ const config: Config = {
     title: projectName,
     trailingSlash: false,
     url: siteOrigin,
-};
+} satisfies Config;
 
 export default config;

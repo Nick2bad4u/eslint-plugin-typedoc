@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingExportedDocCommentDescription when JSDoc has only tag block but no description",
                 code: [
                     "/**",
                     " * @param input Parsed input value.",
@@ -19,9 +18,9 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "missingExportedDocCommentDescription" }],
+                name: "reports missingExportedDocCommentDescription when JSDoc has only tag block but no description",
             },
             {
-                name: "reports missingExportedDocCommentDescription when JSDoc has only @remarks but no leading description",
                 code: [
                     "/**",
                     " * @remarks Advanced configuration surface.",
@@ -31,11 +30,11 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "missingExportedDocCommentDescription" }],
+                name: "reports missingExportedDocCommentDescription when JSDoc has only @remarks but no leading description",
             },
         ],
         valid: [
             {
-                name: "is valid when JSDoc has a leading description before the tag block",
                 code: [
                     "/**",
                     " * Normalize user-provided input before rendering output.",
@@ -46,9 +45,9 @@ ruleTester.run(
                     "    return input.trim();",
                     "}",
                 ].join("\n"),
+                name: "is valid when JSDoc has a leading description before the tag block",
             },
             {
-                name: "is valid when JSDoc has a description followed by @remarks",
                 code: [
                     "/**",
                     " * Public options used to configure markdown generation.",
@@ -59,25 +58,26 @@ ruleTester.run(
                     "    readonly enabled: boolean;",
                     "}",
                 ].join("\n"),
+                name: "is valid when JSDoc has a description followed by @remarks",
             },
             {
-                name: "is valid by default in test/ paths",
+                code: "export interface Widget { id: string; }",
                 filename: "test/exported-doc-comment-description.ts",
-                code: "export interface Widget { id: string; }",
+                name: "is valid by default in test/ paths",
             },
             {
-                name: "is valid when declaration files are ignored via option",
+                code: "export interface Widget { id: string; }",
                 filename: "types/public-api.d.ts",
+                name: "is valid when declaration files are ignored via option",
                 options: [{ ignoreDeclarationFiles: true }],
-                code: "export interface Widget { id: string; }",
             },
             {
-                name: "is valid for unexported function without any JSDoc comment",
                 code: [
                     "function normalize(input: string): string {",
                     "    return input.trim();",
                     "}",
                 ].join("\n"),
+                name: "is valid for unexported function without any JSDoc comment",
             },
         ],
     }

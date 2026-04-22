@@ -4,6 +4,7 @@
  */
 
 import type { TSESLint } from "@typescript-eslint/utils";
+import type { UnknownArray } from "type-fest";
 
 import noDuplicateParamTagsRule from "../rules/no-duplicate-param-tags.js";
 import noDuplicateTypeParamTagsRule from "../rules/no-duplicate-type-param-tags.js";
@@ -38,7 +39,7 @@ import requireTypeParamTagsRule from "../rules/require-type-param-tags.js";
 import typedocConfigRequiresOptionsRule from "../rules/typedoc-config-requires-options.js";
 
 /** Runtime rule module shape used by registry/preset builders. */
-export type RuleWithDocs = TSESLint.RuleModule<string, readonly unknown[]>;
+export type RuleWithDocs = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
 
 /** Pattern for unqualified rule names supported by `eslint-plugin-typedoc`. */
 export type TypedocRuleNamePattern =

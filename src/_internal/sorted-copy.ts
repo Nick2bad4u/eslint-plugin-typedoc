@@ -3,6 +3,8 @@
  * Small immutable sorting helpers for internal metadata and rule messages.
  */
 
+import { isDefined } from "ts-extras";
+
 /** Create a sorted copy of iterable values without mutating the input. */
 export const createSortedCopy = <T>(
     values: Iterable<T>,
@@ -16,10 +18,7 @@ export const createSortedCopy = <T>(
         while (insertionIndex < sortedValues.length) {
             const existingValue = sortedValues[insertionIndex];
 
-            if (
-                existingValue !== undefined &&
-                compare(existingValue, value) > 0
-            ) {
+            if (isDefined(existingValue) && compare(existingValue, value) > 0) {
                 break;
             }
 

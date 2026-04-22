@@ -1,0 +1,24 @@
+.liveBadgeList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    /* stylelint-disable-next-line defensive-css/no-list-style-none -- semantic list element retained and styled presentation-only. */
+    list-style: none;
+}
+
+.liveBadgeListItem {
+    margin: 0;
+}
+
+.liveBadgeAnchor {
+    display: inline-flex;
+    border-radius: 0.5rem;
+}
+
+.liveBadgeImage {
+    display: block;
+    block-size: 24px;
+    inline-size: auto;
+}

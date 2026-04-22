@@ -1,6 +1,6 @@
 import Link from "@docusaurus/Link";
 
-import styles from "../pages/index.module.css";
+import styles from "./GitHubStats.module.css";
 
 type GitHubStatsProps = {
     readonly className?: string;
@@ -58,23 +58,26 @@ const liveBadges = [
  * @returns Badge strip with links to package/repository metadata.
  */
 export default function GitHubStats({ className = "" }: GitHubStatsProps) {
-    const badgeListClassName = [styles.liveBadgeList, className]
+    const liveBadgeAnchorClassName = styles["liveBadgeAnchor"] ?? "";
+    const liveBadgeImageClassName = styles["liveBadgeImage"] ?? "";
+    const liveBadgeListClassName = [styles["liveBadgeList"] ?? "", className]
         .filter(Boolean)
         .join(" ");
+    const liveBadgeListItemClassName = styles["liveBadgeListItem"] ?? "";
 
     return (
-        <ul className={badgeListClassName}>
+        <ul className={liveBadgeListClassName}>
             {liveBadges.map((badge) => (
-                <li key={badge.src} className={styles.liveBadgeListItem}>
+                <li key={badge.src} className={liveBadgeListItemClassName}>
                     <Link
-                        className={styles.liveBadgeAnchor}
+                        className={liveBadgeAnchorClassName}
                         href={badge.href}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
                         <img
                             alt={badge.alt}
-                            className={styles.liveBadgeImage}
+                            className={liveBadgeImageClassName}
                             src={badge.src}
                             loading="lazy"
                             decoding="async"

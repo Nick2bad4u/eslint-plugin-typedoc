@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports extraTypeParamTags when @typeParam names a non-existent generic on a multi-generic function",
                 code: [
                     "/**",
                     " * Build a pair.",
@@ -24,9 +23,9 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "extraTypeParamTags" }],
+                name: "reports extraTypeParamTags when @typeParam names a non-existent generic on a multi-generic function",
             },
             {
-                name: "reports extraTypeParamTags when @typeParam names a non-existent generic on a non-generic function",
                 code: [
                     "/**",
                     " * Parse numeric input.",
@@ -39,11 +38,11 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "extraTypeParamTags" }],
+                name: "reports extraTypeParamTags when @typeParam names a non-existent generic on a non-generic function",
             },
         ],
         valid: [
             {
-                name: "is valid when all @typeParam tags correspond to actual generic type parameters",
                 code: [
                     "/**",
                     " * Build a pair.",
@@ -57,9 +56,9 @@ ruleTester.run(
                     "    return [left, right];",
                     "}",
                 ].join("\n"),
+                name: "is valid when all @typeParam tags correspond to actual generic type parameters",
             },
             {
-                name: "is valid when @template tag documents a valid generic type parameter",
                 code: [
                     "/**",
                     " * Identity.",
@@ -71,6 +70,7 @@ ruleTester.run(
                     "    return value;",
                     "}",
                 ].join("\n"),
+                name: "is valid when @template tag documents a valid generic type parameter",
             },
         ],
     }

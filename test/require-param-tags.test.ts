@@ -5,7 +5,6 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
     invalid: [
         {
-            name: "reports missingParamTags and suggests adding bare @param tags",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -35,11 +34,11 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
                     ],
                 },
             ],
+            name: "reports missingParamTags and suggests adding bare @param tags",
         },
     ],
     valid: [
         {
-            name: "is valid when all function parameters have @param tags",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -50,10 +49,9 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
+            name: "is valid when all function parameters have @param tags",
         },
         {
-            name: "is valid by default in test/ paths",
-            filename: "test/require-param-tags.ts",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -62,17 +60,19 @@ ruleTester.run("require-param-tags", getPluginRule("require-param-tags"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
+            filename: "test/require-param-tags.ts",
+            name: "is valid by default in test/ paths",
         },
         {
-            name: "is valid when declaration files are ignored via option",
-            filename: "types/public-api.d.ts",
-            options: [{ ignoreDeclarationFiles: true }],
             code: [
                 "/**",
                 " * Add two numbers.",
                 " */",
                 "export declare function add(left: number, right: number): number;",
             ].join("\n"),
+            filename: "types/public-api.d.ts",
+            name: "is valid when declaration files are ignored via option",
+            options: [{ ignoreDeclarationFiles: true }],
         },
     ],
 });

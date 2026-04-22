@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayJoin, isEmpty } from "ts-extras";
 
 import {
     getDocCommentAnchorNode,
@@ -107,15 +108,18 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 }
             }
 
-            if (missingDescriptions.length === 0) {
+            if (isEmpty(missingDescriptions)) {
                 return;
             }
 
             context.report({
                 data: {
-                    params: createLocaleSortedStringCopy(
-                        new Set(missingDescriptions)
-                    ).join(", "),
+                    params: arrayJoin(
+                        createLocaleSortedStringCopy(
+                            new Set(missingDescriptions)
+                        ),
+                        ", "
+                    ),
                 },
                 messageId: "missingTypeParamTagDescription",
                 node: reportNode,

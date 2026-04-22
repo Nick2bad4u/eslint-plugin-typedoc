@@ -1,5 +1,7 @@
 import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { arrayFirst } from "ts-extras";
+
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type LineWithOffset = Readonly<{
@@ -85,7 +87,9 @@ const findMissingFenceLanguageRanges = (
         if (!insideFence) {
             if (fenceSuffix.length === 0) {
                 const absoluteStart =
-                    comment.range[0] + line.textStartOffset + fenceOffset;
+                    arrayFirst(comment.range) +
+                    line.textStartOffset +
+                    fenceOffset;
 
                 ranges.push([absoluteStart, absoluteStart + 3]);
             }

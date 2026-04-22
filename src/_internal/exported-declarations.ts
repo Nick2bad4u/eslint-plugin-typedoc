@@ -1,4 +1,5 @@
 import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import { arrayFirst, isPresent } from "ts-extras";
 
 /** Declarations that can be documented as exported API surface. */
 export type DocumentableExportDeclaration =
@@ -18,7 +19,7 @@ export const isDocumentableExportDeclaration = (
         | TSESTree.ExportNamedDeclaration["declaration"]
     >
 ): value is DocumentableExportDeclaration => {
-    if (value === null) {
+    if (!isPresent(value)) {
         return false;
     }
 
@@ -46,7 +47,7 @@ export const getDeclarationName = (
         case AST_NODE_TYPES.TSTypeAliasDeclaration: {
             const declarationId = declaration.id;
 
-            if (declarationId === null || declarationId === undefined) {
+            if (!isPresent(declarationId)) {
                 return "exported declaration";
             }
 
@@ -64,7 +65,7 @@ export const getDeclarationName = (
             return "exported declaration";
         }
         case AST_NODE_TYPES.VariableDeclaration: {
-            const firstDeclarator = declaration.declarations[0];
+            const firstDeclarator = arrayFirst(declaration.declarations);
 
             return firstDeclarator?.id.type === AST_NODE_TYPES.Identifier
                 ? firstDeclarator.id.name

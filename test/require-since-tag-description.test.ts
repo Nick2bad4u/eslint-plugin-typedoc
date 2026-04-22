@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingSinceDescription when @since tag has no content",
                 code: [
                     "/**",
                     " * Parse the given JSON string.",
@@ -19,9 +18,9 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "missingSinceDescription" }],
+                name: "reports missingSinceDescription when @since tag has no content",
             },
             {
-                name: "reports missingSinceDescription when @since tag contains only an empty code fence",
                 code: [
                     "/**",
                     " * Parse the given JSON string.",
@@ -34,11 +33,11 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "missingSinceDescription" }],
+                name: "reports missingSinceDescription when @since tag contains only an empty code fence",
             },
         ],
         valid: [
             {
-                name: "is valid when @since tag specifies a version string",
                 code: [
                     "/**",
                     " * Parse the given JSON string.",
@@ -48,9 +47,9 @@ ruleTester.run(
                     "    return JSON.parse(input);",
                     "}",
                 ].join("\n"),
+                name: "is valid when @since tag specifies a version string",
             },
             {
-                name: "is valid when @since tag is followed by introductory prose",
                 code: [
                     "/**",
                     " * Parse the given JSON string.",
@@ -61,15 +60,16 @@ ruleTester.run(
                     "    return JSON.parse(input);",
                     "}",
                 ].join("\n"),
+                name: "is valid when @since tag is followed by introductory prose",
             },
             {
-                name: "is valid for constant without a @since tag",
                 code: [
                     "/**",
                     " * A constant with no @since tag.",
                     " */",
                     "export const MAX = 100;",
                 ].join("\n"),
+                name: "is valid for constant without a @since tag",
             },
         ],
     }

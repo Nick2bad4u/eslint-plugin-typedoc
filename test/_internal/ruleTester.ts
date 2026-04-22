@@ -40,33 +40,33 @@ ruleTesterHooks.beforeEach = (testCase) => {
     beforeEach(testCase);
 };
 
-RuleTester.describe = ((...args: readonly unknown[]) => {
+RuleTester.describe = (...args: readonly unknown[]) => {
     const text = args[0] as string;
     const method = args[1] as () => void;
 
     describe(text, method);
-}) as unknown as typeof RuleTester.describe;
+};
 
-RuleTester.it = ((...args: readonly unknown[]) => {
+RuleTester.it = (...args: readonly unknown[]) => {
     const text = args[0] as string;
     const method = args[1] as () => Promise<void> | void;
 
     test(text, method);
-}) as unknown as typeof RuleTester.it;
+};
 
-RuleTester.itOnly = ((...args: readonly unknown[]) => {
+RuleTester.itOnly = (...args: readonly unknown[]) => {
     const text = args[0] as string;
     const method = args[1] as () => Promise<void> | void;
 
     test(text, method);
-}) as unknown as typeof RuleTester.itOnly;
+};
 
-RuleTester.itSkip = ((...args: readonly unknown[]) => {
+RuleTester.itSkip = (...args: readonly unknown[]) => {
     const text = args[0] as string;
     const method = args[1] as () => Promise<void> | void;
 
     test.skip(text, method);
-}) as unknown as typeof RuleTester.itSkip;
+};
 
 /* eslint-enable vitest/no-hooks, vitest/prefer-hooks-in-order, vitest/require-top-level-describe, vitest/valid-describe-callback, vitest/expect-expect, vitest/no-disabled-tests -- Restore normal Vitest linting after RuleTester adapter wiring above. */
 

@@ -10,6 +10,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayIncludes } from "ts-extras";
 
 import {
     getDocCommentAnchorNode,
@@ -88,7 +89,7 @@ export function createRequireFunctionTagDescriptionRule<
                 let hasMissingDescription = false;
 
                 for (const block of getDocCommentTagBlocks(docComment)) {
-                    if (!tagNames.includes(block.tagName)) {
+                    if (!arrayIncludes(tagNames, block.tagName)) {
                         continue;
                     }
 

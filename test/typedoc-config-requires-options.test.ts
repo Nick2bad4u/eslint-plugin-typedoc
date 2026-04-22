@@ -8,14 +8,14 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingTypedocConfigOptions and auto-adds entryPoints and tsconfig for config with only entryPoints",
                 code: [
                     "export default {",
                     '    entryPoints: ["src/index.ts"],',
                     "};",
                 ].join("\n"),
-                filename: "typedoc.config.ts",
                 errors: [{ messageId: "missingTypedocConfigOptions" }],
+                filename: "typedoc.config.ts",
+                name: "reports missingTypedocConfigOptions and auto-adds entryPoints and tsconfig for config with only entryPoints",
                 output: [
                     "export default {",
                     '    entryPoints: ["src/index.ts"],',
@@ -24,10 +24,10 @@ ruleTester.run(
                 ].join("\n"),
             },
             {
-                name: "reports missingTypedocConfigOptions and auto-adds entryPoints and tsconfig for empty config object",
                 code: ["export default {};"].join("\n"),
-                filename: "typedoc.config.ts",
                 errors: [{ messageId: "missingTypedocConfigOptions" }],
+                filename: "typedoc.config.ts",
+                name: "reports missingTypedocConfigOptions and auto-adds entryPoints and tsconfig for empty config object",
                 output: [
                     "export default {",
                     '    entryPoints: ["src/index.ts"],',
@@ -38,7 +38,6 @@ ruleTester.run(
         ],
         valid: [
             {
-                name: "is valid when typedoc.config.ts has both entryPoints and tsconfig options",
                 code: [
                     "export default {",
                     '    entryPoints: ["src/index.ts"],',
@@ -46,11 +45,12 @@ ruleTester.run(
                     "};",
                 ].join("\n"),
                 filename: "typedoc.config.ts",
+                name: "is valid when typedoc.config.ts has both entryPoints and tsconfig options",
             },
             {
-                name: "is valid for non-typedoc config file (filename does not match the rule pattern)",
                 code: "export default {};",
                 filename: "src/index.ts",
+                name: "is valid for non-typedoc config file (filename does not match the rule pattern)",
             },
         ],
     }

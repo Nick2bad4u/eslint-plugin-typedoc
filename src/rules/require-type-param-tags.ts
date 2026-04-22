@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, arrayJoin, isEmpty, setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
@@ -33,7 +34,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -50,7 +54,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 typeParameterizedNode
             );
 
-            if (typeParameterNames.length === 0) {
+            if (isEmpty(typeParameterNames)) {
                 return;
             }
 
@@ -62,18 +66,21 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
             const documentedTypeParameterNames =
                 getDocCommentTypeParamTagNames(docComment);
-            const missingTypeParameterNames = typeParameterNames.filter(
-                (typeParameterName) =>
-                    !documentedTypeParameterNames.has(typeParameterName)
-            );
+            const missingTypeParameterNames: string[] = [];
 
-            if (missingTypeParameterNames.length === 0) {
+            for (const typeParameterName of typeParameterNames) {
+                if (!setHas(documentedTypeParameterNames, typeParameterName)) {
+                    missingTypeParameterNames.push(typeParameterName);
+                }
+            }
+
+            if (isEmpty(missingTypeParameterNames)) {
                 return;
             }
 
             context.report({
                 data: {
-                    params: missingTypeParameterNames.join(", "),
+                    params: arrayJoin(missingTypeParameterNames, ", "),
                 },
                 messageId: "missingTypeParamTags",
                 node: reportNode,

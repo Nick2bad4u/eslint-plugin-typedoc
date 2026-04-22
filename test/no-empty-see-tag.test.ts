@@ -5,7 +5,6 @@ const ruleTester = createRuleTester();
 ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
     invalid: [
         {
-            name: "reports emptySeeTag when @see tag has no content on a function",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -16,9 +15,9 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
                 "}",
             ].join("\n"),
             errors: [{ messageId: "emptySeeTag" }],
+            name: "reports emptySeeTag when @see tag has no content on a function",
         },
         {
-            name: "reports emptySeeTag when @see tag contains only an empty code fence on a class",
             code: [
                 "/**",
                 " * Widget component.",
@@ -29,11 +28,11 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
                 "export class Widget {}",
             ].join("\n"),
             errors: [{ messageId: "emptySeeTag" }],
+            name: "reports emptySeeTag when @see tag contains only an empty code fence on a class",
         },
     ],
     valid: [
         {
-            name: "is valid when @see tag contains a URL",
             code: [
                 "/**",
                 " * Normalize user-provided input.",
@@ -43,9 +42,9 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
                 "    return input.trim();",
                 "}",
             ].join("\n"),
+            name: "is valid when @see tag contains a URL",
         },
         {
-            name: "is valid when @see tag contains an inline link",
             code: [
                 "/**",
                 " * Widget component.",
@@ -53,15 +52,16 @@ ruleTester.run("no-empty-see-tag", getPluginRule("no-empty-see-tag"), {
                 " */",
                 "export class Widget {}",
             ].join("\n"),
+            name: "is valid when @see tag contains an inline link",
         },
         {
-            name: "is valid for exported constant without @see tag",
             code: [
                 "/**",
                 " * A constant with no see tag.",
                 " */",
                 "export const PI = 3.14159;",
             ].join("\n"),
+            name: "is valid for exported constant without @see tag",
         },
     ],
 });

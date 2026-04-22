@@ -1,5 +1,7 @@
 import type { TSESLint } from "@typescript-eslint/utils";
 
+import { arrayFirst, setHas } from "ts-extras";
+
 import {
     buildDocCommentTagInsertion,
     getDocCommentAnchorNode,
@@ -30,7 +32,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -50,7 +55,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
             const tagNames = getDocCommentTagNames(sourceCode, docComment);
 
-            if (tagNames.has("example")) {
+            if (setHas(tagNames, "example")) {
                 return;
             }
 

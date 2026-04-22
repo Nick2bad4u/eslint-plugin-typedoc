@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
@@ -103,7 +104,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -130,7 +134,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
             const tagNames = getDocCommentTagNames(sourceCode, docComment);
 
-            if (tagNames.has("throws") || tagNames.has("throw")) {
+            if (setHas(tagNames, "throws") || setHas(tagNames, "throw")) {
                 return;
             }
 

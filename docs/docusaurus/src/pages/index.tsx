@@ -88,6 +88,11 @@ const heroStats = [
     },
 ] as const satisfies readonly HeroStat[];
 
+/**
+ * Render the Docusaurus documentation homepage.
+ *
+ * @returns The docs landing page layout.
+ */
 export default function Home() {
     const logoSrc = useBaseUrl("/img/logo_512x512.png");
 

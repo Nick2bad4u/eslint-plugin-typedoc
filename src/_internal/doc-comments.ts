@@ -8,6 +8,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, arrayJoin, isDefined, stringSplit } from "ts-extras";
 
 const inlineTagPattern = /\{@(?<tagName>[A-Za-z][\w-]*)\b/gu;
 const paramTagPattern = /@param\s+(?<restParameter>\.\.\.)?(?<rawName>\S+)/gu;
@@ -19,7 +20,7 @@ const fencedCodeFencePrefix = "```";
 const isAsciiLetter = (value: string): boolean => {
     const codePoint = value.codePointAt(0);
 
-    if (codePoint === undefined) {
+    if (!isDefined(codePoint)) {
         return false;
     }
 
@@ -32,7 +33,7 @@ const isAsciiLetter = (value: string): boolean => {
 const isTagNameCharacter = (value: string): boolean => {
     const codePoint = value.codePointAt(0);
 
-    if (codePoint === undefined) {
+    if (!isDefined(codePoint)) {
         return false;
     }
 
@@ -149,7 +150,7 @@ export const getLeadingDocComment = (
     const comments = sourceCode.getCommentsBefore(node);
     const nodeStartLine = node.loc?.start.line;
 
-    if (nodeStartLine === undefined) {
+    if (!isDefined(nodeStartLine)) {
         return null;
     }
 
@@ -166,7 +167,7 @@ export const getLeadingDocComment = (
 
         const commentEndLine = comment.loc?.end.line;
 
-        if (commentEndLine === undefined) {
+        if (!isDefined(commentEndLine)) {
             continue;
         }
 
@@ -203,9 +204,7 @@ export const getDocCommentAnchorNode = (node: TSESTree.Node): TSESTree.Node => {
 export const normalizeDocCommentLines = (
     comment: Readonly<TSESTree.Comment>
 ): readonly string[] =>
-    comment.value
-        .replaceAll("\r\n", "\n")
-        .split("\n")
+    stringSplit(comment.value.replaceAll("\r\n", "\n"), "\n")
         .map((line) => line.replace(/^\s*\* ?/u, "").trimEnd())
         .map((line) => (line === "/" ? "" : line));
 
@@ -218,7 +217,7 @@ export const getDocCommentTagMatches = (
     const matches: DocTagMatch[] = [];
     let inFencedCodeBlock = false;
     let lineStartOffset = 0;
-    const rawLines = commentText.split("\n");
+    const rawLines = stringSplit(commentText, "\n");
 
     // Walk the raw comment text line-by-line so we can:
     // 1) match block tags only at line starts,
@@ -274,7 +273,9 @@ export const getDocCommentTagMatches = (
 
             for (const lineMatch of lineMatches) {
                 const absoluteStart =
-                    comment.range[0] + lineStartOffset + lineMatch.start;
+                    arrayFirst(comment.range) +
+                    lineStartOffset +
+                    lineMatch.start;
 
                 matches.push({
                     absoluteRange: [
@@ -315,7 +316,7 @@ export const getDocCommentParamTagNameList = (
     comment: Readonly<TSESTree.Comment>
 ): readonly string[] => {
     const tagNames: string[] = [];
-    const commentBody = normalizeDocCommentLines(comment).join("\n");
+    const commentBody = arrayJoin(normalizeDocCommentLines(comment), "\n");
 
     for (const match of commentBody.matchAll(paramTagPattern)) {
         const isRestParameter = match.groups?.["restParameter"] === "...";
@@ -351,7 +352,7 @@ export const getDocCommentTypeParamTagNameList = (
     comment: Readonly<TSESTree.Comment>
 ): readonly string[] => {
     const tagNames: string[] = [];
-    const commentBody = normalizeDocCommentLines(comment).join("\n");
+    const commentBody = arrayJoin(normalizeDocCommentLines(comment), "\n");
 
     for (const match of commentBody.matchAll(typeParamTagPattern)) {
         const rawName = match.groups?.["rawName"];
@@ -447,7 +448,7 @@ export const getInlineLinkMatches = (
             const content = commentText
                 .slice(cursorStart, scan.closingIndex)
                 .trimStart();
-            const absoluteStart = comment.range[0] + relativeStart;
+            const absoluteStart = arrayFirst(comment.range) + relativeStart;
 
             matches.push({
                 absoluteRange: [
@@ -481,7 +482,9 @@ export const buildDocCommentTagInsertion = (
     const indentation = " ".repeat(indentWidth);
     const linePrefix = `${indentation} * `;
 
-    return linePrefix + lineTexts.join(lineEnding + linePrefix) + lineEnding;
+    return (
+        linePrefix + arrayJoin(lineTexts, lineEnding + linePrefix) + lineEnding
+    );
 };
 
 /**
@@ -509,5 +512,5 @@ export const getDocCommentClosingLineStartIndex = (
         return comment.range[1] - 2;
     }
 
-    return comment.range[0] + lastLineBreakOffset + 1;
+    return arrayFirst(comment.range) + lastLineBreakOffset + 1;
 };

@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingDocComment and suggests doc stub for FunctionDeclaration (baseline)",
                 code: "export function buildClient(): void {}",
                 errors: [
                     {
@@ -26,9 +25,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for FunctionDeclaration (baseline)",
             },
             {
-                name: "reports missingDocComment and suggests doc stub for VariableDeclaration",
                 code: "export const version = '1.0.0';",
                 errors: [
                     {
@@ -46,9 +45,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for VariableDeclaration",
             },
             {
-                name: "reports missingDocComment and suggests doc stub for ClassDeclaration",
                 code: "export class MyService {}",
                 errors: [
                     {
@@ -66,9 +65,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for ClassDeclaration",
             },
             {
-                name: "reports missingDocComment and suggests doc stub for TSEnumDeclaration",
                 code: "export enum Status { Active, Inactive }",
                 errors: [
                     {
@@ -86,9 +85,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for TSEnumDeclaration",
             },
             {
-                name: "reports missingDocComment and suggests doc stub for TSTypeAliasDeclaration",
                 code: "export type MyAlias = string;",
                 errors: [
                     {
@@ -106,9 +105,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for TSTypeAliasDeclaration",
             },
             {
-                name: "reports missingDocComment and suggests doc stub for TSModuleDeclaration (namespace)",
                 code: "export namespace Utils {}",
                 errors: [
                     {
@@ -126,9 +125,9 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment and suggests doc stub for TSModuleDeclaration (namespace)",
             },
             {
-                name: "reports missingDocComment for anonymous default export function (covers null-id fallback)",
                 code: "export default function() {}",
                 errors: [
                     {
@@ -146,20 +145,20 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingDocComment for anonymous default export function (covers null-id fallback)",
             },
         ],
         valid: [
             {
-                name: "is valid when exported function has a JSDoc comment",
                 code: [
                     "/**",
                     " * Build the API client.",
                     " */",
                     "export function buildClient(): void {}",
                 ].join("\n"),
+                name: "is valid when exported function has a JSDoc comment",
             },
             {
-                name: "is valid when exported interface has a JSDoc comment",
                 code: [
                     "/**",
                     " * Public API shape.",
@@ -168,33 +167,34 @@ ruleTester.run(
                     "    run(): void;",
                     "}",
                 ].join("\n"),
+                name: "is valid when exported interface has a JSDoc comment",
             },
             // ExportNamedDeclaration with null declaration (re-export specifier):
             // covers isDocumentableExportDeclaration(null) → returns false (line 22)
             {
-                name: "is valid for re-export specifier without declaration (covers isDocumentableExportDeclaration null branch)",
                 code: ["const foo = 1;", "export { foo };"].join("\n"),
+                name: "is valid for re-export specifier without declaration (covers isDocumentableExportDeclaration null branch)",
             },
             // Documented variable export
             {
-                name: "is valid when exported const has a JSDoc comment",
                 code: [
                     "/**",
                     " * Current package version.",
                     " */",
                     "export const version = '1.0.0';",
                 ].join("\n"),
+                name: "is valid when exported const has a JSDoc comment",
             },
             {
-                name: "is valid by default in test/ paths",
-                filename: "test/exported-doc-comment.ts",
                 code: "export function undocumented(): void {}",
+                filename: "test/exported-doc-comment.ts",
+                name: "is valid by default in test/ paths",
             },
             {
-                name: "is valid when declaration files are ignored via option",
-                filename: "types/public-api.d.ts",
-                options: [{ ignoreDeclarationFiles: true }],
                 code: "export declare function undocumented(): void;",
+                filename: "types/public-api.d.ts",
+                name: "is valid when declaration files are ignored via option",
+                options: [{ ignoreDeclarationFiles: true }],
             },
         ],
     }

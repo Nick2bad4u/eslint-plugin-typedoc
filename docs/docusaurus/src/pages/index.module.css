@@ -1,5 +1,4 @@
 /** eslint-disable css/use-baseline */
-/* stylelint-disable defensive-css/require-named-grid-lines, plugin/stylelint-group-selectors -- Docusaurus homepage CSS intentionally uses compact grid and visual card patterns. */
 
 .heroBanner {
     position: relative;

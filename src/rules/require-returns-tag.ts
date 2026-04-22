@@ -9,6 +9,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, isPresent, setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
@@ -37,7 +38,7 @@ type Options = readonly [RequireCommentFileOptions?];
 const isVoidLikeTypeAnnotation = (
     typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
 ): boolean => {
-    if (typeAnnotation === null || typeAnnotation === undefined) {
+    if (!isPresent(typeAnnotation)) {
         return false;
     }
 
@@ -59,7 +60,7 @@ const isVoidLikeTypeAnnotation = (
         return false;
     }
 
-    const firstTypeParameter = typeAnnotation.typeArguments?.params[0] ?? null;
+    const [firstTypeParameter] = typeAnnotation.typeArguments?.params ?? [];
 
     return (
         firstTypeParameter?.type === AST_NODE_TYPES.TSVoidKeyword ||
@@ -68,7 +69,7 @@ const isVoidLikeTypeAnnotation = (
 };
 
 const requiresReturnsTag = (node: Readonly<FunctionLikeNode>): boolean => {
-    if (node.returnType === null || node.returnType === undefined) {
+    if (!isPresent(node.returnType)) {
         return false;
     }
 
@@ -82,7 +83,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create: (context) => {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -106,7 +110,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
             const tagNames = getDocCommentTagNames(sourceCode, docComment);
 
-            if (tagNames.has("returns") || tagNames.has("return")) {
+            if (setHas(tagNames, "returns") || setHas(tagNames, "return")) {
                 return;
             }
 

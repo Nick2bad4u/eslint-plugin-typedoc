@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingFenceLanguage and auto-fixes code fence without a language identifier",
                 code: [
                     "/**",
                     " * Render value.",
@@ -22,6 +21,7 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "missingFenceLanguage" }],
+                name: "reports missingFenceLanguage and auto-fixes code fence without a language identifier",
                 output: [
                     "/**",
                     " * Render value.",
@@ -38,7 +38,6 @@ ruleTester.run(
         ],
         valid: [
             {
-                name: "is valid when code fence specifies a language identifier",
                 code: [
                     "/**",
                     " * Render value.",
@@ -51,6 +50,7 @@ ruleTester.run(
                     "    return String(value);",
                     "}",
                 ].join("\n"),
+                name: "is valid when code fence specifies a language identifier",
             },
         ],
     }

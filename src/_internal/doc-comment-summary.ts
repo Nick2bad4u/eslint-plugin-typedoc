@@ -1,5 +1,7 @@
 import type { TSESTree } from "@typescript-eslint/utils";
 
+import { arrayJoin } from "ts-extras";
+
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
 /** Collect the summary lines that appear before the first block tag. */
@@ -22,7 +24,7 @@ export const getDocCommentSummaryLines = (
 /** Get the leading summary text that appears before block tags. */
 export const getDocCommentSummaryText = (
     comment: Readonly<TSESTree.Comment>
-): string => getDocCommentSummaryLines(comment).join("\n");
+): string => arrayJoin(getDocCommentSummaryLines(comment), "\n");
 
 /** Determine whether a summary contains meaningful prose content. */
 export const hasMeaningfulDocCommentSummary = (

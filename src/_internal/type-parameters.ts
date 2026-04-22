@@ -1,4 +1,5 @@
 import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import { isPresent } from "ts-extras";
 
 /** Node contract for declarations that may carry generic type parameters. */
 export type TypeParameterizedNode = Readonly<{
@@ -11,7 +12,7 @@ export const getTypeParameterNames = (
 ): readonly string[] => {
     const typeParameters = node.typeParameters;
 
-    if (typeParameters === undefined || typeParameters === null) {
+    if (!isPresent(typeParameters)) {
         return [];
     }
 

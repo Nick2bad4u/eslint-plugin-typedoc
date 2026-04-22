@@ -1,5 +1,7 @@
 import type { TSESLint } from "@typescript-eslint/utils";
 
+import { arrayFirst } from "ts-extras";
+
 import { hasMeaningfulDocCommentSummary } from "../_internal/doc-comment-summary.js";
 import {
     getDocCommentAnchorNode,
@@ -27,7 +29,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }

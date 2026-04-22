@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst } from "ts-extras";
 
 import { normalizeDocCommentLines } from "../_internal/doc-comments.js";
 import {
@@ -29,7 +30,7 @@ const getPackageDocumentationComment = (
     sourceCode: TSESLint.SourceCode,
     program: TSESTree.Program
 ): null | TSESTree.Comment => {
-    const firstStatement = program.body[0];
+    const firstStatement = arrayFirst(program.body);
     const candidateComments =
         firstStatement === undefined
             ? sourceCode.getAllComments()
@@ -68,7 +69,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }

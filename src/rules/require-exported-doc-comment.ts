@@ -1,5 +1,7 @@
 import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { arrayFirst, arrayJoin } from "ts-extras";
+
 import {
     getDocCommentAnchorNode,
     getLeadingDocComment,
@@ -25,12 +27,15 @@ const createDocCommentText = (
     indentation: string,
     lineEnding: "\n" | "\r\n"
 ): string =>
-    [
-        `${indentation}/**`,
-        `${indentation} * ${declarationName} API documentation.`,
-        `${indentation} */`,
-        "",
-    ].join(lineEnding);
+    arrayJoin(
+        [
+            `${indentation}/**`,
+            `${indentation} * ${declarationName} API documentation.`,
+            `${indentation} */`,
+            "",
+        ],
+        lineEnding
+    );
 
 /** Rule implementation for exported declaration documentation coverage. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -39,7 +44,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }

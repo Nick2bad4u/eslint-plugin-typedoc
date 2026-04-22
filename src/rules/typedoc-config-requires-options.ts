@@ -8,6 +8,15 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import {
+    arrayFirst,
+    arrayJoin,
+    isEmpty,
+    not,
+    objectKeys,
+    safeCastTo,
+    setHas,
+} from "ts-extras";
 
 import { getPreferredLineEnding } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
@@ -23,9 +32,9 @@ const requiredOptionDefaultsByName = {
     tsconfig: '"./tsconfig.json"',
 } as const;
 
-const requiredOptionNames = Object.keys(
-    requiredOptionDefaultsByName
-) as readonly (keyof typeof requiredOptionDefaultsByName)[];
+const requiredOptionNames = safeCastTo<
+    readonly (keyof typeof requiredOptionDefaultsByName)[]
+>(objectKeys(requiredOptionDefaultsByName));
 
 const normalizePathSeparators = (fileName: string): string =>
     fileName.replaceAll("\\", "/");
@@ -61,7 +70,7 @@ const extractObjectExpression = (
         return null;
     }
 
-    const firstArgument = expression.arguments[0];
+    const firstArgument = arrayFirst(expression.arguments);
 
     return firstArgument?.type === AST_NODE_TYPES.ObjectExpression
         ? firstArgument
@@ -155,7 +164,7 @@ const getMissingOptionNames = (
     }
 
     return requiredOptionNames.filter(
-        (optionName) => !configuredOptionNames.has(optionName)
+        not((optionName) => setHas(configuredOptionNames, optionName))
     );
 };
 
@@ -196,13 +205,14 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                 const missingOptionNames = getMissingOptionNames(configObject);
 
-                if (missingOptionNames.length === 0) {
+                if (isEmpty(missingOptionNames)) {
                     return;
                 }
 
-                const missingOptionsList = missingOptionNames
-                    .map((name) => `"${name}"`)
-                    .join(", ");
+                const missingOptionsList = arrayJoin(
+                    missingOptionNames.map((name) => `"${name}"`),
+                    ", "
+                );
                 const messageId: MessageIds = "missingTypedocConfigOptions";
 
                 const baseReportDescriptor = {
@@ -251,12 +261,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             break;
                         }
 
-                        const insertedProperties = missingOptionNames
-                            .map(
+                        const insertedProperties = arrayJoin(
+                            missingOptionNames.map(
                                 (name) =>
                                     `${propertyIndentation}${name}: ${requiredOptionDefaultsByName[name]}`
-                            )
-                            .join(`,${lineEnding}`);
+                            ),
+                            `,${lineEnding}`
+                        );
 
                         const insertionText = (() => {
                             if (configObject.properties.length === 0) {

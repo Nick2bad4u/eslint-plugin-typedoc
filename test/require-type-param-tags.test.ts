@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingTypeParamTags and suggests adding bare @typeParam tags",
                 code: [
                     "/**",
                     " * Map one value into another type.",
@@ -50,11 +49,11 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingTypeParamTags and suggests adding bare @typeParam tags",
             },
         ],
         valid: [
             {
-                name: "is valid when all generic type parameters have @typeParam tags",
                 code: [
                     "/**",
                     " * Build a pair.",
@@ -68,9 +67,9 @@ ruleTester.run(
                     "    return [left, right];",
                     "}",
                 ].join("\n"),
+                name: "is valid when all generic type parameters have @typeParam tags",
             },
             {
-                name: "is valid when @template tag documents a generic type parameter",
                 code: [
                     "/**",
                     " * Format a value.",
@@ -82,10 +81,9 @@ ruleTester.run(
                     "    return String(value);",
                     "}",
                 ].join("\n"),
+                name: "is valid when @template tag documents a generic type parameter",
             },
             {
-                name: "is valid by default in test/ paths",
-                filename: "test/require-type-param-tags.ts",
                 code: [
                     "/**",
                     " * Map one value into another type.",
@@ -94,17 +92,19 @@ ruleTester.run(
                     "    return mapper(input);",
                     "}",
                 ].join("\n"),
+                filename: "test/require-type-param-tags.ts",
+                name: "is valid by default in test/ paths",
             },
             {
-                name: "is valid when declaration files are ignored via option",
-                filename: "types/public-api.d.ts",
-                options: [{ ignoreDeclarationFiles: true }],
                 code: [
                     "/**",
                     " * Map one value into another type.",
                     " */",
                     "export declare function mapValue<TInput, TOutput>(input: TInput): TOutput;",
                 ].join("\n"),
+                filename: "types/public-api.d.ts",
+                name: "is valid when declaration files are ignored via option",
+                options: [{ ignoreDeclarationFiles: true }],
             },
         ],
     }

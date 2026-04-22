@@ -5,7 +5,6 @@ const ruleTester = createRuleTester();
 ruleTester.run("no-empty-example-tag", getPluginRule("no-empty-example-tag"), {
     invalid: [
         {
-            name: "reports emptyExampleTag when @example tag has no content",
             code: [
                 "/**",
                 " * Add two values.",
@@ -16,9 +15,9 @@ ruleTester.run("no-empty-example-tag", getPluginRule("no-empty-example-tag"), {
                 "}",
             ].join("\n"),
             errors: [{ messageId: "emptyExampleTag" }],
+            name: "reports emptyExampleTag when @example tag has no content",
         },
         {
-            name: "reports emptyExampleTag when @example tag contains only an empty code fence",
             code: [
                 "/**",
                 " * Add two values.",
@@ -31,11 +30,11 @@ ruleTester.run("no-empty-example-tag", getPluginRule("no-empty-example-tag"), {
                 "}",
             ].join("\n"),
             errors: [{ messageId: "emptyExampleTag" }],
+            name: "reports emptyExampleTag when @example tag contains only an empty code fence",
         },
     ],
     valid: [
         {
-            name: "is valid when @example tag contains a non-empty code snippet",
             code: [
                 "/**",
                 " * Add two values.",
@@ -46,6 +45,7 @@ ruleTester.run("no-empty-example-tag", getPluginRule("no-empty-example-tag"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
+            name: "is valid when @example tag contains a non-empty code snippet",
         },
     ],
 });

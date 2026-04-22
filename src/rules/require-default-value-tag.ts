@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
@@ -85,7 +86,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                 const tagNames = getDocCommentTagNames(sourceCode, docComment);
 
-                if (tagNames.has("default") || tagNames.has("defaultValue")) {
+                if (
+                    setHas(tagNames, "default") ||
+                    setHas(tagNames, "defaultValue")
+                ) {
                     return;
                 }
 

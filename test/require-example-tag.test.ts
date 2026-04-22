@@ -5,7 +5,6 @@ const ruleTester = createRuleTester();
 ruleTester.run("require-example-tag", getPluginRule("require-example-tag"), {
     invalid: [
         {
-            name: "reports missingExampleTag and auto-adds @example placeholder for documented function without one",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -39,11 +38,11 @@ ruleTester.run("require-example-tag", getPluginRule("require-example-tag"), {
                     ],
                 },
             ],
+            name: "reports missingExampleTag and auto-adds @example placeholder for documented function without one",
         },
     ],
     valid: [
         {
-            name: "is valid when documented function already has an @example tag",
             code: [
                 "/**",
                 " * Add two numbers.",
@@ -57,25 +56,26 @@ ruleTester.run("require-example-tag", getPluginRule("require-example-tag"), {
                 "    return left + right;",
                 "}",
             ].join("\n"),
+            name: "is valid when documented function already has an @example tag",
         },
         {
-            name: "is valid for undocumented function without JSDoc comment",
             code: ["export function undocumented(): void {}"].join("\n"),
+            name: "is valid for undocumented function without JSDoc comment",
         },
         {
-            name: "is valid by default in test/ paths",
-            filename: "test/require-example.ts",
             code: [
                 "export function add(left: number, right: number): number { return left + right; }",
             ].join("\n"),
+            filename: "test/require-example.ts",
+            name: "is valid by default in test/ paths",
         },
         {
-            name: "is valid when declaration files are ignored via option",
-            filename: "types/public-api.d.ts",
-            options: [{ ignoreDeclarationFiles: true }],
             code: [
                 "export declare function add(left: number, right: number): number;",
             ].join("\n"),
+            filename: "types/public-api.d.ts",
+            name: "is valid when declaration files are ignored via option",
+            options: [{ ignoreDeclarationFiles: true }],
         },
     ],
 });

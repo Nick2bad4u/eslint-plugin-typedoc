@@ -142,22 +142,22 @@ const sidebars = {
                 {
                     id: "presets/minimal",
                     label: "🟢 Start with minimal",
-                    type: "doc",
+                    type: "ref",
                 },
                 {
                     id: "presets/recommended",
                     label: "🟡 Expand with recommended",
-                    type: "doc",
+                    type: "ref",
                 },
                 {
                     id: "presets/strict",
                     label: "🟠 Tighten with strict",
-                    type: "doc",
+                    type: "ref",
                 },
                 {
                     id: "presets/all",
                     label: "🔴 Full policy with all",
-                    type: "doc",
+                    type: "ref",
                 },
             ],
             label: "🧭 Adoption & Rollout",

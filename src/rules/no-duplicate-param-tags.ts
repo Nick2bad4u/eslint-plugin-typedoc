@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayJoin, isEmpty, setHas } from "ts-extras";
 
 import {
     getDocCommentAnchorNode,
@@ -20,7 +21,7 @@ const getDuplicateNames = (names: readonly string[]): readonly string[] => {
     const duplicates = new Set<string>();
 
     for (const name of names) {
-        if (seen.has(name)) {
+        if (setHas(seen, name)) {
             duplicates.add(name);
             continue;
         }
@@ -53,13 +54,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 getDocCommentParamTagNameList(docComment)
             );
 
-            if (duplicateTagNames.length === 0) {
+            if (isEmpty(duplicateTagNames)) {
                 return;
             }
 
             context.report({
                 data: {
-                    params: duplicateTagNames.join(", "),
+                    params: arrayJoin(duplicateTagNames, ", "),
                 },
                 messageId: "duplicateParamTags",
                 node: reportNode,

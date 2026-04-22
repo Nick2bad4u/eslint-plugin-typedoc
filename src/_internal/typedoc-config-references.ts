@@ -3,6 +3,8 @@
  * sync.
  */
 
+import { objectHasOwn, setHas } from "ts-extras";
+
 import { createSortedCopy } from "./sorted-copy.js";
 
 /** Supported preset keys exported by the plugin. */
@@ -111,10 +113,10 @@ const typedocConfigNameSet = new Set<TypedocConfigName>(typedocConfigNames);
 export const isTypedocConfigName = (
     value: string
 ): value is TypedocConfigName =>
-    typedocConfigNameSet.has(value as TypedocConfigName);
+    setHas(typedocConfigNameSet, value as TypedocConfigName);
 
 /** Determine whether a string is a supported preset reference literal. */
 export const isTypedocConfigReference = (
     value: string
 ): value is TypedocConfigReference =>
-    Object.hasOwn(typedocConfigReferenceToName, value);
+    objectHasOwn(typedocConfigReferenceToName, value);

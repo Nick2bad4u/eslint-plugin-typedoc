@@ -5,6 +5,15 @@
 
 import type { TSESLint } from "@typescript-eslint/utils";
 
+import {
+    arrayFirst,
+    isDefined,
+    not,
+    objectKeys,
+    safeCastTo,
+    setHas,
+} from "ts-extras";
+
 import { getDocCommentTagMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
@@ -113,12 +122,12 @@ const aliasTagsByUnknownTag = {
 } as const satisfies Record<string, string>;
 
 const tagsHandledByAliasFixes = new Set<string>(
-    Object.keys(aliasTagsByUnknownTag)
+    objectKeys(aliasTagsByUnknownTag)
 );
 
 const allowedTags = new Set<string>(
     supportedTypeDocTagNames.filter(
-        (tagName) => !tagsHandledByAliasFixes.has(tagName)
+        not((tagName) => setHas(tagsHandledByAliasFixes, tagName))
     )
 );
 
@@ -129,7 +138,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create: (context) => {
         const { sourceCode } = context;
-        const userTags = context.options[0]?.additionalTags ?? [];
+        const userTags = arrayFirst(context.options)?.additionalTags ?? [];
         const effectiveAllowedTags =
             userTags.length > 0
                 ? new Set([...allowedTags, ...userTags])
@@ -149,7 +158,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                         sourceCode,
                         comment
                     )) {
-                        if (effectiveAllowedTags.has(tagMatch.name)) {
+                        if (setHas(effectiveAllowedTags, tagMatch.name)) {
                             continue;
                         }
 
@@ -157,7 +166,9 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             tagMatch.absoluteRange;
                         const canonicalTagName =
                             aliasTagsByUnknownTag[
-                                tagMatch.name as keyof typeof aliasTagsByUnknownTag
+                                safeCastTo<keyof typeof aliasTagsByUnknownTag>(
+                                    tagMatch.name
+                                )
                             ];
 
                         const baseReportDescriptor = {
@@ -174,7 +185,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             node: sourceCode.ast,
                         };
 
-                        if (canonicalTagName === undefined) {
+                        if (!isDefined(canonicalTagName)) {
                             context.report(baseReportDescriptor);
 
                             continue;

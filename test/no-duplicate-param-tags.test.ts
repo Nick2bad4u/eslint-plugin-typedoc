@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports duplicateParamTags when a @param tag name is repeated",
                 code: [
                     "/**",
                     " * Add two numbers.",
@@ -22,11 +21,11 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "duplicateParamTags" }],
+                name: "reports duplicateParamTags when a @param tag name is repeated",
             },
         ],
         valid: [
             {
-                name: "is valid when each @param tag has a unique parameter name",
                 code: [
                     "/**",
                     " * Add two numbers.",
@@ -38,20 +37,20 @@ ruleTester.run(
                     "    return left + right;",
                     "}",
                 ].join("\n"),
+                name: "is valid when each @param tag has a unique parameter name",
             },
             // ArrowFunctionExpression without JSDoc: exercises ArrowFunctionExpression handler
             {
-                name: "is valid for arrow function without JSDoc (exercises ArrowFunctionExpression handler)",
                 code: "export const add = (left: number, right: number) => left + right;",
+                name: "is valid for arrow function without JSDoc (exercises ArrowFunctionExpression handler)",
             },
             // FunctionExpression without JSDoc: exercises FunctionExpression handler
             {
-                name: "is valid for function expression without JSDoc (exercises FunctionExpression handler)",
                 code: "export const fn = function(x: number) { return x; };",
+                name: "is valid for function expression without JSDoc (exercises FunctionExpression handler)",
             },
             // MethodDefinition with valid unique @param tags: exercises MethodDefinition handler
             {
-                name: "is valid for class method with unique @param tags (exercises MethodDefinition handler)",
                 code: [
                     "export class Calculator {",
                     "    /**",
@@ -65,10 +64,10 @@ ruleTester.run(
                     "    }",
                     "}",
                 ].join("\n"),
+                name: "is valid for class method with unique @param tags (exercises MethodDefinition handler)",
             },
             // TSDeclareFunction with valid unique @param tags: exercises TSDeclareFunction handler
             {
-                name: "is valid for declare function with unique @param tags (exercises TSDeclareFunction handler)",
                 code: [
                     "/**",
                     " * Merge two records.",
@@ -77,6 +76,7 @@ ruleTester.run(
                     " */",
                     "declare function merge(a: Record<string, unknown>, b: Record<string, unknown>): void;",
                 ].join("\n"),
+                name: "is valid for declare function with unique @param tags (exercises TSDeclareFunction handler)",
             },
         ],
     }

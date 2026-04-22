@@ -53,6 +53,8 @@ describe("eslint-plugin-typedoc meaningful benchmarks", () => {
     bench(
         "recommended preset on invalid documentation fixtures",
         async () => {
+            expect.hasAssertions();
+
             const lintResults = await lintScenario({
                 filePatterns: benchmarkFileGlobs.typedInvalidFixtures,
                 fix: false,
@@ -71,6 +73,8 @@ describe("eslint-plugin-typedoc meaningful benchmarks", () => {
     bench(
         "strict preset on invalid documentation fixtures",
         async () => {
+            expect.hasAssertions();
+
             const lintResults = await lintScenario({
                 filePatterns: benchmarkFileGlobs.typedInvalidFixtures,
                 fix: false,

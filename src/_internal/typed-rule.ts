@@ -3,6 +3,8 @@
  * Shared rule creator for eslint-plugin-typedoc rules.
  */
 
+import type { UnknownArray } from "type-fest";
+
 import { ESLintUtils } from "@typescript-eslint/utils";
 
 import type { TypedocConfigReference } from "./typedoc-config-references.js";
@@ -19,7 +21,7 @@ export type TypedocRuleDocs = Readonly<{
 }>;
 
 type TypedRuleCreator = <
-    TOptions extends readonly unknown[],
+    TOptions extends Readonly<UnknownArray>,
     TMessageIds extends string,
 >(
     rule: Readonly<TypedRuleWithMetaAndName<TOptions, TMessageIds>>
@@ -28,12 +30,12 @@ type TypedRuleCreator = <
 };
 
 type TypedRuleModule<
-    TOptions extends readonly unknown[],
+    TOptions extends Readonly<UnknownArray>,
     TMessageIds extends string,
 > = ESLintUtils.RuleModule<TMessageIds, TOptions, TypedocRuleDocs>;
 
 type TypedRuleWithMetaAndName<
-    TOptions extends readonly unknown[],
+    TOptions extends Readonly<UnknownArray>,
     TMessageIds extends string,
 > = ESLintUtils.RuleWithMetaAndName<TOptions, TMessageIds, TypedocRuleDocs>;
 

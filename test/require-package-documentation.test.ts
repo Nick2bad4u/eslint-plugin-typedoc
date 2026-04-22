@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingPackageDocumentation and suggests @packageDocumentation for file without one",
                 code: [
                     "export function add(left: number, right: number): number {",
                     "    return left + right;",
@@ -32,11 +31,11 @@ ruleTester.run(
                         ],
                     },
                 ],
+                name: "reports missingPackageDocumentation and suggests @packageDocumentation for file without one",
             },
         ],
         valid: [
             {
-                name: "is valid when file already has a @packageDocumentation tag",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -46,25 +45,26 @@ ruleTester.run(
                     "    return left + right;",
                     "}",
                 ].join("\n"),
+                name: "is valid when file already has a @packageDocumentation tag",
             },
             {
-                name: "is valid for file with no exports (no package doc required)",
                 code: [
                     "function internalOnly(value: string): string {",
                     "    return value.trim();",
                     "}",
                 ].join("\n"),
+                name: "is valid for file with no exports (no package doc required)",
             },
             {
-                name: "is valid by default in test/ paths",
-                filename: "test/module-without-package-doc.ts",
                 code: "export const exposed = 1;",
+                filename: "test/module-without-package-doc.ts",
+                name: "is valid by default in test/ paths",
             },
             {
-                name: "is valid when declaration files are ignored via option",
-                filename: "types/public-api.d.ts",
-                options: [{ ignoreDeclarationFiles: true }],
                 code: "export declare const exposed: number;",
+                filename: "types/public-api.d.ts",
+                name: "is valid when declaration files are ignored via option",
+                options: [{ ignoreDeclarationFiles: true }],
             },
         ],
     }

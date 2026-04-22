@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports emptyPrivateRemarksTag when @privateRemarks tag has no content",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -19,9 +18,9 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "emptyPrivateRemarksTag" }],
+                name: "reports emptyPrivateRemarksTag when @privateRemarks tag has no content",
             },
             {
-                name: "reports emptyPrivateRemarksTag when @privateRemarks tag contains only an empty code fence",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -34,11 +33,11 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "emptyPrivateRemarksTag" }],
+                name: "reports emptyPrivateRemarksTag when @privateRemarks tag contains only an empty code fence",
             },
         ],
         valid: [
             {
-                name: "is valid when @privateRemarks tag has inline content on same line",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -48,9 +47,9 @@ ruleTester.run(
                     "    return input.trim();",
                     "}",
                 ].join("\n"),
+                name: "is valid when @privateRemarks tag has inline content on same line",
             },
             {
-                name: "is valid when @privateRemarks tag is followed by multi-line prose",
                 code: [
                     "/**",
                     " * Normalize user-provided input.",
@@ -62,15 +61,16 @@ ruleTester.run(
                     "    return input.trim();",
                     "}",
                 ].join("\n"),
+                name: "is valid when @privateRemarks tag is followed by multi-line prose",
             },
             {
-                name: "is valid for exported constant without @privateRemarks tag",
                 code: [
                     "/**",
                     " * A public constant with no private remarks.",
                     " */",
                     "export const PI = 3.14159;",
                 ].join("\n"),
+                name: "is valid for exported constant without @privateRemarks tag",
             },
         ],
     }

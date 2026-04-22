@@ -5,6 +5,8 @@
 
 import type { TSESLint } from "@typescript-eslint/utils";
 
+import { arrayJoin, stringSplit } from "ts-extras";
+
 import { getInlineLinkMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
@@ -18,7 +20,7 @@ const isMalformedInlineLinkContent = (rawContent: string): boolean => {
         return true;
     }
 
-    const [rawTarget = "", ...rawLabelParts] = content.split("|");
+    const [rawTarget = "", ...rawLabelParts] = stringSplit(content, "|");
     const target = rawTarget.trim();
 
     if (target.length === 0) {
@@ -30,7 +32,8 @@ const isMalformedInlineLinkContent = (rawContent: string): boolean => {
     }
 
     return (
-        rawLabelParts.length > 0 && rawLabelParts.join("|").trim().length === 0
+        rawLabelParts.length > 0 &&
+        arrayJoin(rawLabelParts, "|").trim().length === 0
     );
 };
 

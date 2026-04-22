@@ -4,6 +4,9 @@
  */
 
 import type { TSESLint } from "@typescript-eslint/utils";
+import type { UnknownArray } from "type-fest";
+
+import { objectEntries, safeCastTo, setHas } from "ts-extras";
 
 import {
     isTypedocConfigName,
@@ -32,7 +35,7 @@ type RuleDocsRecord = Readonly<{
     url?: string;
 }>;
 
-type RuleModule = TSESLint.RuleModule<string, readonly unknown[]>;
+type RuleModule = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
 
 type RuleName<TRules extends Record<string, RuleModule>> = Extract<
     keyof TRules,
@@ -80,7 +83,7 @@ const normalizeTypedocConfigNames = (
     }
 
     return typedocConfigNames.filter((configName) =>
-        resolvedConfigNames.has(configName)
+        setHas(resolvedConfigNames, configName)
     );
 };
 
@@ -94,14 +97,14 @@ export const deriveRuleDocsMetadataByName = <
 ): Readonly<Record<RuleName<TRules>, RuleDocsMetadata>> => {
     const metadataByRuleName = {} as Record<RuleName<TRules>, RuleDocsMetadata>;
 
-    for (const [rawRuleName, ruleModule] of Object.entries(rules)) {
+    for (const [rawRuleName, ruleModule] of objectEntries(rules)) {
         const ruleName = rawRuleName as RuleName<TRules>;
 
         if (ruleModule === undefined) {
             continue;
         }
 
-        const docs = (ruleModule.meta?.docs ?? {}) as RuleDocsRecord;
+        const docs = safeCastTo<RuleDocsRecord>(ruleModule.meta?.docs ?? {});
 
         const description = docs.description;
 
@@ -144,11 +147,11 @@ export const deriveRulePresetMembershipByRuleName = <TRuleName extends string>(
 ): Readonly<Record<TRuleName, readonly TypedocConfigName[]>> => {
     const membershipMap = {} as Record<TRuleName, readonly TypedocConfigName[]>;
 
-    for (const [rawRuleName, metadataValue] of Object.entries(
+    for (const [rawRuleName, metadataValue] of objectEntries(
         metadataByRuleName
     )) {
         const ruleName = rawRuleName as TRuleName;
-        const metadata = metadataValue as RuleDocsMetadata;
+        const metadata = safeCastTo<RuleDocsMetadata>(metadataValue);
 
         membershipMap[ruleName] = [...metadata.typedocConfigs];
     }

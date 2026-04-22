@@ -4,6 +4,8 @@ import typedocPlugin from "../src/plugin.js";
 
 describe("preset configs", () => {
     it("uses typedoc namespace rule IDs", () => {
+        expect.hasAssertions();
+
         for (const preset of Object.values(typedocPlugin.configs ?? {})) {
             const ruleIds = Object.keys(preset.rules ?? {});
 
@@ -14,6 +16,8 @@ describe("preset configs", () => {
     });
 
     it("strict includes advanced completeness rules", () => {
+        expect.hasAssertions();
+
         const strictRules = typedocPlugin.configs?.strict?.rules ?? {};
 
         expect(strictRules["typedoc/require-code-fence-language"]).toBe(
@@ -60,6 +64,8 @@ describe("preset configs", () => {
     });
 
     it("minimal excludes strict-only completeness rules", () => {
+        expect.hasAssertions();
+
         const minimalRules = typedocPlugin.configs?.minimal?.rules ?? {};
 
         expect(minimalRules["typedoc/require-param-tags"]).toBeUndefined();
@@ -109,6 +115,8 @@ describe("preset configs", () => {
     });
 
     it("recommended includes stale tag correctness rules", () => {
+        expect.hasAssertions();
+
         const recommendedRules =
             typedocPlugin.configs?.recommended?.rules ?? {};
 
@@ -134,6 +142,8 @@ describe("preset configs", () => {
     });
 
     it("markdown focuses on rendered markdown quality", () => {
+        expect.hasAssertions();
+
         const markdownRules = typedocPlugin.configs?.markdown?.rules ?? {};
 
         expect(markdownRules["typedoc/no-empty-example-tag"]).toBe("error");
@@ -164,6 +174,8 @@ describe("preset configs", () => {
     });
 
     it("tsdoc focuses on canonical TSDoc-compatible authoring", () => {
+        expect.hasAssertions();
+
         const tsdocRules = typedocPlugin.configs?.tsdoc?.rules ?? {};
 
         expect(tsdocRules["typedoc/no-empty-example-tag"]).toBe("error");
@@ -183,6 +195,8 @@ describe("preset configs", () => {
     });
 
     it("jsdoc focuses on the TypeDoc-supported JSDoc subset", () => {
+        expect.hasAssertions();
+
         const jsdocRules = typedocPlugin.configs?.jsdoc?.rules ?? {};
 
         expect(jsdocRules["typedoc/no-empty-example-tag"]).toBe("error");

@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingPackageDocumentationDescription when @packageDocumentation has no description",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -21,11 +20,11 @@ ruleTester.run(
                 errors: [
                     { messageId: "missingPackageDocumentationDescription" },
                 ],
+                name: "reports missingPackageDocumentationDescription when @packageDocumentation has no description",
             },
         ],
         valid: [
             {
-                name: "is valid when @packageDocumentation is followed by a description",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -36,17 +35,18 @@ ruleTester.run(
                     "    return left + right;",
                     "}",
                 ].join("\n"),
+                name: "is valid when @packageDocumentation is followed by a description",
             },
             {
-                name: "is valid by default in test/ paths",
-                filename: "test/package-doc-description.ts",
                 code: "export const value = 1;",
+                filename: "test/package-doc-description.ts",
+                name: "is valid by default in test/ paths",
             },
             {
-                name: "is valid when declaration files are ignored via option",
-                filename: "types/public-api.d.ts",
-                options: [{ ignoreDeclarationFiles: true }],
                 code: "export declare const value: number;",
+                filename: "types/public-api.d.ts",
+                name: "is valid when declaration files are ignored via option",
+                options: [{ ignoreDeclarationFiles: true }],
             },
         ],
     }

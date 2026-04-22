@@ -4,8 +4,10 @@
  */
 
 import type { ESLint, Linter } from "eslint";
+import type { Except } from "type-fest";
 
 import typeScriptParser from "@typescript-eslint/parser";
+import { objectEntries, safeCastTo } from "ts-extras";
 
 import packageJson from "../package.json" with { type: "json" };
 import {
@@ -37,7 +39,7 @@ type FlatParserOptions = NonNullable<FlatLanguageOptions["parserOptions"]>;
 type RulesConfig = TypedocPresetConfig["rules"];
 type TypedocConfigsContract = Record<TypedocConfigName, TypedocPresetConfig>;
 
-type TypedocPluginContract = Omit<ESLint.Plugin, "configs" | "rules"> & {
+type TypedocPluginContract = Except<ESLint.Plugin, "configs" | "rules"> & {
     configs: TypedocConfigsContract;
     meta: {
         name: string;
@@ -107,12 +109,9 @@ const dedupeRuleNames = (
 const presetRuleNamesByConfig = (() => {
     const map = createEmptyPresetRuleMap();
 
-    for (const [ruleName, configNames] of Object.entries(
-        rulePresetMembershipByRuleName
-    ) as readonly (readonly [
-        TypedocRuleName,
-        readonly TypedocConfigName[],
-    ])[]) {
+    for (const [ruleName, configNames] of safeCastTo<
+        readonly (readonly [TypedocRuleName, readonly TypedocConfigName[]])[]
+    >(objectEntries(rulePresetMembershipByRuleName))) {
         for (const configName of configNames) {
             map[configName].push(ruleName);
         }
@@ -124,9 +123,9 @@ const presetRuleNamesByConfig = (() => {
         ) as TypedocRuleName[];
     }
 
-    return map as Readonly<
-        Record<TypedocConfigName, readonly TypedocRuleName[]>
-    >;
+    return safeCastTo<
+        Readonly<Record<TypedocConfigName, readonly TypedocRuleName[]>>
+    >(map);
 })();
 
 const errorRulesFor = (ruleNames: readonly TypedocRuleName[]): RulesConfig => {

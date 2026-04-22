@@ -1,5 +1,7 @@
 import type { TSESTree } from "@typescript-eslint/utils";
 
+import { arrayJoin, isDefined, stringSplit } from "ts-extras";
+
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
 const nextTagLinePattern = /^\s*@[A-Za-z][\w-]*/u;
@@ -13,7 +15,7 @@ const isAsciiLetter = (character: string): boolean => {
     const codePoint = character.codePointAt(0);
 
     return (
-        codePoint !== undefined &&
+        isDefined(codePoint) &&
         ((codePoint >= 65 && codePoint <= 90) ||
             (codePoint >= 97 && codePoint <= 122))
     );
@@ -23,7 +25,7 @@ const isDocTagNameCharacter = (character: string): boolean => {
     const codePoint = character.codePointAt(0);
 
     return (
-        codePoint !== undefined &&
+        isDefined(codePoint) &&
         (isAsciiLetter(character) ||
             (codePoint >= 48 && codePoint <= 57) ||
             character === "_" ||
@@ -38,7 +40,7 @@ const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
 
     const firstTagCharacter = line[1];
 
-    if (firstTagCharacter === undefined || !isAsciiLetter(firstTagCharacter)) {
+    if (!isDefined(firstTagCharacter) || !isAsciiLetter(firstTagCharacter)) {
         return null;
     }
 
@@ -47,7 +49,7 @@ const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
     while (tagEndIndex < line.length) {
         const character = line[tagEndIndex];
 
-        if (character === undefined || !isDocTagNameCharacter(character)) {
+        if (!isDefined(character) || !isDocTagNameCharacter(character)) {
             break;
         }
 
@@ -80,7 +82,7 @@ const isMarkdownDividerLine = (line: string): boolean => {
     const dividerCharacter = condensedLine[0];
 
     return (
-        dividerCharacter !== undefined &&
+        isDefined(dividerCharacter) &&
         (dividerCharacter === "-" ||
             dividerCharacter === "_" ||
             dividerCharacter === "*") &&
@@ -102,7 +104,7 @@ export const getDocCommentTagBlocks = (
     while (lineIndex < lines.length) {
         const line = lines[lineIndex];
 
-        if (line === undefined) {
+        if (!isDefined(line)) {
             lineIndex += 1;
             continue;
         }
@@ -122,7 +124,7 @@ export const getDocCommentTagBlocks = (
         while (continuationIndex < lines.length) {
             const continuationLine = lines[continuationIndex];
 
-            if (continuationLine === undefined) {
+            if (!isDefined(continuationLine)) {
                 continuationIndex += 1;
                 continue;
             }
@@ -135,7 +137,7 @@ export const getDocCommentTagBlocks = (
             continuationIndex += 1;
         }
 
-        const continuationText = continuationLines.join("\n");
+        const continuationText = arrayJoin(continuationLines, "\n");
 
         blocks.push({
             blockText:
@@ -167,9 +169,10 @@ export const hasMeaningfulTagDescription = (
 
 /** Determine whether a block-tag body contains meaningful prose or code. */
 export const hasMeaningfulTagBlockContent = (blockText: string): boolean => {
-    const normalizedLines = blockText
-        .replaceAll("\r\n", "\n")
-        .split("\n")
+    const normalizedLines = stringSplit(
+        blockText.replaceAll("\r\n", "\n"),
+        "\n"
+    )
         .map((line) => line.trim())
         .filter(
             (line) =>

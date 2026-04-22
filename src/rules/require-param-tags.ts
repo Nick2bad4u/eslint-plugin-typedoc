@@ -8,6 +8,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, arrayJoin, isEmpty, setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
@@ -57,7 +58,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create: (context) => {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -81,17 +85,23 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             }
 
             const paramTagNames = getDocCommentParamTagNames(docComment);
-            const missingParamNames = params
-                .map((parameter, index) => getParameterName(parameter, index))
-                .filter((paramName) => !paramTagNames.has(paramName));
+            const missingParamNames: string[] = [];
 
-            if (missingParamNames.length === 0) {
+            for (const [index, parameter] of params.entries()) {
+                const paramName = getParameterName(parameter, index);
+
+                if (!setHas(paramTagNames, paramName)) {
+                    missingParamNames.push(paramName);
+                }
+            }
+
+            if (isEmpty(missingParamNames)) {
                 return;
             }
 
             context.report({
                 data: {
-                    params: missingParamNames.join(", "),
+                    params: arrayJoin(missingParamNames, ", "),
                 },
                 messageId: "missingParamTags",
                 node: reportNode,

@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayFirst, arrayJoin } from "ts-extras";
 
 import { getPreferredLineEnding } from "../_internal/doc-comments.js";
 import {
@@ -31,7 +32,7 @@ const hasPackageDocumentationComment = (
     sourceCode: TSESLint.SourceCode,
     program: TSESTree.Program
 ): boolean => {
-    const firstStatement = program.body[0];
+    const firstStatement = arrayFirst(program.body);
     const candidateComments =
         firstStatement === undefined
             ? sourceCode.getAllComments()
@@ -55,7 +56,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 >({
     create(context) {
         if (
-            shouldIgnoreRequireCommentFile(context.filename, context.options[0])
+            shouldIgnoreRequireCommentFile(
+                context.filename,
+                arrayFirst(context.options)
+            )
         ) {
             return {};
         }
@@ -83,14 +87,17 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     suggest: [
                         {
                             fix: (fixer) => {
-                                const insertionIndex =
-                                    program.body[0]?.range[0] ?? 0;
-                                const packageDocumentationComment = [
-                                    "/**",
-                                    " * @packageDocumentation",
-                                    " */",
-                                    "",
-                                ].join(lineEnding);
+                                const [insertionIndex = 0] =
+                                    arrayFirst(program.body)?.range ?? [];
+                                const packageDocumentationComment = arrayJoin(
+                                    [
+                                        "/**",
+                                        " * @packageDocumentation",
+                                        " */",
+                                        "",
+                                    ],
+                                    lineEnding
+                                );
 
                                 return fixer.insertTextBeforeRange(
                                     [insertionIndex, insertionIndex],

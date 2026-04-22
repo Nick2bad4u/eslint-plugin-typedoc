@@ -3,6 +3,7 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
+import { arrayJoin, isEmpty, not, setHas } from "ts-extras";
 
 import {
     getDocCommentAnchorNode,
@@ -45,16 +46,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             const documentedTypeParameterNames =
                 getDocCommentTypeParamTagNames(docComment);
             const extraTagNames = [...documentedTypeParameterNames].filter(
-                (name) => !typeParameterNameSet.has(name)
+                not((name) => setHas(typeParameterNameSet, name))
             );
 
-            if (extraTagNames.length === 0) {
+            if (isEmpty(extraTagNames)) {
                 return;
             }
 
             context.report({
                 data: {
-                    params: extraTagNames.join(", "),
+                    params: arrayJoin(extraTagNames, ", "),
                 },
                 messageId: "extraTypeParamTags",
                 node: reportNode,

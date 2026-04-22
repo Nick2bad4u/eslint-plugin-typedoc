@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports missingDeprecatedDescription when @deprecated tag has no content",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -17,9 +16,9 @@ ruleTester.run(
                     "export class LegacyWidget {}",
                 ].join("\n"),
                 errors: [{ messageId: "missingDeprecatedDescription" }],
+                name: "reports missingDeprecatedDescription when @deprecated tag has no content",
             },
             {
-                name: "reports missingDeprecatedDescription when @deprecated tag contains only an empty code fence",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -30,11 +29,11 @@ ruleTester.run(
                     "export class LegacyWidget {}",
                 ].join("\n"),
                 errors: [{ messageId: "missingDeprecatedDescription" }],
+                name: "reports missingDeprecatedDescription when @deprecated tag contains only an empty code fence",
             },
         ],
         valid: [
             {
-                name: "is valid when @deprecated tag has inline explanation",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -42,9 +41,9 @@ ruleTester.run(
                     " */",
                     "export class LegacyWidget {}",
                 ].join("\n"),
+                name: "is valid when @deprecated tag has inline explanation",
             },
             {
-                name: "is valid when @deprecated tag is followed by multi-line migration guidance",
                 code: [
                     "/**",
                     " * Legacy widget implementation.",
@@ -54,15 +53,16 @@ ruleTester.run(
                     " */",
                     "export class LegacyWidget {}",
                 ].join("\n"),
+                name: "is valid when @deprecated tag is followed by multi-line migration guidance",
             },
             {
-                name: "is valid for class without @deprecated tag",
                 code: [
                     "/**",
                     " * Modern widget implementation.",
                     " */",
                     "export class ModernWidget {}",
                 ].join("\n"),
+                name: "is valid for class without @deprecated tag",
             },
         ],
     }

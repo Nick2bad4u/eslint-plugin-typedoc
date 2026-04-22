@@ -46,7 +46,7 @@ const createSelectorAwareListenerMap = (listenerMap: unknown): unknown => {
         return listenerMap;
     }
 
-    const listenerRecord = listenerMap as Record<string, unknown>;
+    const listenerRecord = listenerMap;
 
     return new Proxy(listenerRecord, {
         get(target, property, receiver): unknown {

@@ -8,7 +8,6 @@ ruleTester.run(
     {
         invalid: [
             {
-                name: "reports preferPackageDocumentationTag and auto-fixes @module to @packageDocumentation",
                 code: [
                     "/**",
                     " * @module",
@@ -18,6 +17,7 @@ ruleTester.run(
                     "}",
                 ].join("\n"),
                 errors: [{ messageId: "preferPackageDocumentationTag" }],
+                name: "reports preferPackageDocumentationTag and auto-fixes @module to @packageDocumentation",
                 output: [
                     "/**",
                     " * @packageDocumentation",
@@ -30,7 +30,6 @@ ruleTester.run(
         ],
         valid: [
             {
-                name: "is valid when @packageDocumentation tag is used",
                 code: [
                     "/**",
                     " * @packageDocumentation",
@@ -39,6 +38,7 @@ ruleTester.run(
                     "    return Number.parseInt(value, 10);",
                     "}",
                 ].join("\n"),
+                name: "is valid when @packageDocumentation tag is used",
             },
         ],
     }
