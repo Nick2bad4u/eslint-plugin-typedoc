@@ -22,6 +22,7 @@ jobs:
         timeout-minutes: 60
         permissions:
             contents: read
+            id-token: write
         strategy:
             fail-fast: true
             matrix:
@@ -38,6 +39,8 @@ jobs:
         defaults:
             run:
                 shell: bash
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
         steps:
             - name: Harden the runner (Audit all outbound calls)
@@ -62,6 +65,13 @@ jobs:
             - name: Build package
               run: npm run build
 
+            - name: Upload bundle analysis to Codecov
+              if: ${{ matrix.os == 'ubuntu-latest' && !cancelled() && env.CODECOV_TOKEN != '' }}
+              run: npx @codecov/bundle-analyzer ./dist --bundle-name=eslint-plugin-typedoc --upload-token="${CODECOV_TOKEN}"
+              env:
+                  GITHUB_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+                  GITHUB_REF: ${{ github.event_name == 'pull_request' && format('refs/heads/{0}', github.head_ref) || github.ref }}
+
             - name: Verify README rules table sync
               run: npm run sync:readme-rules-table
 
@@ -73,7 +83,7 @@ jobs:
               env:
                   CI: "true"
                   MAX_THREADS: "1"
-                  TYPEDOC_VITEST_HANGING_PROCESS_REPORTER: "true"
+                  TYPEFEST_VITEST_HANGING_PROCESS_REPORTER: "true"
                   VITEST_HANGING_PROCESS_REPORTER: "true"
 
             - name: Verify coverage artifact
@@ -86,9 +96,10 @@ jobs:
               if: ${{ !cancelled() }}
               uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
               with:
+                  use_oidc: true
                   slug: Nick2bad4u/eslint-plugin-typedoc
                   files: test-report.junit.xml
-                  flags: unit,${{ matrix.codecov_flag }}
+                  flags: ${{ matrix.codecov_flag }}
                   name: vitest-junit-${{ matrix.codecov_flag }}
                   report_type: test_results
                   fail_ci_if_error: true
@@ -99,9 +110,10 @@ jobs:
               if: ${{ !cancelled() }}
               uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
               with:
+                  use_oidc: true
                   slug: Nick2bad4u/eslint-plugin-typedoc
                   files: ./coverage/lcov.info
-                  flags: unit,${{ matrix.codecov_flag }}
+                  flags: ${{ matrix.codecov_flag }}
                   name: vitest-unit-coverage-${{ matrix.codecov_flag }}
                   report_type: coverage
                   fail_ci_if_error: true
