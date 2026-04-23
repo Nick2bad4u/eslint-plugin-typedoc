@@ -121,6 +121,93 @@ const normalizeTagNameToken = (rawName: string): string => {
         : normalizedName.slice(0, equalsSignOffset);
 };
 
+type LineTagMatch = Readonly<{
+    end: number;
+    name: string;
+    start: number;
+}>;
+
+const trimTrailingCarriageReturn = (lineText: string): string =>
+    lineText.endsWith("\r") ? lineText.slice(0, -1) : lineText;
+
+const normalizeRawCommentLine = (lineText: string): string =>
+    lineText.replace(leadingCommentStarPattern, "").trimStart();
+
+const isFencedCodeDelimiterLine = (lineText: string): boolean =>
+    normalizeRawCommentLine(lineText).startsWith(fencedCodeFencePrefix);
+
+const getInlineTagMatchesFromLine = (
+    lineText: string
+): readonly LineTagMatch[] => {
+    const inlineMatches: LineTagMatch[] = [];
+
+    for (const inlineTagMatch of lineText.matchAll(inlineTagPattern)) {
+        const inlineTagName = inlineTagMatch.groups?.["tagName"];
+        const inlineTagIndex = inlineTagMatch.index;
+
+        if (
+            typeof inlineTagName !== "string" ||
+            typeof inlineTagIndex !== "number"
+        ) {
+            continue;
+        }
+
+        // Inline tags match as "{@tag"; normalize ranges to start at '@'.
+        const inlineTagStart = inlineTagIndex + 1;
+
+        inlineMatches.push({
+            end: inlineTagStart + inlineTagName.length + 1,
+            name: inlineTagName,
+            start: inlineTagStart,
+        });
+    }
+
+    return inlineMatches;
+};
+
+const getTagMatchesFromLine = (lineText: string): readonly LineTagMatch[] => {
+    const lineMatches: LineTagMatch[] = [];
+    const blockTagMatch = getBlockTagMatchFromLine(lineText);
+
+    if (blockTagMatch !== null) {
+        lineMatches.push(blockTagMatch);
+    }
+
+    lineMatches.push(...getInlineTagMatchesFromLine(lineText));
+    lineMatches.sort((left, right) => left.start - right.start);
+
+    return lineMatches;
+};
+
+const getAbsoluteTagMatches = (
+    lineMatches: readonly LineTagMatch[],
+    commentStartOffset: number,
+    lineStartOffset: number
+): readonly DocTagMatch[] =>
+    lineMatches.map((lineMatch) => {
+        const absoluteStart =
+            commentStartOffset + lineStartOffset + lineMatch.start;
+
+        return {
+            absoluteRange: [
+                absoluteStart,
+                absoluteStart + (lineMatch.end - lineMatch.start),
+            ],
+            name: lineMatch.name,
+        };
+    });
+
+const getLineBreakLength = (
+    rawLine: string,
+    hasTrailingLineFeed: boolean
+): number => {
+    if (!hasTrailingLineFeed) {
+        return 0;
+    }
+
+    return rawLine.endsWith("\r") ? 2 : 1;
+};
+
 /** Matched documentation tag with absolute source range. */
 export type DocTagMatch = Readonly<{
     absoluteRange: readonly [number, number];
@@ -214,6 +301,7 @@ export const getDocCommentTagMatches = (
     comment: Readonly<TSESTree.Comment>
 ): readonly DocTagMatch[] => {
     const commentText = sourceCode.getText(comment);
+    const commentStartOffset = arrayFirst(comment.range);
     const matches: DocTagMatch[] = [];
     let inFencedCodeBlock = false;
     let lineStartOffset = 0;
@@ -224,74 +312,23 @@ export const getDocCommentTagMatches = (
     // 2) still support inline tags like {@link ...}, and
     // 3) ignore fenced code blocks where @-prefixed tokens are just code.
     for (const [lineIndex, rawLine] of rawLines.entries()) {
-        const tokenText = rawLine.endsWith("\r")
-            ? rawLine.slice(0, -1)
-            : rawLine;
-        const hasTrailingCarriageReturn = rawLine.endsWith("\r");
+        const lineText = trimTrailingCarriageReturn(rawLine);
 
-        const normalizedLine = tokenText
-            .replace(leadingCommentStarPattern, "")
-            .trimStart();
-
-        if (normalizedLine.startsWith(fencedCodeFencePrefix)) {
+        if (isFencedCodeDelimiterLine(lineText)) {
             inFencedCodeBlock = !inFencedCodeBlock;
         } else if (!inFencedCodeBlock) {
-            const lineMatches: {
-                readonly end: number;
-                readonly name: string;
-                readonly start: number;
-            }[] = [];
-
-            const blockTagMatch = getBlockTagMatchFromLine(tokenText);
-
-            if (blockTagMatch !== null) {
-                lineMatches.push(blockTagMatch);
-            }
-
-            for (const inlineTagMatch of tokenText.matchAll(inlineTagPattern)) {
-                const inlineTagName = inlineTagMatch.groups?.["tagName"];
-                const inlineTagIndex = inlineTagMatch.index;
-
-                if (
-                    typeof inlineTagName !== "string" ||
-                    typeof inlineTagIndex !== "number"
-                ) {
-                    continue;
-                }
-
-                // Inline tags match as "{@tag"; normalize ranges to start at '@'.
-                const inlineTagStart = inlineTagIndex + 1;
-
-                lineMatches.push({
-                    end: inlineTagStart + inlineTagName.length + 1,
-                    name: inlineTagName,
-                    start: inlineTagStart,
-                });
-            }
-
-            lineMatches.sort((left, right) => left.start - right.start);
-
-            for (const lineMatch of lineMatches) {
-                const absoluteStart =
-                    arrayFirst(comment.range) +
-                    lineStartOffset +
-                    lineMatch.start;
-
-                matches.push({
-                    absoluteRange: [
-                        absoluteStart,
-                        absoluteStart + (lineMatch.end - lineMatch.start),
-                    ],
-                    name: lineMatch.name,
-                });
-            }
+            matches.push(
+                ...getAbsoluteTagMatches(
+                    getTagMatchesFromLine(lineText),
+                    commentStartOffset,
+                    lineStartOffset
+                )
+            );
         }
 
         const hasTrailingLineFeed = lineIndex < rawLines.length - 1;
-
         lineStartOffset +=
-            tokenText.length +
-            (hasTrailingLineFeed ? (hasTrailingCarriageReturn ? 2 : 1) : 0);
+            lineText.length + getLineBreakLength(rawLine, hasTrailingLineFeed);
     }
 
     return matches;
