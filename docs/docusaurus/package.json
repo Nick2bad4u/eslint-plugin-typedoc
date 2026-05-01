@@ -37,12 +37,10 @@
     "scripts": {
         "build": "npm run docs:api && npm --prefix ../.. run build:eslint-inspector && npm --prefix ../.. run build:stylelint-inspector && docusaurus build",
         "build:fast": "cross-env DOCUSAURUS_ENABLE_EXPERIMENTAL=true docusaurus build",
-        "build:local": "npm run docs:api:local && npm --prefix ../.. run build:eslint-inspector:local && npm --prefix ../.. run build:stylelint-inspector:local && cross-env NODE_OPTIONS=--no-deprecation docusaurus build",
+        "build:local": "npm run docs:api && npm --prefix ../.. run build:eslint-inspector:local && npm --prefix ../.. run build:stylelint-inspector:local && cross-env NODE_OPTIONS=--no-deprecation docusaurus build",
         "clear": "docusaurus clear",
         "deploy": "docusaurus deploy",
-        "docs:api": "node -e \"const { execSync } = require('node:child_process'); const isCi = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'; const command = isCi ? 'typedoc --options typedoc.config.json' : 'node ../../scripts/run-typedoc-docs.mjs --config typedoc.config.json'; execSync(command, { stdio: 'inherit' });\"",
-        "docs:api:default": "typedoc --options typedoc.config.json",
-        "docs:api:local": "node ../../scripts/run-typedoc-docs.mjs --config typedoc.local.config.mjs",
+        "docs:api": "typedoc --options typedoc.config.json",
         "docusaurus": "docusaurus",
         "serve": "docusaurus serve",
         "start": "docusaurus start --host localhost",
@@ -52,33 +50,21 @@
         "write-heading-ids": "docusaurus write-heading-ids",
         "write-translations": "docusaurus write-translations"
     },
-    "browserslist": {
-        "development": [
-            "last 3 chrome version",
-            "last 3 firefox version",
-            "last 5 safari version"
-        ],
-        "production": [
-            ">0.5%",
-            "not dead",
-            "not op_mini all"
-        ]
-    },
     "dependencies": {
-        "@docusaurus/core": "^3.10.0",
-        "@docusaurus/faster": "^3.10.0",
-        "@docusaurus/plugin-content-docs": "^3.10.0",
-        "@docusaurus/plugin-pwa": "^3.10.0",
-        "@docusaurus/preset-classic": "^3.10.0",
-        "@docusaurus/theme-mermaid": "^3.10.0",
-        "@docusaurus/types": "^3.10.0",
+        "@docusaurus/core": "^3.10.1",
+        "@docusaurus/faster": "^3.10.1",
+        "@docusaurus/plugin-content-docs": "^3.10.1",
+        "@docusaurus/plugin-pwa": "^3.10.1",
+        "@docusaurus/preset-classic": "^3.10.1",
+        "@docusaurus/theme-mermaid": "^3.10.1",
+        "@docusaurus/types": "^3.10.1",
         "@easyops-cn/docusaurus-search-local": "^0.55.1",
         "clsx": "^2.1.1",
         "prism-react-renderer": "^2.4.1"
     },
     "devDependencies": {
-        "@docusaurus/module-type-aliases": "^3.10.0",
-        "@docusaurus/tsconfig": "^3.10.0",
+        "@docusaurus/module-type-aliases": "^3.10.1",
+        "@docusaurus/tsconfig": "^3.10.1",
         "@eslint/config-inspector": "^2.0.0",
         "@mdx-js/react": "^3.1.1",
         "@types/react": "^19.2.14",
@@ -91,7 +77,7 @@
         "typedoc": "^0.28.19",
         "typedoc-docusaurus-theme": "^1.4.2",
         "typedoc-plugin-coverage": "^4.0.3",
-        "typedoc-plugin-dt-links": "^2.0.51",
+        "typedoc-plugin-dt-links": "^2.0.52",
         "typedoc-plugin-external-package-links": "^0.2.0",
         "typedoc-plugin-markdown": "^4.11.0",
         "typedoc-plugin-mdn-links": "^5.1.1",
@@ -105,7 +91,7 @@
         "react": "^19.2.4",
         "react-dom": "^19.2.4"
     },
-    "packageManager": "npm@11.12.1",
+    "packageManager": "npm@11.13.0",
     "engines": {
         "node": ">=22.0.0"
     },

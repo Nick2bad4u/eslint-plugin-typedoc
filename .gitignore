@@ -868,3 +868,6 @@ eslint.config.bundled_**
 **/site-docs/developer/api/
 # Local Chrome DevTools automatic workspace metadata (machine-specific absolute path)
 docs/docusaurus/static/.well-known/appspecific/com.chrome.devtools.json
+# Ignore generated doc coverage badges
+docs/docusaurus/static/img/coverage.json
+docs/docusaurus/static/img/coverage.svg
