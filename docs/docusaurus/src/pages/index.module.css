@@ -3,7 +3,7 @@
 .heroBanner {
     position: relative;
     overflow: hidden;
-    padding: 5rem 0 3.5rem;
+    padding: clamp(4.2rem, 8vi, 5rem) 0 3.5rem;
     background:
     /* 1. Vibrant Pink/Magenta highlight to break up the purple */
         radial-gradient(
@@ -43,7 +43,7 @@
     display: grid;
     align-items: center;
     gap: 1.25rem;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
 }
 
 .heroEyebrow {
@@ -122,7 +122,8 @@
 .heroPanelLogo {
     block-size: auto;
     filter: drop-shadow(0 10px 24px rgb(20 10 40 / 20%));
-    inline-size: min(80%, 520px);
+    inline-size: min(100%, 420px);
+    max-inline-size: 520px;
 }
 
 .heroLiveBadges {
@@ -132,7 +133,7 @@
 .heroStats {
     display: grid;
     gap: 0.85rem;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
     margin-block-start: 0.82rem;
 }
 
@@ -173,7 +174,13 @@
         line-height: 1.375;
     }
 }
+
 .mainContent {
+    --homepage-card-background: var(--ifm-background-surface-color);
+    --homepage-card-border-color: var(--ifm-color-emphasis-300);
+    --homepage-card-description-color: var(--ifm-color-emphasis-800);
+    --homepage-card-hover-border-color: var(--ifm-color-primary-light);
+
     padding: 2.5rem 0 3.2rem;
 }
 
@@ -185,24 +192,24 @@
 
 .card {
     padding: 1.1rem;
-    border: 1px solid var(--ifm-color-emphasis-300);
+    border: 1px solid var(--homepage-card-border-color);
     border-radius: 0.85rem;
-    background: var(--ifm-background-surface-color);
+    background: var(--homepage-card-background);
     transition:
         border-color 140ms ease-in-out,
         transform 140ms ease-in-out;
 
     @media screen and (prefers-reduced-motion: reduce) {
         padding: 1.1rem;
-        border: 1px solid var(--ifm-color-emphasis-300);
+        border: 1px solid var(--homepage-card-border-color);
         border-radius: 0.85rem;
-        background: var(--ifm-background-surface-color);
+        background: var(--homepage-card-background);
         transition: none;
     }
 
     &:hover,
     &:focus {
-        border-color: var(--ifm-color-primary-light);
+        border-color: var(--homepage-card-hover-border-color);
         transform: translateY(-1px);
     }
 }
@@ -237,7 +244,7 @@
 }
 
 .cardDescription {
-    color: var(--ifm-color-emphasis-800);
+    color: var(--homepage-card-description-color);
     margin-block-end: 0.8rem;
 }
 
@@ -269,26 +276,4 @@
     display: block;
     block-size: 24px;
     inline-size: auto;
-}
-
-@media (width <= 996px) {
-    .heroGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .heroPanel {
-        justify-content: center;
-    }
-
-    .heroPanelLogo {
-        inline-size: min(100%, 420px);
-    }
-
-    .heroBanner {
-        padding-block-start: 4.2rem;
-    }
-
-    .heroStats {
-        grid-template-columns: 1fr;
-    }
 }
