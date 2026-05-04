@@ -1,11 +1,9 @@
 [CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = "High")]
 param(
     [ValidateRange(1,100)]
-    [int]$KeepLast = 5,
-
-    [switch]$DeleteTags,
-
-    [switch]$Force
+    [int] $KeepLast = 5,
+    [switch] $DeleteTags,
+    [switch] $Force
 )
 
 Set-StrictMode -Version Latest
@@ -14,7 +12,7 @@ $ErrorActionPreference = "Stop"
 function Assert-CommandExists {
     param(
         [Parameter(Mandatory = $true)]
-        [string]$Name
+        [string] $Name
     )
 
     if (-not (Get-Command -Name $Name -ErrorAction SilentlyContinue)) {
@@ -31,7 +29,7 @@ if ($insideGitRepository -ne "true") {
 }
 
 Write-Host "Fetching releases from GitHub..."
-$releasesJson = gh release list --limit 1000 --json tagName,publishedAt,isDraft,isPrerelease
+$releasesJson = gh release list --limit 1000 --json tagName, publishedAt, isDraft, isPrerelease
 $releases = $releasesJson | ConvertFrom-Json
 
 if (-not $releases -or $releases.Count -eq 0) {
@@ -39,9 +37,13 @@ if (-not $releases -or $releases.Count -eq 0) {
     exit 0
 }
 
-$publishedReleases = @($releases | Where-Object {
+$publishedReleases = @(
+    $releases | Where-Object {
         $_.publishedAt -and -not $_.isDraft
-    } | Sort-Object { [datetime]$_.publishedAt })
+    } | Sort-Object {
+        [datetime] $_.publishedAt
+    }
+)
 
 if ($publishedReleases.Count -eq 0) {
     Write-Host "No published releases found. Nothing to clean up."
@@ -60,13 +62,20 @@ foreach ($release in $publishedReleases) {
 
 $latestReleases = @($publishedReleases | Select-Object -Last $KeepLast)
 $keptTags = @(
-    $firstMajorReleaseByMajor.Values | ForEach-Object { $_.tagName }
-    $latestReleases | ForEach-Object { $_.tagName }
-) | Select-Object -Unique
+    $firstMajorReleaseByMajor.Values | ForEach-Object {
+        $_.tagName
+    },
+    $latestReleases | ForEach-Object {
+        $_.tagName
+    }
+)
+    | Select-Object -Unique
 
-$releasesToDelete = @($publishedReleases | Where-Object {
+$releasesToDelete = @(
+    $publishedReleases | Where-Object {
         $keptTags -notcontains $_.tagName
-    })
+    }
+)
 
 if ($releasesToDelete.Count -eq 0) {
     Write-Host "No releases match deletion criteria."
@@ -74,7 +83,7 @@ if ($releasesToDelete.Count -eq 0) {
 }
 
 Write-Host "Releases selected for deletion:"
-$releasesToDelete | Select-Object tagName,publishedAt | Format-Table -AutoSize
+$releasesToDelete | Select-Object tagName, publishedAt | Format-Table -AutoSize
 
 if (-not $Force) {
     $confirmation = Read-Host "Delete $($releasesToDelete.Count) release(s)? Type 'yes' to continue"
@@ -86,7 +95,7 @@ if (-not $Force) {
 
 foreach ($release in $releasesToDelete) {
     $tagName = $release.tagName
-    if (-not $PSCmdlet.ShouldProcess("release '$tagName'","Delete")) {
+    if (-not $PSCmdlet.ShouldProcess( "release '$tagName'", "Delete" )) {
         continue
     }
 
@@ -97,7 +106,12 @@ foreach ($release in $releasesToDelete) {
         continue
     }
 
-    if (-not $PSCmdlet.ShouldProcess("git tag '$tagName'","Delete local and remote tags")) {
+    if (
+        -not $PSCmdlet.ShouldProcess(
+            "git tag '$tagName'",
+            "Delete local and remote tags"
+        )
+    ) {
         continue
     }
 
