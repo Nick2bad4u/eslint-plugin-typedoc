@@ -17,6 +17,9 @@ on:
     schedule:
         - cron: "44 4 * * 0" # Runs every Sunday at midnight UTC; https://crontab.guru/#0_0_*_*_0
 
+permissions:
+  contents: read
+
 jobs:
     trufflehog:
         name: Trufflehog Secret Scan

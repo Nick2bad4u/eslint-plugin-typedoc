@@ -10,6 +10,9 @@ concurrency:
 on:
     workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
     coverage:
         name: Run Coverage And Upload (${{ matrix.label }})

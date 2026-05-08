@@ -36,6 +36,9 @@ concurrency:
     group: indexnow-manual
     cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
     submit:
         name: Submit IndexNow Notification

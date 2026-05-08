@@ -18,6 +18,9 @@ concurrency:
     group: dependency-review-${{ github.ref }}
     cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
     dependency-review:
         name: Dependency Review

@@ -16,6 +16,9 @@ on:
             - reopened
             - synchronize
 
+permissions:
+  contents: read
+
 jobs:
     labeler:
         name: Label Pull Requests

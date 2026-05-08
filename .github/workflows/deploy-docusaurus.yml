@@ -24,6 +24,9 @@ concurrency:
     group: pages
     cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
     build:
         name: Build Docs Site
