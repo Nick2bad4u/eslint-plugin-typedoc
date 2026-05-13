@@ -14,7 +14,7 @@ describe("plugin entry", () => {
 
         expect(typedocPlugin.meta?.name).toBe("eslint-plugin-typedoc");
         expect(typedocPlugin.meta?.namespace).toBe("typedoc");
-        expect(typeof typedocPlugin.meta?.version).toBe("string");
+        expect(typedocPlugin.meta?.version).toBeTypeOf("string");
     });
 
     it("registers the expected rule set", () => {
@@ -112,7 +112,7 @@ describe("plugin entry", () => {
         it.each(rules)('"%s" has a non-empty docs.url', (_name, rule) => {
             expect.hasAssertions();
 
-            expect(typeof rule.meta?.docs?.url).toBe("string");
+            expect(rule.meta?.docs?.url).toBeTypeOf("string");
             expect((rule.meta?.docs?.url ?? "").length).toBeGreaterThan(0);
         });
 
@@ -121,7 +121,7 @@ describe("plugin entry", () => {
             (_name, rule) => {
                 expect.hasAssertions();
 
-                expect(typeof rule.meta?.docs?.description).toBe("string");
+                expect(rule.meta?.docs?.description).toBeTypeOf("string");
                 expect(
                     (rule.meta?.docs?.description ?? "").trim().length
                 ).toBeGreaterThan(0);
@@ -136,10 +136,10 @@ describe("plugin entry", () => {
             // lint rule but as a hard contract test so the check cannot be
             // downgraded below "error" without failing the test suite.
             expect(
-                typeof (
-                    rule.meta?.docs as Record<string, unknown> | undefined
-                )?.["recommended"]
-            ).toBe("boolean");
+                (rule.meta?.docs as Record<string, unknown> | undefined)?.[
+                    "recommended"
+                ]
+            ).toBeTypeOf("boolean");
         });
 
         it.each(rules)(
@@ -152,10 +152,10 @@ describe("plugin entry", () => {
                 // services must set this to `true`; rules that only analyse
                 // syntax set it to `false`.
                 expect(
-                    typeof (
-                        rule.meta?.docs as Record<string, unknown> | undefined
-                    )?.["requiresTypeChecking"]
-                ).toBe("boolean");
+                    (rule.meta?.docs as Record<string, unknown> | undefined)?.[
+                        "requiresTypeChecking"
+                    ]
+                ).toBeTypeOf("boolean");
             }
         );
 
@@ -167,10 +167,10 @@ describe("plugin entry", () => {
             // receive breaking changes in a patch release).
             // This property drives the frozen-indicator in the docs site.
             expect(
-                typeof (
-                    rule.meta?.docs as Record<string, unknown> | undefined
-                )?.["frozen"]
-            ).toBe("boolean");
+                (rule.meta?.docs as Record<string, unknown> | undefined)?.[
+                    "frozen"
+                ]
+            ).toBeTypeOf("boolean");
         });
 
         it.each(rules)(

@@ -1,4 +1,5 @@
-import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
+
 import { isPresent } from "ts-extras";
 
 /** Node contract for declarations that may carry generic type parameters. */
@@ -26,9 +27,7 @@ export const getTypeParameterNames = (
             continue;
         }
 
-        if (name.type === AST_NODE_TYPES.Identifier) {
-            typeParameterNames.push(name.name);
-        }
+        typeParameterNames.push(name.name);
     }
 
     return typeParameterNames;

@@ -1,10 +1,20 @@
-import nick2bad4u from "eslint-config-nick2bad4u";
+import nickTwoBadFourU from "eslint-config-nick2bad4u";
 
-import typedoc from "./plugin.mjs";
+import plugin from "./plugin.mjs";
+
+const typedocAllConfig = /** @type {unknown} */ (plugin.configs?.["all"]);
+const typedocAllRules =
+    typeof typedocAllConfig === "object" &&
+    typedocAllConfig !== null &&
+    "rules" in typedocAllConfig &&
+    typeof typedocAllConfig.rules === "object" &&
+    typedocAllConfig.rules !== null
+        ? typedocAllConfig.rules
+        : {};
 
 /** @type {import("eslint").Linter.Config[]} */
 const config = [
-    ...nick2bad4u.configs.withoutTypedoc,
+    ...nickTwoBadFourU.configs.withoutTypedoc,
 
     // Local Plugin Config
     // This lets us use the plugin's rules in this repository without needing to publish the plugin first.
@@ -12,11 +22,10 @@ const config = [
         files: ["src/**/*.{js,mjs,cjs,ts,mts,cts,tsx,jsx}"],
         name: "Local TypeDoc",
         plugins: {
-            typedoc: typedoc,
+            typedoc: plugin,
         },
         rules: {
-            // @ts-expect-error -- plugin.mjs is typed as generic ESLint.Plugin.
-            ...typedoc.configs.all.rules,
+            ...typedocAllRules,
 
             "typedoc/no-empty-private-remarks-tag": "off",
             "typedoc/no-extra-type-param-tags": "off",
@@ -36,6 +45,16 @@ const config = [
             "typedoc/require-throws-tag": "off",
             "typedoc/require-type-param-tag-description": "off",
             "typedoc/require-type-param-tags": "off",
+        },
+    },
+    {
+        files: [
+            "benchmarks/eslint-benchmark-config.mjs",
+            "commitlint.config.mjs",
+        ],
+        name: "MJS Boundary Types",
+        rules: {
+            "@typescript-eslint/explicit-module-boundary-types": "off",
         },
     },
     // Add repository-specific config entries below as needed.

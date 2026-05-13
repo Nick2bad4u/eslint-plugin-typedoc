@@ -7,7 +7,7 @@
  * - `🛠️ [fix](lint) Prevent parser crash on empty scope`
  * - `:sparkles: [feat] Add typed rule metadata`
  *
- * Structure: `<gitmoji> [type](scope?)?[:]? <subject>`
+ * Structure: `&lt;gitmoji> [type](scope?)?[:]? &lt;subject>`
  *
  * @type {import("@commitlint/types").UserConfig}
  *
@@ -101,18 +101,22 @@ function isGitmojiShortcodeToken(token) {
         return false;
     }
 
-    return [...body].every((character) => {
+    for (const character of body) {
         const isLowercaseLetter = character >= "a" && character <= "z";
         const isNumber = character >= "0" && character <= "9";
 
-        return (
-            isLowercaseLetter ||
-            isNumber ||
-            character === "_" ||
-            character === "+" ||
-            character === "-"
-        );
-    });
+        if (
+            !isLowercaseLetter &&
+            !isNumber &&
+            character !== "_" &&
+            character !== "+" &&
+            character !== "-"
+        ) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -143,17 +147,21 @@ function isValidScope(scope) {
         return false;
     }
 
-    return [...scope].every((character) => {
+    for (const character of scope) {
         const isLowercaseLetter = character >= "a" && character <= "z";
         const isNumber = character >= "0" && character <= "9";
 
-        return (
-            isLowercaseLetter ||
-            isNumber ||
-            character === "-" ||
-            character === "/"
-        );
-    });
+        if (
+            !isLowercaseLetter &&
+            !isNumber &&
+            character !== "-" &&
+            character !== "/"
+        ) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -301,12 +309,14 @@ const commitlintConfig = /** @type {CommitlintConfig} */ ({
         {
             rules: {
                 /**
-                 * @param {{ header?: string | null }} parsed
+                 * @param {Readonly<
+                 *     Record<string, string | null | undefined>
+                 * >} parsed
                  *
                  * @returns {[boolean, string]}
                  */
-                "gitmoji-token-valid": (parsed) => {
-                    const header = parsed.header?.trim() ?? "";
+                "gitmoji-token-valid": function gitmojiTokenValid(parsed) {
+                    const header = parsed["header"]?.trim() ?? "";
 
                     if (header.length === 0) {
                         return [false, "commit header must not be empty"];

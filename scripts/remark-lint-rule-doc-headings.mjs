@@ -10,7 +10,7 @@ import { dirname, join } from "node:path";
 /** @typedef {import("mdast").Root} Root */
 /** @typedef {import("unist").Node} Node */
 /** @typedef {import("vfile").VFile} VFile */
-/** @typedef {{ name?: unknown }} PackageMetadata */
+/** @typedef {Record<string, unknown> & { name?: unknown }} PackageMetadata */
 /** @typedef {boolean | undefined} HeadingToggle */
 
 /**

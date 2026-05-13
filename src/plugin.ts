@@ -7,15 +7,16 @@ import type { ESLint, Linter } from "eslint";
 import type { Except } from "type-fest";
 
 import typeScriptParser from "@typescript-eslint/parser";
-import { objectEntries, safeCastTo } from "ts-extras";
+import { objectEntries, objectHasOwn, safeCastTo } from "ts-extras";
 
+// eslint-disable-next-line import-x/extensions -- JSON modules require explicit `.json` specifiers.
 import packageJson from "../package.json" with { type: "json" };
 import {
     deriveRuleDocsMetadataByName,
     deriveRulePresetMembershipByRuleName,
 } from "./_internal/rule-docs-metadata.js";
-import { typedocRules } from "./_internal/rules-registry.js";
-import { createLocaleSortedStringCopy } from "./_internal/sorted-copy.js";
+import { type RuleWithDocs, typedocRules } from "./_internal/rules-registry.js";
+import { createSortedCopy } from "./_internal/sorted-copy.js";
 import {
     type TypedocConfigName as InternalTypedocConfigName,
     typedocConfigMetadataByName,
@@ -33,6 +34,8 @@ export type TypedocPresetConfig = Linter.Config & {
     rules: NonNullable<Linter.Config["rules"]>;
 };
 
+type EslintRuleMap = NonNullable<ESLint.Plugin["rules"]>;
+type EslintRuleModule = EslintRuleMap[string];
 type FlatConfig = Linter.Config;
 type FlatLanguageOptions = NonNullable<FlatConfig["languageOptions"]>;
 type FlatParserOptions = NonNullable<FlatLanguageOptions["parserOptions"]>;
@@ -55,7 +58,7 @@ const getPackageVersion = (pkg: unknown): string => {
         return "0.0.0";
     }
 
-    const version = Reflect.get(pkg, "version");
+    const version: unknown = Reflect.get(pkg, "version");
 
     return typeof version === "string" ? version : "0.0.0";
 };
@@ -81,8 +84,33 @@ export type TypedocRuleId = `typedoc/${TypedocRuleName}`;
 /** Unqualified rule-name union exposed by this plugin. */
 export type TypedocRuleName = keyof typeof typedocRules;
 
-const typedocEslintRules = typedocRules as NonNullable<ESLint.Plugin["rules"]> &
-    typeof typedocRules;
+const isTypedocRuleName = (ruleName: string): ruleName is TypedocRuleName =>
+    objectHasOwn(typedocRules, ruleName);
+
+const toEslintRuleModule = (
+    ruleModule: Readonly<RuleWithDocs>
+): EslintRuleModule => {
+    const adaptedCreate: EslintRuleModule["create"] = (context) =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ESLint v10 and typescript-eslint expose equivalent runtime context values via different type packages.
+        ruleModule.create(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Runtime context object is forwarded unchanged across the type-interop boundary.
+            context as unknown as Parameters<RuleWithDocs["create"]>[0]
+        ) as unknown as ReturnType<EslintRuleModule["create"]>;
+
+    return {
+        create: adaptedCreate,
+        meta: {
+            ...ruleModule.meta,
+            defaultOptions: [...(ruleModule.meta.defaultOptions ?? [])],
+        },
+    };
+};
+
+const typedocEslintRules: EslintRuleMap = {};
+
+for (const [ruleName, ruleModule] of objectEntries(typedocRules)) {
+    typedocEslintRules[ruleName] = toEslintRuleModule(ruleModule);
+}
 
 const ruleDocsMetadataByRuleName = deriveRuleDocsMetadataByName(typedocRules);
 const rulePresetMembershipByRuleName = deriveRulePresetMembershipByRuleName(
@@ -92,15 +120,15 @@ const rulePresetMembershipByRuleName = deriveRulePresetMembershipByRuleName(
 const createEmptyPresetRuleMap = (): Record<
     TypedocConfigName,
     TypedocRuleName[]
-> => {
-    const map = {} as Record<TypedocConfigName, TypedocRuleName[]>;
-
-    for (const configName of typedocConfigNames) {
-        map[configName] = [];
-    }
-
-    return map;
-};
+> => ({
+    all: [],
+    jsdoc: [],
+    markdown: [],
+    minimal: [],
+    recommended: [],
+    strict: [],
+    tsdoc: [],
+});
 
 const dedupeRuleNames = (
     ruleNames: readonly TypedocRuleName[]
@@ -109,18 +137,25 @@ const dedupeRuleNames = (
 const presetRuleNamesByConfig = (() => {
     const map = createEmptyPresetRuleMap();
 
-    for (const [ruleName, configNames] of safeCastTo<
-        readonly (readonly [TypedocRuleName, readonly TypedocConfigName[]])[]
-    >(objectEntries(rulePresetMembershipByRuleName))) {
+    for (const [ruleName, configNames] of objectEntries(
+        rulePresetMembershipByRuleName
+    )) {
+        if (!isTypedocRuleName(ruleName)) {
+            continue;
+        }
+
         for (const configName of configNames) {
             map[configName].push(ruleName);
         }
     }
 
     for (const configName of typedocConfigNames) {
-        map[configName] = createLocaleSortedStringCopy(
-            dedupeRuleNames(map[configName])
-        ) as TypedocRuleName[];
+        map[configName] = [
+            ...createSortedCopy(
+                dedupeRuleNames(map[configName]),
+                (left, right) => left.localeCompare(right)
+            ),
+        ];
     }
 
     return safeCastTo<
@@ -168,24 +203,30 @@ const pluginForConfigs: ESLint.Plugin = {
     rules: typedocEslintRules,
 };
 
-const createTypedocConfigsDefinition = (): TypedocConfigsContract => {
-    const configs = {} as TypedocConfigsContract;
+const createTypedocPresetConfig = (
+    configName: TypedocConfigName
+): TypedocPresetConfig => {
+    const configMetadata = typedocConfigMetadataByName[configName];
+    const presetRuleNames = presetRuleNamesByConfig[configName];
 
-    for (const configName of typedocConfigNames) {
-        const configMetadata = typedocConfigMetadataByName[configName];
-        const presetRuleNames = presetRuleNamesByConfig[configName];
-
-        configs[configName] = withTypedocPlugin(
-            {
-                name: configMetadata.presetName,
-                rules: errorRulesFor(presetRuleNames),
-            },
-            pluginForConfigs
-        );
-    }
-
-    return configs;
+    return withTypedocPlugin(
+        {
+            name: configMetadata.presetName,
+            rules: errorRulesFor(presetRuleNames),
+        },
+        pluginForConfigs
+    );
 };
+
+const createTypedocConfigsDefinition = (): TypedocConfigsContract => ({
+    all: createTypedocPresetConfig("all"),
+    jsdoc: createTypedocPresetConfig("jsdoc"),
+    markdown: createTypedocPresetConfig("markdown"),
+    minimal: createTypedocPresetConfig("minimal"),
+    recommended: createTypedocPresetConfig("recommended"),
+    strict: createTypedocPresetConfig("strict"),
+    tsdoc: createTypedocPresetConfig("tsdoc"),
+});
 
 const typedocConfigs: TypedocConfigsContract = createTypedocConfigsDefinition();
 

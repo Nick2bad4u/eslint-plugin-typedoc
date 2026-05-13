@@ -3,19 +3,19 @@
  * sync.
  */
 
-import { objectHasOwn, setHas } from "ts-extras";
+import { arrayIncludes, objectHasOwn } from "ts-extras";
 
 import { createSortedCopy } from "./sorted-copy.js";
 
 /** Supported preset keys exported by the plugin. */
 export const typedocConfigNames = [
+    "all",
+    "jsdoc",
+    "markdown",
     "minimal",
     "recommended",
-    "markdown",
-    "tsdoc",
-    "jsdoc",
     "strict",
-    "all",
+    "tsdoc",
 ] as const;
 
 /** Supported preset-name union exported by the plugin. */
@@ -107,13 +107,10 @@ export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
     ),
 ];
 
-const typedocConfigNameSet = new Set<TypedocConfigName>(typedocConfigNames);
-
 /** Determine whether a string is a supported preset key. */
 export const isTypedocConfigName = (
     value: string
-): value is TypedocConfigName =>
-    setHas(typedocConfigNameSet, value as TypedocConfigName);
+): value is TypedocConfigName => arrayIncludes(typedocConfigNames, value);
 
 /** Determine whether a string is a supported preset reference literal. */
 export const isTypedocConfigReference = (

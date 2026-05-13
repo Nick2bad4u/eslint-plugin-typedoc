@@ -19,7 +19,7 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingTypeParamTagDescription";
 type Options = readonly [];
 
-const findFirstWhitespaceIndex = (text: string): number => text.search(/\s/u);
+const findFirstWhitespaceIndex = (text: string): number => text.search(/\s/v);
 
 const parseTypeParamTagPayload = (
     tagText: string
@@ -53,7 +53,7 @@ const parseTypeParamTagPayload = (
 };
 
 const normalizeTypeParamTagName = (rawName: string): string => {
-    const bracketTrimmed = rawName.replace(/^\[/u, "").replace(/\]$/u, "");
+    const bracketTrimmed = rawName.replace(/^\[/v, "").replace(/\]$/v, "");
     const equalsSignOffset = bracketTrimmed.indexOf("=");
 
     return equalsSignOffset === -1
@@ -140,11 +140,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 checkNode(node, node);
             },
             MethodDefinition: (node): void => {
-                if (
-                    node.value.type !== AST_NODE_TYPES.FunctionExpression &&
-                    node.value.type !==
-                        AST_NODE_TYPES.TSEmptyBodyFunctionExpression
-                ) {
+                if (node.value.type !== AST_NODE_TYPES.FunctionExpression) {
                     return;
                 }
 

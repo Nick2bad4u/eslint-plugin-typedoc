@@ -3,29 +3,21 @@
  * Disallow unknown tags in TypeDoc comments.
  */
 
-import type { TSESLint } from "@typescript-eslint/utils";
-
-import {
-    arrayFirst,
-    isDefined,
-    not,
-    objectKeys,
-    safeCastTo,
-    setHas,
-} from "ts-extras";
+import { AST_TOKEN_TYPES, type TSESLint } from "@typescript-eslint/utils";
+import { arrayFirst, isDefined, not, setHas } from "ts-extras";
 
 import { getDocCommentTagMatches } from "../_internal/doc-comments.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 /** Shape of the optional first config element accepted by this rule. */
-type AdditionalTagsOption = {
+interface AdditionalTagsOption {
     /**
      * Extra tag names (without `@`) to allow in addition to TypeDoc's built-in
      * supported tag set. Use this when your project defines custom tags via
      * plugins or a `tsdoc.json` configuration.
      */
     readonly additionalTags?: readonly string[];
-};
+}
 
 type MessageIds = "unknownTag";
 type Options = readonly [AdditionalTagsOption?];
@@ -33,8 +25,8 @@ type Options = readonly [AdditionalTagsOption?];
 const supportedTypeDocTagNames = [
     "abstract",
     "alpha",
-    "author",
     "augments",
+    "author",
     "beta",
     "callback",
     "category",
@@ -58,8 +50,8 @@ const supportedTypeDocTagNames = [
     "groupDescription",
     "hidden",
     "hideCategories",
-    "hideGroups",
     "hideconstructor",
+    "hideGroups",
     "ignore",
     "import",
     "include",
@@ -114,16 +106,14 @@ const supportedTypeDocTagNames = [
     "yields",
 ] as const satisfies readonly string[];
 
-const aliasTagsByUnknownTag = {
-    arg: "param",
-    argument: "param",
-    inheritdoc: "inheritDoc",
-    return: "returns",
-} as const satisfies Record<string, string>;
+const aliasTagsByUnknownTag = new Map<string, string>([
+    ["arg", "param"],
+    ["argument", "param"],
+    ["inheritdoc", "inheritDoc"],
+    ["return", "returns"],
+]);
 
-const tagsHandledByAliasFixes = new Set<string>(
-    objectKeys(aliasTagsByUnknownTag)
-);
+const tagsHandledByAliasFixes = new Set<string>(aliasTagsByUnknownTag.keys());
 
 const allowedTags = new Set<string>(
     supportedTypeDocTagNames.filter(
@@ -148,7 +138,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             Program: (): void => {
                 for (const comment of sourceCode.getAllComments()) {
                     if (
-                        comment.type !== "Block" ||
+                        comment.type !== AST_TOKEN_TYPES.Block ||
                         !comment.value.startsWith("*")
                     ) {
                         continue;
@@ -164,16 +154,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         const [absoluteStart, absoluteEnd] =
                             tagMatch.absoluteRange;
-                        const canonicalTagName =
-                            aliasTagsByUnknownTag[
-                                safeCastTo<keyof typeof aliasTagsByUnknownTag>(
-                                    tagMatch.name
-                                )
-                            ];
+                        const canonicalTagName = aliasTagsByUnknownTag.get(
+                            tagMatch.name
+                        );
 
                         const baseReportDescriptor = {
                             data: {
-                                tag: `@${tagMatch.name}`,
+                                tag: `@${String(tagMatch.name)}`,
                             },
                             loc: {
                                 end: sourceCode.getLocFromIndex(absoluteEnd),

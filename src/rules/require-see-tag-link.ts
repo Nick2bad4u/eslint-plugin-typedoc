@@ -1,4 +1,4 @@
-import type { TSESLint } from "@typescript-eslint/utils";
+import { AST_TOKEN_TYPES, type TSESLint } from "@typescript-eslint/utils";
 
 import {
     getDocCommentTagBlocks,
@@ -17,7 +17,7 @@ type Options = readonly [];
  * quantifier) avoids super-linear backtracking when the regex cannot match.
  */
 const seeLinkOrUrlPattern =
-    /\{@link\b|(?:file|ftps?|git|https?|mailto|ssh|svn):\/\//u;
+    /\{@link\b|(?:file|ftps?|git|https?|mailto|ssh|svn):\/\//v;
 
 /** Rule implementation for requiring links or URLs in see-tag bodies. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
@@ -31,7 +31,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             Program(): void {
                 for (const comment of sourceCode.getAllComments()) {
                     if (
-                        comment.type !== "Block" ||
+                        comment.type !== AST_TOKEN_TYPES.Block ||
                         !comment.value.startsWith("*")
                     ) {
                         continue;

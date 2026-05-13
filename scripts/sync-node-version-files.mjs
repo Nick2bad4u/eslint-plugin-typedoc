@@ -31,6 +31,8 @@ const nvmrcFilePath = fileURLToPath(new URL("../.nvmrc", import.meta.url));
  * @param {unknown} version
  *
  * @returns {string}
+ *
+ * @throws {TypeError} When the input is not an exact semver string.
  */
 const normalizeNodeVersion = (version) => {
     if (typeof version !== "string") {
@@ -58,21 +60,20 @@ const normalizeNodeVersion = (version) => {
 const isRecord = (value) => typeof value === "object" && value !== null;
 
 /**
- * Parse command-line arguments.
+ * Parses command-line arguments. Supports `--check`, `--check-current`, and
+ * `--version` overrides.
  *
- * Supported options:
- *
- * - `--check`: validate file existence and synchronization only
- * - `--check-current`: validate files match current runtime version exactly
- * - `--version x.y.z` or `--version=x.y.z`: explicit version override
- *
- * @param {readonly string[]} argumentList
+ * @param {readonly string[]} argumentList - Raw CLI arguments excluding the
+ *   node executable and script path.
  *
  * @returns {{
  *     checkOnly: boolean;
  *     checkCurrent: boolean;
  *     explicitVersion: string | null;
  * }}
+ *
+ * @throws {TypeError} When arguments are unknown, malformed, or mutually
+ *   exclusive.
  */
 const parseArguments = (argumentList) => {
     /** @type {boolean} */
@@ -204,6 +205,8 @@ const compareExactVersions = (leftVersion, rightVersion) => {
  * @param {string | null} minimumEngineVersion
  *
  * @returns {void}
+ *
+ * @throws {RangeError} When the preferred version is below engines.node.
  */
 const assertPreferredVersionSupported = (
     preferredVersion,

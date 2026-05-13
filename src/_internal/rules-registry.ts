@@ -6,37 +6,37 @@
 import type { TSESLint } from "@typescript-eslint/utils";
 import type { UnknownArray } from "type-fest";
 
-import noDuplicateParamTagsRule from "../rules/no-duplicate-param-tags.js";
-import noDuplicateTypeParamTagsRule from "../rules/no-duplicate-type-param-tags.js";
-import noEmptyExampleTagRule from "../rules/no-empty-example-tag.js";
-import noEmptyPrivateRemarksTagRule from "../rules/no-empty-private-remarks-tag.js";
-import noEmptyRemarksTagRule from "../rules/no-empty-remarks-tag.js";
-import noEmptySeeTagRule from "../rules/no-empty-see-tag.js";
-import noExtraParamTagsRule from "../rules/no-extra-param-tags.js";
-import noExtraTypeParamTagsRule from "../rules/no-extra-type-param-tags.js";
-import noMalformedInlineLinksRule from "../rules/no-malformed-inline-links.js";
-import noUnknownTagsRule from "../rules/no-unknown-tags.js";
-import preferPackageDocumentationTagRule from "../rules/prefer-package-documentation-tag.js";
-import preferTypeParamTagRule from "../rules/prefer-type-param-tag.js";
-import requireCodeFenceLanguageRule from "../rules/require-code-fence-language.js";
-import requireDefaultValueTagRule from "../rules/require-default-value-tag.js";
-import requireDeprecatedTagDescriptionRule from "../rules/require-deprecated-tag-description.js";
-import requireExampleTagRule from "../rules/require-example-tag.js";
-import requireExportedDocCommentDescriptionRule from "../rules/require-exported-doc-comment-description.js";
-import requireExportedDocCommentRule from "../rules/require-exported-doc-comment.js";
-import requirePackageDocumentationDescriptionRule from "../rules/require-package-documentation-description.js";
-import requirePackageDocumentationRule from "../rules/require-package-documentation.js";
-import requireParamTagDescriptionRule from "../rules/require-param-tag-description.js";
-import requireParamTagsRule from "../rules/require-param-tags.js";
-import requireReturnsDescriptionRule from "../rules/require-returns-description.js";
-import requireReturnsTagRule from "../rules/require-returns-tag.js";
-import requireSeeTagLinkRule from "../rules/require-see-tag-link.js";
-import requireSinceTagDescriptionRule from "../rules/require-since-tag-description.js";
-import requireThrowsDescriptionRule from "../rules/require-throws-description.js";
-import requireThrowsTagRule from "../rules/require-throws-tag.js";
-import requireTypeParamTagDescriptionRule from "../rules/require-type-param-tag-description.js";
-import requireTypeParamTagsRule from "../rules/require-type-param-tags.js";
-import typedocConfigRequiresOptionsRule from "../rules/typedoc-config-requires-options.js";
+import * as noDuplicateParamTagsRuleModule from "../rules/no-duplicate-param-tags.js";
+import * as noDuplicateTypeParamTagsRuleModule from "../rules/no-duplicate-type-param-tags.js";
+import * as noEmptyExampleTagRuleModule from "../rules/no-empty-example-tag.js";
+import * as noEmptyPrivateRemarksTagRuleModule from "../rules/no-empty-private-remarks-tag.js";
+import * as noEmptyRemarksTagRuleModule from "../rules/no-empty-remarks-tag.js";
+import * as noEmptySeeTagRuleModule from "../rules/no-empty-see-tag.js";
+import * as noExtraParamTagsRuleModule from "../rules/no-extra-param-tags.js";
+import * as noExtraTypeParamTagsRuleModule from "../rules/no-extra-type-param-tags.js";
+import * as noMalformedInlineLinksRuleModule from "../rules/no-malformed-inline-links.js";
+import * as noUnknownTagsRuleModule from "../rules/no-unknown-tags.js";
+import * as preferPackageDocumentationTagRuleModule from "../rules/prefer-package-documentation-tag.js";
+import * as preferTypeParamTagRuleModule from "../rules/prefer-type-param-tag.js";
+import * as requireCodeFenceLanguageRuleModule from "../rules/require-code-fence-language.js";
+import * as requireDefaultValueTagRuleModule from "../rules/require-default-value-tag.js";
+import * as requireDeprecatedTagDescriptionRuleModule from "../rules/require-deprecated-tag-description.js";
+import * as requireExampleTagRuleModule from "../rules/require-example-tag.js";
+import * as requireExportedDocCommentDescriptionRuleModule from "../rules/require-exported-doc-comment-description.js";
+import * as requireExportedDocCommentRuleModule from "../rules/require-exported-doc-comment.js";
+import * as requirePackageDocumentationDescriptionRuleModule from "../rules/require-package-documentation-description.js";
+import * as requirePackageDocumentationRuleModule from "../rules/require-package-documentation.js";
+import * as requireParamTagDescriptionRuleModule from "../rules/require-param-tag-description.js";
+import * as requireParamTagsRuleModule from "../rules/require-param-tags.js";
+import * as requireReturnsDescriptionRuleModule from "../rules/require-returns-description.js";
+import * as requireReturnsTagRuleModule from "../rules/require-returns-tag.js";
+import * as requireSeeTagLinkRuleModule from "../rules/require-see-tag-link.js";
+import * as requireSinceTagDescriptionRuleModule from "../rules/require-since-tag-description.js";
+import * as requireThrowsDescriptionRuleModule from "../rules/require-throws-description.js";
+import * as requireThrowsTagRuleModule from "../rules/require-throws-tag.js";
+import * as requireTypeParamTagDescriptionRuleModule from "../rules/require-type-param-tag-description.js";
+import * as requireTypeParamTagsRuleModule from "../rules/require-type-param-tags.js";
+import * as typedocConfigRequiresOptionsRuleModule from "../rules/typedoc-config-requires-options.js";
 
 /** Runtime rule module shape used by registry/preset builders. */
 export type RuleWithDocs = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
@@ -77,39 +77,46 @@ export type TypedocRuleNamePattern =
 
 /** Runtime map of all rule modules keyed by unqualified rule name. */
 const typedocRuleRegistry = {
-    "no-duplicate-param-tags": noDuplicateParamTagsRule,
-    "no-duplicate-type-param-tags": noDuplicateTypeParamTagsRule,
-    "no-empty-example-tag": noEmptyExampleTagRule,
-    "no-empty-private-remarks-tag": noEmptyPrivateRemarksTagRule,
-    "no-empty-remarks-tag": noEmptyRemarksTagRule,
-    "no-empty-see-tag": noEmptySeeTagRule,
-    "no-extra-param-tags": noExtraParamTagsRule,
-    "no-extra-type-param-tags": noExtraTypeParamTagsRule,
-    "no-malformed-inline-links": noMalformedInlineLinksRule,
-    "no-unknown-tags": noUnknownTagsRule,
-    "prefer-package-documentation-tag": preferPackageDocumentationTagRule,
-    "prefer-type-param-tag": preferTypeParamTagRule,
-    "require-code-fence-language": requireCodeFenceLanguageRule,
-    "require-default-value-tag": requireDefaultValueTagRule,
-    "require-deprecated-tag-description": requireDeprecatedTagDescriptionRule,
-    "require-example-tag": requireExampleTagRule,
-    "require-exported-doc-comment": requireExportedDocCommentRule,
+    "no-duplicate-param-tags": noDuplicateParamTagsRuleModule.default,
+    "no-duplicate-type-param-tags": noDuplicateTypeParamTagsRuleModule.default,
+    "no-empty-example-tag": noEmptyExampleTagRuleModule.default,
+    "no-empty-private-remarks-tag": noEmptyPrivateRemarksTagRuleModule.default,
+    "no-empty-remarks-tag": noEmptyRemarksTagRuleModule.default,
+    "no-empty-see-tag": noEmptySeeTagRuleModule.default,
+    "no-extra-param-tags": noExtraParamTagsRuleModule.default,
+    "no-extra-type-param-tags": noExtraTypeParamTagsRuleModule.default,
+    "no-malformed-inline-links": noMalformedInlineLinksRuleModule.default,
+    "no-unknown-tags": noUnknownTagsRuleModule.default,
+    "prefer-package-documentation-tag":
+        preferPackageDocumentationTagRuleModule.default,
+    "prefer-type-param-tag": preferTypeParamTagRuleModule.default,
+    "require-code-fence-language": requireCodeFenceLanguageRuleModule.default,
+    "require-default-value-tag": requireDefaultValueTagRuleModule.default,
+    "require-deprecated-tag-description":
+        requireDeprecatedTagDescriptionRuleModule.default,
+    "require-example-tag": requireExampleTagRuleModule.default,
+    "require-exported-doc-comment": requireExportedDocCommentRuleModule.default,
     "require-exported-doc-comment-description":
-        requireExportedDocCommentDescriptionRule,
-    "require-package-documentation": requirePackageDocumentationRule,
+        requireExportedDocCommentDescriptionRuleModule.default,
+    "require-package-documentation":
+        requirePackageDocumentationRuleModule.default,
     "require-package-documentation-description":
-        requirePackageDocumentationDescriptionRule,
-    "require-param-tag-description": requireParamTagDescriptionRule,
-    "require-param-tags": requireParamTagsRule,
-    "require-returns-description": requireReturnsDescriptionRule,
-    "require-returns-tag": requireReturnsTagRule,
-    "require-see-tag-link": requireSeeTagLinkRule,
-    "require-since-tag-description": requireSinceTagDescriptionRule,
-    "require-throws-description": requireThrowsDescriptionRule,
-    "require-throws-tag": requireThrowsTagRule,
-    "require-type-param-tag-description": requireTypeParamTagDescriptionRule,
-    "require-type-param-tags": requireTypeParamTagsRule,
-    "typedoc-config-requires-options": typedocConfigRequiresOptionsRule,
+        requirePackageDocumentationDescriptionRuleModule.default,
+    "require-param-tag-description":
+        requireParamTagDescriptionRuleModule.default,
+    "require-param-tags": requireParamTagsRuleModule.default,
+    "require-returns-description": requireReturnsDescriptionRuleModule.default,
+    "require-returns-tag": requireReturnsTagRuleModule.default,
+    "require-see-tag-link": requireSeeTagLinkRuleModule.default,
+    "require-since-tag-description":
+        requireSinceTagDescriptionRuleModule.default,
+    "require-throws-description": requireThrowsDescriptionRuleModule.default,
+    "require-throws-tag": requireThrowsTagRuleModule.default,
+    "require-type-param-tag-description":
+        requireTypeParamTagDescriptionRuleModule.default,
+    "require-type-param-tags": requireTypeParamTagsRuleModule.default,
+    "typedoc-config-requires-options":
+        typedocConfigRequiresOptionsRuleModule.default,
 } as const satisfies Record<TypedocRuleNamePattern, RuleWithDocs>;
 
 /** Exported typed view consumed by the plugin entrypoint. */

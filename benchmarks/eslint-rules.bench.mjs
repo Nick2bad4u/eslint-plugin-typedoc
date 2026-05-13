@@ -33,7 +33,7 @@ const countProblems = (lintResults) =>
  *     fix: boolean;
  *     rules: BenchmarkRules;
  * }} options
- *   - Scenario options.
+ *   - File globs, fix mode, and benchmark rule map.
  *
  * @returns {Promise<LintResults>} Lint results.
  */

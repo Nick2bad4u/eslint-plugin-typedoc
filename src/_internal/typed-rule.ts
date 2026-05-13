@@ -42,8 +42,9 @@ type TypedRuleWithMetaAndName<
 /**
  * Canonical rule creator that stamps `meta.docs.url` from rule names.
  */
-const typedRuleCreator: TypedRuleCreator =
-    ESLintUtils.RuleCreator(createRuleDocsUrl);
+const { RuleCreator: createRuleCreator } = ESLintUtils;
+
+const typedRuleCreator: TypedRuleCreator = createRuleCreator(createRuleDocsUrl);
 
 /** Shared RuleCreator instance that stamps canonical docs URLs. */
 export const createTypedRule: TypedRuleCreator = typedRuleCreator;

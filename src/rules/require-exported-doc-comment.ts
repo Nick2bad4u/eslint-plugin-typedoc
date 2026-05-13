@@ -76,7 +76,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     {
                         fix: (fixer) => {
                             const indentation = " ".repeat(
-                                docAnchorNode.loc?.start.column ?? 0
+                                docAnchorNode.loc.start.column
                             );
                             const docComment = createDocCommentText(
                                 declarationName,

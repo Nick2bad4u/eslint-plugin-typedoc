@@ -1,5 +1,8 @@
-import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
-
+import {
+    AST_TOKEN_TYPES,
+    type TSESLint,
+    type TSESTree,
+} from "@typescript-eslint/utils";
 import { arrayFirst } from "ts-extras";
 
 import { createTypedRule } from "../_internal/typed-rule.js";
@@ -12,7 +15,7 @@ type MessageIds = "missingFenceLanguage";
 
 type Options = readonly [];
 
-const lineBreakPattern = /\r\n|\n|\r/gu;
+const lineBreakPattern = /\r\n|\n|\r/gv;
 
 const hasDocFencePrefix = (prefix: string): boolean => {
     const trimmedPrefix = prefix.trimStart();
@@ -58,7 +61,7 @@ const splitTextIntoLinesWithOffsets = (
 };
 
 const isDocComment = (comment: Readonly<TSESTree.Comment>): boolean =>
-    comment.type === "Block" && comment.value.startsWith("*");
+    comment.type === AST_TOKEN_TYPES.Block && comment.value.startsWith("*");
 
 const findMissingFenceLanguageRanges = (
     sourceCode: TSESLint.SourceCode,

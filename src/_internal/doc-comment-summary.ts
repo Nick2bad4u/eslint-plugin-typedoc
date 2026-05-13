@@ -31,8 +31,8 @@ export const hasMeaningfulDocCommentSummary = (
     comment: Readonly<TSESTree.Comment>
 ): boolean => {
     const normalizedSummary = getDocCommentSummaryText(comment)
-        .replace(/^\s*-\s*/u, "")
-        .replace(/^\s*\{[^{}]+\}\s*/u, "")
+        .replace(/^\s*-\s*/v, "")
+        .replace(/^\s*\{[^\{\}]+\}\s*/v, "")
         .trim();
 
     return normalizedSummary.length > 0;

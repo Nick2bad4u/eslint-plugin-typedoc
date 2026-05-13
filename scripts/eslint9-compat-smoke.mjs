@@ -77,6 +77,8 @@ const isUnknownRecord = (value) =>
  * @param {readonly string[]} argv
  *
  * @returns {number | undefined}
+ *
+ * @throws {Error} When `--expect-eslint-major=` is present but malformed.
  */
 const parseExpectedEslintMajor = (argv) => {
     const matchingArgument = argv.find((argument) =>
@@ -110,6 +112,9 @@ const parseExpectedEslintMajor = (argv) => {
 
 /**
  * @param {number | undefined} expectedMajor
+ *
+ * @throws {Error} When the runtime ESLint version cannot be parsed or does not
+ *   match the requested major.
  */
 const assertEslintMajor = (expectedMajor) => {
     const runtimeVersion = ESLint.version;
@@ -150,6 +155,8 @@ const assertEslintMajor = (expectedMajor) => {
 
 /**
  * @param {string} fixturePath
+ *
+ * @throws {Error} When the fixture path does not exist.
  */
 const assertFixtureExists = (fixturePath) => {
     if (!existsSync(fixturePath)) {
@@ -194,6 +201,8 @@ const ensureCompatibilityFixtures = async () => {
  * @param {string} fixturePath
  *
  * @returns {import("eslint").Linter.Config[]}
+ *
+ * @throws {Error} When the plugin recommended config is unavailable.
  */
 const createCompatibilityConfig = (ruleId, typed, fixturePath) => {
     const recommendedConfig = plugin.configs?.["recommended"];
@@ -267,6 +276,9 @@ const createCompatibilityConfig = (ruleId, typed, fixturePath) => {
 
 /**
  * @param {Scenario} scenario
+ *
+ * @throws {Error} When lint execution produces fatal diagnostics or does not
+ *   satisfy message expectations.
  */
 const runScenario = async ({
     expectedMaximumMessages,

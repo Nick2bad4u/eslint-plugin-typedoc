@@ -3,7 +3,11 @@
  * Factory for rules that enforce a canonical tag name over a deprecated alias.
  */
 
-import type { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
+import {
+    AST_TOKEN_TYPES,
+    type ESLintUtils,
+    type TSESLint,
+} from "@typescript-eslint/utils";
 
 import { getDocCommentTagMatches } from "./doc-comments.js";
 import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
@@ -60,7 +64,7 @@ export function createPreferTagRule<TMessageId extends string>(
                 Program(): void {
                     for (const comment of sourceCode.getAllComments()) {
                         if (
-                            comment.type !== "Block" ||
+                            comment.type !== AST_TOKEN_TYPES.Block ||
                             !comment.value.startsWith("*")
                         ) {
                             continue;

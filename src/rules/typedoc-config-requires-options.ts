@@ -25,7 +25,7 @@ type MessageIds = "missingTypedocConfigOptions";
 type Options = readonly [];
 
 const typedocConfigFileExpression =
-    /(?:^|\\|\/)(?:typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/u;
+    /(?:^|\\|\/)(?:typedoc(?:\.config)?\.(?:[cm]?js|ts)|typedoc\.json)$/v;
 
 const requiredOptionDefaultsByName = {
     entryPoints: '["src/index.ts"]',
@@ -134,13 +134,7 @@ const getPropertyKeyName = (
         return property.key.name;
     }
 
-    if (property.key.type === AST_NODE_TYPES.Literal) {
-        return typeof property.key.value === "string"
-            ? property.key.value
-            : null;
-    }
-
-    return null;
+    return typeof property.key.value === "string" ? property.key.value : null;
 };
 
 const getMissingOptionNames = (
@@ -234,31 +228,26 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     fix: (fixer) => {
                         const configObjectText =
                             sourceCode.getText(configObject);
-                        const hasTrailingComma = /,\s*\}$/u.test(
+                        const hasTrailingComma = /,\s*\}$/v.test(
                             configObjectText
                         );
                         const objectStartLineIndex =
-                            (configObject.loc?.start.line ?? 1) - 1;
+                            configObject.loc.start.line - 1;
                         const objectStartLineText =
                             sourceCode.lines[objectStartLineIndex] ?? "";
                         const lineIndentation =
-                            /^\s*/u.exec(objectStartLineText)?.[0] ?? "";
+                            /^\s*/v.exec(objectStartLineText)?.[0] ?? "";
                         const indentation = lineIndentation;
                         let propertyIndentation = `${lineIndentation}    `;
 
-                        for (const property of configObject.properties) {
-                            if (
-                                property.type !== AST_NODE_TYPES.Property ||
-                                property.kind !== "init" ||
-                                property.loc === null
-                            ) {
-                                continue;
-                            }
+                        const firstProperty = arrayFirst(
+                            configObject.properties
+                        );
 
+                        if (firstProperty !== undefined) {
                             propertyIndentation = " ".repeat(
-                                property.loc.start.column
+                                firstProperty.loc.start.column
                             );
-                            break;
                         }
 
                         const insertedProperties = arrayJoin(

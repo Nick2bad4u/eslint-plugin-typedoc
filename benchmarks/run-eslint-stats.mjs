@@ -88,6 +88,9 @@ const benchmarkScenarios = Object.freeze([
  * @param {number} fallbackValue - Default value.
  *
  * @returns {number} Parsed non-negative integer.
+ *
+ * @throws {TypeError} When the provided CLI value is not a non-negative
+ *   integer.
  */
 const parseIntegerArgument = (key, fallbackValue) => {
     const matchingArgument = process.argv.find((argument) =>
@@ -113,7 +116,8 @@ const parseIntegerArgument = (key, fallbackValue) => {
 /**
  * Create a configured ESLint instance for benchmark execution.
  *
- * @param {{ fix: boolean; rules: BenchmarkRules }} options - ESLint options.
+ * @param {{ fix: boolean; rules: BenchmarkRules }} options - Scenario fix mode
+ *   and typedoc rule set.
  *
  * @returns {ESLint} Benchmark ESLint instance.
  */
@@ -143,8 +147,8 @@ const countMessages = (lintResults) =>
 /**
  * Safely divide two numbers.
  *
- * @param {number} numerator - Numerator.
- * @param {number} denominator - Denominator.
+ * @param {number} numerator - Value being divided.
+ * @param {number} denominator - Divisor applied to the numerator.
  *
  * @returns {number | undefined} Division result or `undefined` when denominator
  *   is zero.
@@ -209,12 +213,11 @@ const runScenario = async (scenario, { iterations, warmupIterations }) => {
         lastLintResults = lintResults;
     }
 
-    const mathWithSumPrecise = /**
-     * @type {Math & {
-     *     sumPrecise: (values: readonly number[]) => number;
-     * }}
-     */ (Math);
-    const totalWallClock = mathWithSumPrecise.sumPrecise(wallClockMeasurements);
+    // eslint-disable-next-line math/prefer-math-sum-precise -- Using `Math.sumPrecise` currently triggers a sonarjs rule crash in JS-mode linting.
+    const totalWallClock = wallClockMeasurements.reduce(
+        (total, value) => total + value,
+        0
+    );
 
     return {
         filePatterns: scenario.filePatterns,
@@ -236,7 +239,8 @@ const runScenario = async (scenario, { iterations, warmupIterations }) => {
 /**
  * Print a compact benchmark summary table.
  *
- * @param {readonly ScenarioResult[]} scenarioResults - Scenario results.
+ * @param {readonly ScenarioResult[]} scenarioResults - Aggregated scenario
+ *   timing and message metrics.
  */
 const printSummaryTable = (scenarioResults) => {
     const tableRows = scenarioResults.map((result) => ({

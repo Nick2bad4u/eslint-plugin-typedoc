@@ -37,11 +37,6 @@ type RuleDocsRecord = Readonly<{
 
 type RuleModule = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
 
-type RuleName<TRules extends Record<string, RuleModule>> = Extract<
-    keyof TRules,
-    string
->;
-
 const normalizeTypedocConfigName = (
     value: string
 ): null | TypedocConfigName => {
@@ -60,13 +55,11 @@ const normalizeTypedocConfigNames = (
     references: readonly string[] | string | undefined,
     fallbackToRecommended: boolean
 ): readonly TypedocConfigName[] => {
-    let values: readonly string[] = [];
-
-    if (Array.isArray(references)) {
-        values = references;
-    } else if (typeof references === "string") {
-        values = [references];
-    }
+    const values: readonly string[] = Array.isArray(references)
+        ? references
+        : typeof references === "string"
+          ? [references]
+          : [];
 
     const resolvedConfigNames = new Set<TypedocConfigName>();
 
@@ -90,21 +83,13 @@ const normalizeTypedocConfigNames = (
 /**
  * Derive normalized docs metadata for each rule in a runtime registry.
  */
-export const deriveRuleDocsMetadataByName = <
-    TRules extends Record<string, RuleModule>,
->(
-    rules: TRules
-): Readonly<Record<RuleName<TRules>, RuleDocsMetadata>> => {
-    const metadataByRuleName = {} as Record<RuleName<TRules>, RuleDocsMetadata>;
+export const deriveRuleDocsMetadataByName = (
+    rules: Readonly<Record<string, RuleModule>>
+): Readonly<Record<string, RuleDocsMetadata>> => {
+    const metadataByRuleName: Record<string, RuleDocsMetadata> = {};
 
-    for (const [rawRuleName, ruleModule] of objectEntries(rules)) {
-        const ruleName = rawRuleName as RuleName<TRules>;
-
-        if (ruleModule === undefined) {
-            continue;
-        }
-
-        const docs = safeCastTo<RuleDocsRecord>(ruleModule.meta?.docs ?? {});
+    for (const [ruleName, ruleModule] of objectEntries(rules)) {
+        const docs = safeCastTo<RuleDocsRecord>(ruleModule.meta.docs ?? {});
 
         const description = docs.description;
 
@@ -144,15 +129,10 @@ export const deriveRuleDocsMetadataByName = <
  */
 export const deriveRulePresetMembershipByRuleName = <TRuleName extends string>(
     metadataByRuleName: Readonly<Record<TRuleName, RuleDocsMetadata>>
-): Readonly<Record<TRuleName, readonly TypedocConfigName[]>> => {
-    const membershipMap = {} as Record<TRuleName, readonly TypedocConfigName[]>;
+): Readonly<Record<string, readonly TypedocConfigName[]>> => {
+    const membershipMap: Record<string, readonly TypedocConfigName[]> = {};
 
-    for (const [rawRuleName, metadataValue] of objectEntries(
-        metadataByRuleName
-    )) {
-        const ruleName = rawRuleName as TRuleName;
-        const metadata = safeCastTo<RuleDocsMetadata>(metadataValue);
-
+    for (const [ruleName, metadata] of objectEntries(metadataByRuleName)) {
         membershipMap[ruleName] = [...metadata.typedocConfigs];
     }
 

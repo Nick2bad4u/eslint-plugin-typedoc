@@ -1,6 +1,6 @@
 /**
- * @packageDocumentation
- * Synchronize or validate presets documentation tables from canonical rule metadata.
+ * Synchronize or validate presets documentation tables from canonical rule
+ * metadata.
  */
 // @ts-check
 
@@ -12,15 +12,23 @@ import builtPlugin from "../dist/plugin.js";
 import { generateReadmeRulesSectionFromRules } from "./sync-readme-rules-table.mjs";
 
 /**
- * @typedef {Readonly<{
- *     meta?: {
- *         docs?: {
- *             url?: string;
- *         };
- *         fixable?: string;
- *         hasSuggestions?: boolean;
- *     };
- * }>} RuleModule
+ * @typedef {object} RuleModuleMetaDocs
+ *
+ * @property {string} [url] Rule documentation URL.
+ */
+
+/**
+ * @typedef {object} RuleModuleMeta
+ *
+ * @property {RuleModuleMetaDocs} [docs] Nested docs metadata.
+ * @property {string} [fixable] Fix mode metadata from ESLint.
+ * @property {boolean} [hasSuggestions] Whether the rule provides suggestions.
+ */
+
+/**
+ * @typedef {object} RuleModule
+ *
+ * @property {RuleModuleMeta} [meta] Optional rule metadata block.
  */
 
 /** @typedef {Readonly<Record<string, RuleModule>>} RulesMap */
@@ -111,6 +119,8 @@ const toPluginRuleName = (configRuleKey) => {
  * @param {PresetConfigName} presetConfigName
  *
  * @returns {readonly string[]}
+ *
+ * @throws {TypeError} When the built plugin does not expose the preset config.
  */
 const collectPresetRuleNames = (presetConfigName) => {
     const presetConfig = builtPlugin.configs[presetConfigName];
@@ -162,6 +172,8 @@ const getRuleFixIndicator = (ruleModule) => {
  * @param {string} ruleName
  *
  * @returns {RuleModule}
+ *
+ * @throws {TypeError} When the named rule is absent from the built plugin.
  */
 const getRuleModuleByName = (ruleName) => {
     const candidate = builtPlugin.rules[ruleName];
@@ -177,6 +189,8 @@ const getRuleModuleByName = (ruleName) => {
  * @param {string} ruleName
  *
  * @returns {string}
+ *
+ * @throws {TypeError} When the named rule is missing a docs URL.
  */
 const toPresetRuleRow = (ruleName) => {
     const ruleModule = getRuleModuleByName(ruleName);
@@ -243,6 +257,8 @@ const generatePresetRulesSection = (presetConfigName) => {
  * @param {readonly string[]} headingCandidates
  *
  * @returns {{ headingOffset: number; sectionEndOffset: number }}
+ *
+ * @throws {Error} When no candidate heading exists in the markdown source.
  */
 const findSectionBoundsByHeadings = (markdown, headingCandidates) => {
     /** @type {number[]} */

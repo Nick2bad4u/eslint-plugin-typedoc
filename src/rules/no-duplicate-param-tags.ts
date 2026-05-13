@@ -78,11 +78,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                 checkFunctionLike(node, node);
             },
             MethodDefinition: (node): void => {
-                if (
-                    node.value.type !== AST_NODE_TYPES.FunctionExpression &&
-                    node.value.type !==
-                        AST_NODE_TYPES.TSEmptyBodyFunctionExpression
-                ) {
+                if (node.value.type !== AST_NODE_TYPES.FunctionExpression) {
                     return;
                 }
 

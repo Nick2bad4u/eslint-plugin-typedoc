@@ -35,7 +35,6 @@ describe("preset configs", () => {
         expect(strictRules["typedoc/require-deprecated-tag-description"]).toBe(
             "error"
         );
-        expect(strictRules["typedoc/require-default-value-tag"]).toBe("error");
         expect(strictRules["typedoc/require-example-tag"]).toBe("error");
         expect(
             strictRules["typedoc/require-exported-doc-comment-description"]

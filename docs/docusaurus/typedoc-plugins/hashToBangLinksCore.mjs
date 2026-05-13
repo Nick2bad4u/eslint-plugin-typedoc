@@ -72,7 +72,7 @@ function isModuleSourceLike(moduleSource) {
  * Rewrites `module#path` -> `module!path` for module-source-like references.
  * Preserves whitespace and any `| label` suffix.
  *
- * @param {string} inlineTagText The inline-tag payload stored by TypeDoc.
+ * @param {string} inlineTagText - The inline-tag payload stored by TypeDoc.
  */
 export function convertHashLinksToBangLinksInInlineTagText(inlineTagText) {
     const pipeIndex = inlineTagText.indexOf("|");

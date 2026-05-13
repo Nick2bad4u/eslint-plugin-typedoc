@@ -27,6 +27,8 @@ export const benchmarkFileGlobs = Object.freeze({
  *
  * @returns {Readonly<BenchmarkRules>} Frozen rules object for the requested
  *   preset.
+ *
+ * @throws {TypeError} When the selected preset does not expose a rules map.
  */
 const resolveRuleSet = (presetName) => {
     const presetConfig = plugin.configs?.[presetName];
@@ -81,12 +83,13 @@ export const typedocRuleSets = Object.freeze({
 /**
  * Create a flat ESLint config array for benchmark scenarios.
  *
- * @type {(options: {
- *     rules: BenchmarkRules;
- * }) => import("eslint").Linter.Config[]}
+ * @param {{ rules: BenchmarkRules }} options - Rule map to apply for benchmark
+ *   runs.
+ *
+ * @returns {import("eslint").Linter.Config[]} Flat config array for
+ *   benchmark-only lint runs.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types -- This .mjs module relies on JSDoc contracts instead of TypeScript syntax.
-export const createTypedocFlatConfig = (options) => {
+export function createTypedocFlatConfig(options) {
     const { rules } = options;
 
     return [
@@ -108,4 +111,4 @@ export const createTypedocFlatConfig = (options) => {
             rules,
         },
     ];
-};
+}

@@ -5,16 +5,18 @@
 
 import {
     AST_NODE_TYPES,
+    AST_TOKEN_TYPES,
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
 import { arrayFirst, arrayJoin, isDefined, stringSplit } from "ts-extras";
 
-const inlineTagPattern = /\{@(?<tagName>[A-Za-z][\w-]*)\b/gu;
-const paramTagPattern = /@param\s+(?<restParameter>\.\.\.)?(?<rawName>\S+)/gu;
-const typeParamTagPattern = /@(?:template|typeParam)\s+(?<rawName>\S+)/gu;
+const inlineTagPattern =
+    /\{@(?<tagName>\p{Letter}[\p{Letter}\p{Number}\-_]*)\b/gv;
+const paramTagPattern = /@param\s+(?<restParameter>\.\.\.)?(?<rawName>\S+)/gv;
+const typeParamTagPattern = /@(?:template|typeParam)\s+(?<rawName>\S+)/gv;
 const inlineLinkPrefix = "{@link";
-const leadingCommentStarPattern = /^\s*\*/u;
+const leadingCommentStarPattern = /^\s*\*/v;
 const fencedCodeFencePrefix = "```";
 
 const isAsciiLetter = (value: string): boolean => {
@@ -111,8 +113,8 @@ const getBlockTagMatchFromLine = (
 
 const normalizeTagNameToken = (rawName: string): string => {
     const normalizedName = rawName
-        .replace(/^\[/u, "")
-        .replace(/\]$/u, "")
+        .replace(/^\[/v, "")
+        .replace(/\]$/v, "")
         .trim();
     const equalsSignOffset = normalizedName.indexOf("=");
 
@@ -235,16 +237,16 @@ export const getLeadingDocComment = (
     node: TSESTree.Node
 ): null | TSESTree.Comment => {
     const comments = sourceCode.getCommentsBefore(node);
-    const nodeStartLine = node.loc?.start.line;
-
-    if (!isDefined(nodeStartLine)) {
-        return null;
-    }
+    const nodeStartLine = node.loc.start.line;
 
     for (let index = comments.length - 1; index >= 0; index -= 1) {
         const comment = comments[index];
 
-        if (comment?.type !== "Block") {
+        if (!isDefined(comment)) {
+            continue;
+        }
+
+        if (comment.type !== AST_TOKEN_TYPES.Block) {
             continue;
         }
 
@@ -252,11 +254,7 @@ export const getLeadingDocComment = (
             continue;
         }
 
-        const commentEndLine = comment.loc?.end.line;
-
-        if (!isDefined(commentEndLine)) {
-            continue;
-        }
+        const commentEndLine = comment.loc.end.line;
 
         if (commentEndLine === nodeStartLine - 1) {
             return comment;
@@ -292,7 +290,7 @@ export const normalizeDocCommentLines = (
     comment: Readonly<TSESTree.Comment>
 ): readonly string[] =>
     stringSplit(comment.value.replaceAll("\r\n", "\n"), "\n")
-        .map((line) => line.replace(/^\s*\* ?/u, "").trimEnd())
+        .map((line) => line.replace(/^\s*\* ?/v, "").trimEnd())
         .map((line) => (line === "/" ? "" : line));
 
 /** Collect all `@tag` matches from a comment with absolute ranges. */
@@ -316,7 +314,9 @@ export const getDocCommentTagMatches = (
 
         if (isFencedCodeDelimiterLine(lineText)) {
             inFencedCodeBlock = !inFencedCodeBlock;
-        } else if (!inFencedCodeBlock) {
+        } else if (inFencedCodeBlock) {
+            // Inside fenced blocks, `@` tokens are treated as code, not tags.
+        } else {
             matches.push(
                 ...getAbsoluteTagMatches(
                     getTagMatchesFromLine(lineText),
@@ -515,7 +515,7 @@ export const buildDocCommentTagInsertion = (
     lineTexts: readonly string[],
     lineEnding: "\n" | "\r\n"
 ): string => {
-    const indentWidth = comment.loc?.start.column ?? 0;
+    const indentWidth = comment.loc.start.column;
     const indentation = " ".repeat(indentWidth);
     const linePrefix = `${indentation} * `;
 

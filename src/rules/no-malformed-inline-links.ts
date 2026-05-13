@@ -3,8 +3,7 @@
  * Report malformed inline `{@link ...}` tags in TypeDoc comments.
  */
 
-import type { TSESLint } from "@typescript-eslint/utils";
-
+import { AST_TOKEN_TYPES, type TSESLint } from "@typescript-eslint/utils";
 import { arrayJoin, stringSplit } from "ts-extras";
 
 import { getInlineLinkMatches } from "../_internal/doc-comments.js";
@@ -27,7 +26,7 @@ const isMalformedInlineLinkContent = (rawContent: string): boolean => {
         return true;
     }
 
-    if (/\s/u.test(target)) {
+    if (/\s/v.test(target)) {
         return true;
     }
 
@@ -49,7 +48,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             Program: (): void => {
                 for (const comment of sourceCode.getAllComments()) {
                     if (
-                        comment.type !== "Block" ||
+                        comment.type !== AST_TOKEN_TYPES.Block ||
                         !comment.value.startsWith("*")
                     ) {
                         continue;

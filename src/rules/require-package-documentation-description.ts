@@ -1,5 +1,6 @@
 import {
     AST_NODE_TYPES,
+    AST_TOKEN_TYPES,
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
@@ -16,7 +17,7 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [RequireCommentFileOptions?];
 
-const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/u;
+const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/v;
 const isExportStatement = (
     statement: Readonly<TSESTree.ProgramStatement>
 ): boolean =>
@@ -38,7 +39,7 @@ const getPackageDocumentationComment = (
 
     for (const comment of candidateComments) {
         if (
-            comment.type === "Block" &&
+            comment.type === AST_TOKEN_TYPES.Block &&
             comment.value.startsWith("*") &&
             packageDocumentationSearchPattern.test(comment.value)
         ) {

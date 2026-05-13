@@ -4,7 +4,7 @@ import { arrayJoin, isDefined, stringSplit } from "ts-extras";
 
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
-const nextTagLinePattern = /^\s*@[A-Za-z][\w-]*/u;
+const nextTagLinePattern = /^\s*@\p{Letter}[\p{Letter}\p{Number}\-_]*/v;
 
 type ParsedDocTagLine = Readonly<{
     tagName: string;
@@ -70,10 +70,10 @@ export type DocTagBlock = Readonly<{
     tagText: string;
 }>;
 
-const codeFenceDelimiterLinePattern = /^(?:```|~~~)/u;
+const codeFenceDelimiterLinePattern = /^(?:```|~~~)/v;
 
 const isMarkdownDividerLine = (line: string): boolean => {
-    const condensedLine = line.replaceAll(/\s+/gu, "");
+    const condensedLine = line.replaceAll(/\s+/gv, "");
 
     if (condensedLine.length < 3) {
         return false;
@@ -81,13 +81,22 @@ const isMarkdownDividerLine = (line: string): boolean => {
 
     const dividerCharacter = condensedLine[0];
 
-    return (
-        isDefined(dividerCharacter) &&
-        (dividerCharacter === "-" ||
-            dividerCharacter === "_" ||
-            dividerCharacter === "*") &&
-        [...condensedLine].every((character) => character === dividerCharacter)
-    );
+    if (
+        !isDefined(dividerCharacter) ||
+        (dividerCharacter !== "-" &&
+            dividerCharacter !== "_" &&
+            dividerCharacter !== "*")
+    ) {
+        return false;
+    }
+
+    for (const character of condensedLine) {
+        if (character !== dividerCharacter) {
+            return false;
+        }
+    }
+
+    return true;
 };
 
 /**
@@ -160,8 +169,8 @@ export const hasMeaningfulTagDescription = (
     descriptionText: string
 ): boolean => {
     const normalizedDescription = descriptionText
-        .replace(/^\s*-\s*/u, "")
-        .replace(/^\s*\{[^{}]+\}\s*/u, "")
+        .replace(/^\s*-\s*/v, "")
+        .replace(/^\s*\{[^\{\}]+\}\s*/v, "")
         .trim();
 
     return normalizedDescription.length > 0;
@@ -181,7 +190,7 @@ export const hasMeaningfulTagBlockContent = (blockText: string): boolean => {
                 !isMarkdownDividerLine(line)
         )
         .map((line) =>
-            line.replace(/^(?:[*+-]|\d+\.)\s*/u, "").replace(/^>\s*/u, "")
+            line.replace(/^(?:[*+\-]|\d+\.)\s*/v, "").replace(/^>\s*/v, "")
         );
 
     return normalizedLines.some((line) => hasMeaningfulTagDescription(line));

@@ -144,11 +144,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     return;
                 }
 
-                if (
-                    node.value.type !== AST_NODE_TYPES.FunctionExpression &&
-                    node.value.type !==
-                        AST_NODE_TYPES.TSEmptyBodyFunctionExpression
-                ) {
+                if (node.value.type !== AST_NODE_TYPES.FunctionExpression) {
                     return;
                 }
 
