@@ -37,6 +37,20 @@ type RuleDocsRecord = Readonly<{
 
 type RuleModule = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
 
+const toReferenceArray = (
+    references: readonly string[] | string | undefined
+): readonly string[] => {
+    if (Array.isArray(references)) {
+        return references;
+    }
+
+    if (typeof references === "string") {
+        return [references];
+    }
+
+    return [];
+};
+
 const normalizeTypedocConfigName = (
     value: string
 ): null | TypedocConfigName => {
@@ -55,11 +69,7 @@ const normalizeTypedocConfigNames = (
     references: readonly string[] | string | undefined,
     fallbackToRecommended: boolean
 ): readonly TypedocConfigName[] => {
-    const values: readonly string[] = Array.isArray(references)
-        ? references
-        : typeof references === "string"
-          ? [references]
-          : [];
+    const values = toReferenceArray(references);
 
     const resolvedConfigNames = new Set<TypedocConfigName>();
 
