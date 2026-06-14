@@ -209,7 +209,8 @@
         "typecheck:all": "npm run typecheck",
         "types:update": "typesync",
         "update-deps": "npx ncu -i --install never && npm update --workspaces --force && npm install --force && npm run sync:peer-eslint-range && npm run sync:node-version-files && npm run sync:rules:write",
-        "verify:readme-rules-table": "npm run build && npm run sync:readme-rules-table"
+        "verify:readme-rules-table": "npm run build && npm run sync:readme-rules-table",
+        "update-actions": "npx actions-up --yes --style sha"
     },
     "overrides": {
         "jsonc-eslint-parser": "$jsonc-eslint-parser"
