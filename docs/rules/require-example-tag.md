@@ -26,12 +26,14 @@ Type signatures explain shape, but examples explain usage. This rule drives prac
 ```ts
 /**
  * Add two numbers.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -40,14 +42,17 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add two numbers.
+ *
+ * @example
+ *  add(1, 2);
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Sum.
- * @example
- * add(1, 2);
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -73,10 +78,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -86,12 +91,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-example-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-example-tag": "error",
+  },
+ },
 ];
 ```
 

@@ -25,16 +25,19 @@ Generic APIs are harder to consume when type parameters are undocumented. This r
 ```ts
 /**
  * Map one value into another type.
+ *
  * @typeParam TInput Input type.
+ *
  * @param input Input value.
  * @param mapper Mapping function.
+ *
  * @returns Mapped value.
  */
 export function mapValue<TInput, TOutput>(
-    input: TInput,
-    mapper: (value: TInput) => TOutput
+ input: TInput,
+ mapper: (value: TInput) => TOutput
 ): TOutput {
-    return mapper(input);
+ return mapper(input);
 }
 ```
 
@@ -43,17 +46,20 @@ export function mapValue<TInput, TOutput>(
 ```ts
 /**
  * Map one value into another type.
+ *
  * @typeParam TInput Input type.
  * @typeParam TOutput Output type.
+ *
  * @param input Input value.
  * @param mapper Mapping function.
+ *
  * @returns Mapped value.
  */
 export function mapValue<TInput, TOutput>(
-    input: TInput,
-    mapper: (value: TInput) => TOutput
+ input: TInput,
+ mapper: (value: TInput) => TOutput
 ): TOutput {
-    return mapper(input);
+ return mapper(input);
 }
 ```
 
@@ -76,10 +82,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -89,12 +95,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-type-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-type-param-tags": "error",
+  },
+ },
 ];
 ```
 

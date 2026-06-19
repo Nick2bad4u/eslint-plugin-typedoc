@@ -40,15 +40,11 @@ type RuleModule = TSESLint.RuleModule<string, Readonly<UnknownArray>>;
 const toReferenceArray = (
     references: readonly string[] | string | undefined
 ): readonly string[] => {
-    if (Array.isArray(references)) {
-        return references;
-    }
-
     if (typeof references === "string") {
         return [references];
     }
 
-    return [];
+    return references ?? [];
 };
 
 const normalizeTypedocConfigName = (

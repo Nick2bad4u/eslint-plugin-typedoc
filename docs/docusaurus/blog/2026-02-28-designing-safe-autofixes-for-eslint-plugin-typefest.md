@@ -2,13 +2,13 @@
 slug: designing-safe-autofixes-for-eslint-plugin-typefest
 title: Designing Safe Autofixes for eslint-plugin-typefest
 authors:
-  - nick
+ - nick
 tags:
-  - eslint
-  - autofix
-  - typescript
-  - static-analysis
-  - developer-experience
+ - eslint
+ - autofix
+ - typescript
+ - static-analysis
+ - developer-experience
 description: How eslint-plugin-typefest decides between automatic fixes and suggestions to protect runtime behavior.
 ---
 

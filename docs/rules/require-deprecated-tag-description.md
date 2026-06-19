@@ -21,6 +21,7 @@ An empty deprecation marker tells consumers that an API is going away, but gives
 ```ts
 /**
  * Legacy widget implementation.
+ *
  * @deprecated
  */
 export class LegacyWidget {}
@@ -31,6 +32,7 @@ export class LegacyWidget {}
 ```ts
 /**
  * Legacy widget implementation.
+ *
  * @deprecated Use {@link ModernWidget} instead.
  */
 export class LegacyWidget {}
@@ -48,12 +50,12 @@ export class LegacyWidget {}
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-deprecated-tag-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-deprecated-tag-description": "error",
+  },
+ },
 ];
 ```
 

@@ -19,12 +19,14 @@ A parameter list without explanations is not useful API documentation. This rule
 ```ts
 /**
  * Add two values.
+ *
  * @param left
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -33,12 +35,14 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add two values.
+ *
  * @param left - Left value.
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -52,12 +56,12 @@ This rule intentionally does not autofix because generating high-quality prose d
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-param-tag-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-param-tag-description": "error",
+  },
+ },
 ];
 ```
 

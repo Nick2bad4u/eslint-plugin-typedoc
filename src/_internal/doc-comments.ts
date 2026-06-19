@@ -301,7 +301,7 @@ export const getDocCommentTagMatches = (
     const commentText = sourceCode.getText(comment);
     const commentStartOffset = arrayFirst(comment.range);
     const matches: DocTagMatch[] = [];
-    let inFencedCodeBlock = false;
+    let isInFencedCodeBlock = false;
     let lineStartOffset = 0;
     const rawLines = stringSplit(commentText, "\n");
 
@@ -313,8 +313,8 @@ export const getDocCommentTagMatches = (
         const lineText = trimTrailingCarriageReturn(rawLine);
 
         if (isFencedCodeDelimiterLine(lineText)) {
-            inFencedCodeBlock = !inFencedCodeBlock;
-        } else if (inFencedCodeBlock) {
+            isInFencedCodeBlock = !isInFencedCodeBlock;
+        } else if (isInFencedCodeBlock) {
             // Inside fenced blocks, `@` tokens are treated as code, not tags.
         } else {
             matches.push(
@@ -435,7 +435,7 @@ const scanForClosingBrace = (
     text: string,
     startOffset: number
 ): InlineLinkScanResult => {
-    for (let index = startOffset; index < text.length; index++) {
+    for (let index = startOffset; index < text.length; index += 1) {
         const character = text[index];
 
         if (character === "\n" || character === "\r") {

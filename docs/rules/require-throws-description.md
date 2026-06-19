@@ -19,15 +19,17 @@ Error type names alone are not enough for consumers. API docs should explain whe
 ```ts
 /**
  * Parse value.
+ *
  * @param input Input value.
+ *
  * @throws {TypeError}
  */
 export function parseValue(input: string): number {
-    if (input.length === 0) {
-        throw new TypeError("Input must not be empty.");
-    }
+ if (input.length === 0) {
+  throw new TypeError("Input must not be empty.");
+ }
 
-    return Number.parseInt(input, 10);
+ return Number.parseInt(input, 10);
 }
 ```
 
@@ -36,15 +38,17 @@ export function parseValue(input: string): number {
 ```ts
 /**
  * Parse value.
+ *
  * @param input Input value.
+ *
  * @throws {TypeError} When input is empty.
  */
 export function parseValue(input: string): number {
-    if (input.length === 0) {
-        throw new TypeError("Input must not be empty.");
-    }
+ if (input.length === 0) {
+  throw new TypeError("Input must not be empty.");
+ }
 
-    return Number.parseInt(input, 10);
+ return Number.parseInt(input, 10);
 }
 ```
 
@@ -58,12 +62,12 @@ No autofix is provided because generated throw descriptions would be guesswork.
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-throws-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-throws-description": "error",
+  },
+ },
 ];
 ```
 

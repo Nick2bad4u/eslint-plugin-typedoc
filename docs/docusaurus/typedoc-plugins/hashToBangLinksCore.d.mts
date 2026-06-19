@@ -3,7 +3,8 @@
  */
 
 /**
- * Rewrites `module#Export` to `module!Export` for module-source-like references.
+ * Rewrites `module#Export` to `module!Export` for module-source-like
+ * references.
  *
  * @param inlineTagText - The inline-tag payload stored by TypeDoc.
  */
@@ -24,7 +25,8 @@ export declare function convertHashLinksToBangLinksInComment(
 /**
  * Mutates an array of TypeDoc comment display parts in-place.
  *
- * @param parts - Display parts collection whose inline-tag text may be rewritten.
+ * @param parts - Display parts collection whose inline-tag text may be
+ *   rewritten.
  */
 export declare function convertHashLinksToBangLinksInParts(
     parts: Array<Record<string, unknown>>

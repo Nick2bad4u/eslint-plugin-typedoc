@@ -3,14 +3,14 @@
  * Sidebar structure for rule documentation under `docs/rules`.
  */
 
-import { readdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
-const sidebarDirectoryPath = dirname(fileURLToPath(import.meta.url));
-const rulesDirectoryPath = join(sidebarDirectoryPath, "..", "rules");
+import { readdirSync } from "node:fs";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const sidebarDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
+const rulesDirectoryPath = path.join(sidebarDirectoryPath, "..", "rules");
 
 const formatRuleDocLabel = (docId: string): string =>
     docId
@@ -124,20 +124,20 @@ if (otherRuleDocIds.length > 0) {
 const sidebars = {
     rules: [
         {
+            className: "sb-rules-overview",
             id: "overview",
             label: "🏁 Overview",
-            className: "sb-rules-overview",
             type: "doc",
         },
         {
+            className: "sb-rules-started",
             id: "getting-started",
             label: "🚀 Getting Started",
-            className: "sb-rules-started",
             type: "doc",
         },
         {
-            collapsed: true,
             className: "sb-rules-adoption",
+            collapsed: true,
             items: [
                 {
                     id: "presets/minimal",
@@ -171,8 +171,8 @@ const sidebars = {
             type: "category",
         },
         {
-            collapsed: false,
             className: "sb-rules-presets",
+            collapsed: false,
             customProps: {
                 badge: "presets",
             },
@@ -221,8 +221,8 @@ const sidebars = {
             type: "category",
         },
         {
-            collapsed: false,
             className: "sb-rules-root",
+            collapsed: false,
             customProps: {
                 badge: "rules",
             },

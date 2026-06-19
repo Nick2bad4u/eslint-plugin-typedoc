@@ -21,7 +21,7 @@ Parameter names without matching docs create incomplete API documentation and fo
  * Build a user profile.
  */
 export function buildProfile(name: string, isActive: boolean): string {
-    return `${name}:${isActive ? "active" : "inactive"}`;
+ return `${name}:${isActive ? "active" : "inactive"}`;
 }
 ```
 
@@ -30,11 +30,12 @@ export function buildProfile(name: string, isActive: boolean): string {
 ```ts
 /**
  * Build a user profile.
+ *
  * @param name User display name.
  * @param isActive Whether the user is active.
  */
 export function buildProfile(name: string, isActive: boolean): string {
-    return `${name}:${isActive ? "active" : "inactive"}`;
+ return `${name}:${isActive ? "active" : "inactive"}`;
 }
 ```
 
@@ -57,10 +58,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -70,12 +71,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-param-tags": "error",
+  },
+ },
 ];
 ```
 

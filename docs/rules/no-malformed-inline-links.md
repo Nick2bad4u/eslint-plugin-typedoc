@@ -65,12 +65,12 @@ The rule provides suggestions (not automatic fixes) to replace malformed links w
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-malformed-inline-links": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-malformed-inline-links": "error",
+  },
+ },
 ];
 ```
 

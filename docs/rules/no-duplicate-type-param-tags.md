@@ -19,13 +19,17 @@ Duplicate generic docs introduce conflicting descriptions and reduce documentati
 ```ts
 /**
  * Identity helper.
- * @typeParam TValue Value type.
+ *
  * @template TValue Duplicate value type.
+ *
+ * @typeParam TValue Value type.
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -34,12 +38,15 @@ export function identity<TValue>(value: TValue): TValue {
 ```ts
 /**
  * Identity helper.
+ *
  * @typeParam TValue Value type.
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -53,12 +60,12 @@ The rule reports duplicates but does not autofix, since choosing which content t
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-duplicate-type-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-duplicate-type-param-tags": "error",
+  },
+ },
 ];
 ```
 

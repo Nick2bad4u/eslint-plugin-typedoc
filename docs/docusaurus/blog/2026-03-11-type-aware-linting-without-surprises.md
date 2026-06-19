@@ -2,13 +2,13 @@
 slug: type-aware-linting-without-surprises
 title: Type-Aware Linting Without Surprises
 authors:
-  - nick
+ - nick
 tags:
-  - eslint
-  - typescript
-  - parser-services
-  - architecture
-  - performance
+ - eslint
+ - typescript
+ - parser-services
+ - architecture
+ - performance
 description: Practical adoption strategy for typed ESLint rules using guard-first execution and predictable fallbacks.
 ---
 

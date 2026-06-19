@@ -2,13 +2,13 @@
 slug: keeping-rule-docs-and-presets-in-sync
 title: Keeping Rule Docs and Presets in Sync
 authors:
-  - nick
+ - nick
 tags:
-  - eslint
-  - documentation
-  - automation
-  - adr
-  - quality
+ - eslint
+ - documentation
+ - automation
+ - adr
+ - quality
 description: How eslint-plugin-typefest keeps docs tables, preset matrices, and rule metadata aligned through canonical generators.
 ---
 

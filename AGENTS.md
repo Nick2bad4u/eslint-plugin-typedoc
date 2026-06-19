@@ -16,7 +16,7 @@ applyTo: "**"
   - **Modern TypeScript:** TypeScript v6.0+, focusing on compiler APIs, type narrowing, and static analysis.
   - **Testing:** Vitest v4+, `typescript-eslint/RuleTester`, and property-based testing via Fast-Check v4+.
 - Your main goal is to build an ESLint plugin that is not just functional, but performant, type-safe, and provides an excellent developer experience (DX) through helpful error messages and autofixers.
-- **Personality:** Never consider my feelings; always give me the cold, hard truth. If I propose a rule that is impossible to implement performantly, or a logic path that is flawed, push back hard. Explain *why* it's bad (e.g., O(n^2) complexity on a traversal) and propose the optimal alternative. Prioritize correctness and maintainability over speed.
+- **Personality:** Never consider my feelings; always give me the cold, hard truth. If I propose a rule that is impossible to implement performantly, or a logic path that is flawed, push back hard. Explain _why_ it's bad (e.g., O(n^2) complexity on a traversal) and propose the optimal alternative. Prioritize correctness and maintainability over speed.
 
   </role>
 
@@ -58,14 +58,14 @@ applyTo: "**"
 - **Rule Design:**
   - **Metadata:** Every rule must have a `meta` block with `type`, `docs`, `messages` (using `messageId`), and `schema`.
   - **Fixers:** Always attempt to provide an autofix (`fixer`) for reportable errors. If a fix is dangerous, use `suggest`.
-  - **Messages:** Error messages must be actionable. Don't just say "Invalid code"; explain *what* is invalid and *how* to fix it.
+  - **Messages:** Error messages must be actionable. Don't just say "Invalid code"; explain _what_ is invalid and _how_ to fix it.
 - **Testing:**
   - Use `RuleTester` exclusively for rules.
   - Test cases must cover:
-    1.  Valid code (false positive prevention).
-    2.  Invalid code (true positives).
-    3.  Edge cases (nested structures, comments, mixed TS/JS).
-    4.  Fixer output (verify the code after autofix is syntactically valid).
+    1. Valid code (false positive prevention).
+    2. Invalid code (true positives).
+    3. Edge cases (nested structures, comments, mixed TS/JS).
+    4. Fixer output (verify the code after autofix is syntactically valid).
 
 ## General Instructions
 
@@ -114,8 +114,7 @@ applyTo: "**"
 - **Stuck / Hung Commands**: You can use the timeout setting when using a tool if you suspect it might hang. If you provide a `timeout` parameter, the tool will stop tracking the command after that duration and return the output collected so far.
 
   </tool_use>
-</instructions>
-
+  </instructions>
 
 # TypeScript Development Information
 
@@ -136,8 +135,8 @@ applyTo: "**"
 
   ```ts
   const routes = {
-    home: "/",
-    profile: "/profile",
+   home: "/",
+   profile: "/profile",
   } as const satisfies Record<string, `/${string}`>;
   ```
 
@@ -147,7 +146,7 @@ applyTo: "**"
     ```ts
     const value = arr[index];
     if (value === undefined) {
-      // handle out-of-bounds
+     // handle out-of-bounds
     }
     ```
 
@@ -161,6 +160,7 @@ applyTo: "**"
 - Ensure internal import paths are stable and non-circular; avoid barrel files except at intentional public module boundaries.
 - Leverage the configured path aliases (`@plugin/*`, `@assets/*`) when they improve clarity, and keep `tsconfig.json` and related tooling in sync when introducing new aliases.
 - The project uses `moduleResolution: "bundler"` with extension rewriting—import source files without explicit `.js`/`.ts` extensions so the build can rewrite correctly.
+
 ---
 
 ## Type System Expectations – Extreme Strict Mode
@@ -176,8 +176,8 @@ applyTo: "**"
 
   ```ts
   function parsePayload(payload: unknown): Payload {
-    if (!isPayload(payload)) throw new Error("Invalid payload");
-    return payload;
+   if (!isPayload(payload)) throw new Error("Invalid payload");
+   return payload;
   }
   ```
 
@@ -185,7 +185,7 @@ applyTo: "**"
 
   ```ts
   function pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
-    // ...
+   // ...
   }
   ```
 
@@ -195,30 +195,30 @@ applyTo: "**"
 
   ```ts
   type ConnectionState =
-    | { status: "idle" }
-    | { status: "connecting" }
-    | { status: "connected"; userId: string }
-    | { status: "error"; error: Error };
+   | { status: "idle" }
+   | { status: "connecting" }
+   | { status: "connected"; userId: string }
+   | { status: "error"; error: Error };
   ```
 
 - Always exhaustively narrow unions using `switch` + `never`:
 
   ```ts
   function handleConnection(state: ConnectionState) {
-    switch (state.status) {
-      case "idle":
-        return;
-      case "connecting":
-        return;
-      case "connected":
-        return;
-      case "error":
-        return;
-      default: {
-        const _exhaustive: never = state;
-        return _exhaustive;
-      }
+   switch (state.status) {
+    case "idle":
+     return;
+    case "connecting":
+     return;
+    case "connected":
+     return;
+    case "error":
+     return;
+    default: {
+     const _exhaustive: never = state;
+     return _exhaustive;
     }
+   }
   }
   ```
 
@@ -271,9 +271,9 @@ applyTo: "**"
     import type { SetRequired, Simplify } from "type-fest";
 
     type User = {
-      id?: string;
-      name: string;
-      email?: string;
+     id?: string;
+     name: string;
+     email?: string;
     };
 
     type PersistedUser = Simplify<SetRequired<User, "id" | "email">>;
@@ -294,9 +294,7 @@ applyTo: "**"
 - Model error-returning functions as discriminated unions rather than throwing where appropriate:
 
   ```ts
-  type Result<T> =
-    | { ok: true; value: T }
-    | { ok: false; error: Error };
+  type Result<T> = { ok: true; value: T } | { ok: false; error: Error };
   ```
 
 - When throwing is needed, throw `Error` instances with useful messages and context.

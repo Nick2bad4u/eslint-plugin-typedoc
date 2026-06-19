@@ -1,38 +1,38 @@
-name: Label Pull Requests
+name: "Label Pull Requests"
 
-run-name: Label Pull Requests • ${{ github.ref_name }} @${{ github.actor }}
+run-name: "Label Pull Requests • ${{ github.ref_name }} @${{ github.actor }}"
 
 concurrency:
-    group: labeler-${{ github.workflow }}-${{ github.ref }}
+    group: "labeler-${{ github.workflow }}-${{ github.ref }}"
     cancel-in-progress: true
 
 on:
     pull_request_target:
         branches:
-            - main
+            - "main"
         types:
-            - opened
-            - edited
-            - reopened
-            - synchronize
+            - "opened"
+            - "edited"
+            - "reopened"
+            - "synchronize"
 
 jobs:
     labeler:
-        name: Label Pull Requests
-        runs-on: ubuntu-latest
+        name: "Label Pull Requests"
+        runs-on: "ubuntu-latest"
         timeout-minutes: 15
         permissions:
-            contents: read
-            pull-requests: write
+            contents: "read"
+            pull-requests: "write"
         steps:
-            - name: Harden the runner (Audit all outbound calls)
-              uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+            - name: "Harden the runner (Audit all outbound calls)"
+              uses: "step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411" # v2.19.4
               with:
-                  egress-policy: audit
+                  egress-policy: "audit"
 
-            - name: Apply labels
-              uses: actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0
+            - name: "Apply labels"
+              uses: "actions/labeler@f27b608878404679385c85cfa523b85ccb86e213" # v6.1.0
               with:
-                  configuration-path: .github/labeler.yml
-                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+                  configuration-path: ".github/labeler.yml"
+                  repo-token: "${{ secrets.GITHUB_TOKEN }}"
                   sync-labels: true

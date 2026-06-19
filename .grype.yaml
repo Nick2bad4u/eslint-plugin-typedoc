@@ -20,28 +20,30 @@ db:
     auto-update: true
 
     # CA certificate for secure database downloads
-    ca-cert: ""
+    ca-cert: "" # yamllint disable-line rule:empty-values
 
     # Database cache location (uses system-appropriate default)
     cache-dir: "~/Library/Caches/grype/db"
 
     # Database freshness requirements (5 days maximum age)
-    max-allowed-built-age: 120h0m0s
+    max-allowed-built-age: "120h0m0s"
 
-    max-update-check-frequency: 2h0m0s # maximum update check frequency
+    max-update-check-frequency: "2h0m0s" # maximum update check frequency
 
     # Updated URL for latest database schema and features
     # Update check requirements and timeouts
     require-update-check: false
-    update-available-timeout: 30s # timeout for update availability check
-    update-download-timeout: 5m0s # timeout for database download
+    update-available-timeout: "30s" # timeout for update availability check
+    update-download-timeout: "5m0s" # timeout for database download
     update-url: "https://grype.anchore.io/databases"
 
     validate-age: true
 
     # Database integrity validation for security
     validate-by-hash-on-start: true
+# yamllint disable rule:empty-values
 default-image-pull-source: "" # registry, docker, podman
+# yamllint enable rule:empty-values
 
 # Distro specification for enhanced matching (format: <distro>:<version>)
 # Enhanced logging configuration for debugging and monitoring
@@ -51,9 +53,11 @@ dev:
         debug: false # show SQL queries in trace logging (requires -vv)
 
     # Resource profiling for performance analysis
+    # yamllint disable rule:empty-values
     profile: "" # cpu, mem
+    # yamllint enable rule:empty-values
 
-distro: ""
+distro: "" # yamllint disable-line rule:empty-values
 
 exclude:
     # Source code and testing exclusions
@@ -160,14 +164,18 @@ external-sources:
     # Maven repository search with optimized rate limiting
     maven:
         base-url: "https://search.maven.org/solrsearch/select"
-        rate-limit: 200ms # optimized for better performance
+        rate-limit: "200ms" # optimized for better performance
 
         search-maven-upstream: true
+# yamllint disable rule:empty-values
 fail-on-severity: "" # negligible, low, medium, high, critical
+# yamllint enable rule:empty-values
 
-file: ""
+file: "" # yamllint disable-line rule:empty-values
 
+# yamllint disable rule:empty-values
 ignore-wontfix: "" # ignore vulnerabilities with specific fix states: fixed,not-fixed,unknown,wont-fix
+# yamllint enable rule:empty-values
 
 # Output configuration specifies how results are displayed
 # Modern Grype includes EPSS data in JSON output for risk-based decision making
@@ -175,7 +183,7 @@ ignore-wontfix: "" # ignore vulnerabilities with specific fix states: fixed,not-
 # Database debugging configuration
 log:
     # Log file path (stdout if empty)
-    file: ""
+    file: "" # yamllint disable-line rule:empty-values
 
     # Logging level for appropriate verbosity
     level: "warn" # error, warn, info, debug, trace
@@ -231,10 +239,12 @@ only-notfixed: false # show only vulnerabilities without fixes
 output: "table" # table, json, cyclonedx, sarif, template (use 'json' for EPSS data)
 
 # Template file for custom output formatting (when output=template)
-output-template-file: ""
+output-template-file: "" # yamllint disable-line rule:empty-values
 
 # Platform specification for multi-architecture scanning
+# yamllint disable rule:empty-values
 platform: "" # e.g., 'linux/arm64', 'linux/amd64'
+# yamllint enable rule:empty-values
 
 # Pretty-print JSON output for readability
 pretty: true
@@ -255,7 +265,7 @@ registry:
     auth: []
 
     # CA certificate for registry communication
-    ca-cert: ""
+    ca-cert: "" # yamllint disable-line rule:empty-values
 
     # TLS configuration for secure registry communication
     insecure-skip-tls-verify: false
@@ -318,6 +328,7 @@ vex-add: [] # VEX statuses to consider as ignored rules
 
 # VEX (Vulnerability Exploitability eXchange) configuration for modern vulnerability management
 vex-documents: []
+
 # Modern usage examples and best practices:
 #
 # Basic vulnerability scan with risk prioritization:

@@ -19,13 +19,15 @@ Duplicate parameter docs create ambiguity in rendered docs and usually indicate 
 ```ts
 /**
  * Add two numbers.
+ *
  * @param left Left value.
  * @param left Duplicate doc.
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -34,12 +36,14 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add two numbers.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -53,12 +57,12 @@ This rule reports duplicates but does not autofix because deciding which duplica
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-duplicate-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-duplicate-param-tags": "error",
+  },
+ },
 ];
 ```
 

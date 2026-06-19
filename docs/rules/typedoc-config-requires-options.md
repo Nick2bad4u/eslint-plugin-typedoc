@@ -21,7 +21,7 @@ Missing core TypeDoc config options is a common setup mistake. Catching it in ES
 
 ```ts
 export default {
-    plugin: ["typedoc-plugin-markdown"],
+ plugin: ["typedoc-plugin-markdown"],
 };
 ```
 
@@ -29,8 +29,8 @@ export default {
 
 ```ts
 export default {
-    entryPoints: ["src/plugin.ts"],
-    tsconfig: "./tsconfig.json",
+ entryPoints: ["src/plugin.ts"],
+ tsconfig: "./tsconfig.json",
 };
 ```
 
@@ -44,13 +44,13 @@ When the configuration object shape is safe to edit, autofix inserts missing key
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        files: ["typedoc.config.{ts,mts,cts,js,mjs,cjs}", "typedoc.json"],
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/typedoc-config-requires-options": "error",
-        },
-    },
+ {
+  files: ["typedoc.config.{ts,mts,cts,js,mjs,cjs}", "typedoc.json"],
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/typedoc-config-requires-options": "error",
+  },
+ },
 ];
 ```
 

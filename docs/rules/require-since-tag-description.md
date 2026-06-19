@@ -21,10 +21,9 @@ This makes the tag actively misleading. Generated documentation with an empty `@
 ```ts
 /**
  * Parse the given JSON string.
- * @since
  */
 export function parseJson(input: string): unknown {
-    return JSON.parse(input);
+ return JSON.parse(input);
 }
 ```
 
@@ -33,21 +32,22 @@ export function parseJson(input: string): unknown {
 ```ts
 /**
  * Parse the given JSON string.
+ *
  * @since 1.2.0
  */
 export function parseJson(input: string): unknown {
-    return JSON.parse(input);
+ return JSON.parse(input);
 }
 ```
 
 ```ts
 /**
  * Parse the given JSON string.
- * @since
- * Introduced in the 1.2.0 release as a replacement for `legacyParse`.
+ *
+ * @since Introduced in the 1.2.0 release as a replacement for `legacyParse`.
  */
 export function parseJson(input: string): unknown {
-    return JSON.parse(input);
+ return JSON.parse(input);
 }
 ```
 
@@ -63,12 +63,12 @@ export function parseJson(input: string): unknown {
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-since-tag-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-since-tag-description": "error",
+  },
+ },
 ];
 ```
 

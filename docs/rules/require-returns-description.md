@@ -19,12 +19,14 @@ Type annotations alone do not explain semantics. This rule ensures return docs c
 ```ts
 /**
  * Add values.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns {number}
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -33,12 +35,14 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add values.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns {number} Sum result.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -52,12 +56,12 @@ No autofix is provided, because semantic return descriptions cannot be generated
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-returns-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-returns-description": "error",
+  },
+ },
 ];
 ```
 

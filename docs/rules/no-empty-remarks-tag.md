@@ -21,10 +21,9 @@ An empty remarks section adds visible noise to generated documentation and usual
 ```ts
 /**
  * Normalize user-provided input.
- * @remarks
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -33,10 +32,12 @@ export function normalize(input: string): string {
 ```ts
 /**
  * Normalize user-provided input.
- * @remarks Trims leading and trailing whitespace before returning the value.
+ *
+ * @remarks
+ *   Trims leading and trailing whitespace before returning the value.
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -52,12 +53,12 @@ export function normalize(input: string): string {
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-empty-remarks-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-empty-remarks-tag": "error",
+  },
+ },
 ];
 ```
 

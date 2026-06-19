@@ -25,10 +25,11 @@ This matters even more when using markdown-oriented output, because summaries ar
 ```ts
 /**
  * @param input Parsed input value.
+ *
  * @returns Normalized output value.
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -37,11 +38,13 @@ export function normalize(input: string): string {
 ```ts
 /**
  * Normalize user-provided input before rendering output.
+ *
  * @param input Parsed input value.
+ *
  * @returns Normalized output value.
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -57,10 +60,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -70,12 +73,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-exported-doc-comment-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-exported-doc-comment-description": "error",
+  },
+ },
 ];
 ```
 

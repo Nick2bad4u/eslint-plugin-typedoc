@@ -14,12 +14,12 @@ npm install --save-dev eslint-plugin-typedoc typedoc
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    typedocPlugin.configs.recommended,
-    {
-        rules: {
-            "typedoc/require-param-tags": "error",
-        },
-    },
+ typedocPlugin.configs.recommended,
+ {
+  rules: {
+   "typedoc/require-param-tags": "error",
+  },
+ },
 ];
 ```
 

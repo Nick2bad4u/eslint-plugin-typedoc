@@ -52,10 +52,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -65,12 +65,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-exported-doc-comment": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-exported-doc-comment": "error",
+  },
+ },
 ];
 ```
 

@@ -1,13 +1,13 @@
 # Deploy Docusaurus site to GitHub Pages
 # yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
-name: Deploy Docusaurus To GitHub Pages
+name: "Deploy Docusaurus To GitHub Pages"
 
-run-name: Deploy Docusaurus • ${{ github.ref_name }} @${{ github.actor }}
+run-name: "Deploy Docusaurus • ${{ github.ref_name }} @${{ github.actor }}"
 
 on:
     push:
         branches:
-            - main
+            - "main"
         paths:
             - ".github/workflows/deploy-docusaurus.yml"
             - ".node-version"
@@ -21,51 +21,51 @@ on:
     workflow_dispatch:
 
 concurrency:
-    group: pages
+    group: "pages"
     cancel-in-progress: true
 
 jobs:
     build:
-        name: Build Docs Site
-        runs-on: ubuntu-latest
+        name: "Build Docs Site"
+        runs-on: "ubuntu-latest"
         timeout-minutes: 40
         permissions:
-            contents: read
-            pages: write
-            id-token: write
+            contents: "read"
+            pages: "write"
+            id-token: "write"
         defaults:
             run:
-                shell: bash
+                shell: "bash"
         steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+            - name: "Harden runner"
+              uses: "step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411" # v2.19.4
               with:
-                  egress-policy: audit
+                  egress-policy: "audit"
 
-            - name: Checkout repository
-              uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - name: "Checkout repository"
+              uses: "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0" # v7.0.0
               with:
                   fetch-depth: 0 # Need full history for proper git info
 
-            - name: Setup Node.js
-              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+            - name: "Setup Node.js"
+              uses: "actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e" # v6.4.0
               with:
-                  node-version-file: .node-version
-                  cache: npm
-                  cache-dependency-path: package-lock.json
+                  node-version-file: ".node-version"
+                  cache: "npm"
+                  cache-dependency-path: "package-lock.json"
 
-            - name: Install dependencies
-              run: npm ci --force
+            - name: "Install dependencies"
+              run: "npm ci --force"
 
-            - name: Build before TypeDoc
-              run: npm run build
+            - name: "Build before TypeDoc"
+              run: "npm run build"
 
-            - name: Build Docusaurus site
-              run: npm run docs:build
+            - name: "Build Docusaurus site"
+              run: "npm run docs:build"
 
-            - name: Write IndexNow key file into built site output
+            - name: "Write IndexNow key file into built site output"
               env:
-                  INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+                  INDEXNOW_KEY: "${{ secrets.INDEXNOW_KEY }}"
               run: |
                   if [ -z "${INDEXNOW_KEY}" ]; then
                     echo "::notice title=IndexNow key file skipped::Set the INDEXNOW_KEY repository secret if you want the published site to expose an IndexNow verification file."
@@ -75,39 +75,39 @@ jobs:
                   node scripts/indexnow.mjs write-key-file \
                     --output docs/docusaurus/build/indexnow-key.txt
 
-            - name: List TypeDoc output directories
+            - name: "List TypeDoc output directories"
               run: |
                   echo "TypeDoc output directories:"
                   ls -l docs/docusaurus/site-docs
                   ls -l docs
 
-            - name: Setup GitHub Pages
-              uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+            - name: "Setup GitHub Pages"
+              uses: "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d" # v6.0.0
 
-            - name: Upload pages artifact
-              uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+            - name: "Upload pages artifact"
+              uses: "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9" # v5.0.0
               with:
-                  path: docs/docusaurus/build
+                  path: "docs/docusaurus/build"
 
     deploy:
-        name: Deploy Site
-        runs-on: ubuntu-latest
+        name: "Deploy Site"
+        runs-on: "ubuntu-latest"
         timeout-minutes: 20
-        needs: build
+        needs: "build"
         outputs:
-            page_url: ${{ steps.deployment.outputs.page_url }}
+            page_url: "${{ steps.deployment.outputs.page_url }}"
         permissions:
-            pages: write
-            id-token: write
+            pages: "write"
+            id-token: "write"
         environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
+            name: "github-pages"
+            url: "${{ steps.deployment.outputs.page_url }}"
         steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+            - name: "Harden runner"
+              uses: "step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411" # v2.19.4
               with:
-                  egress-policy: audit
+                  egress-policy: "audit"
 
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+            - name: "Deploy to GitHub Pages"
+              id: "deployment"
+              uses: "actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128" # v5.0.0

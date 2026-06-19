@@ -8,20 +8,20 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebars = {
     docs: [
         {
+            className: "sb-dev-overview",
             id: "intro",
             label: "🏁 Developer overview",
-            className: "sb-dev-overview",
             type: "doc",
         },
         {
+            className: "sb-dev-started",
             id: "getting-started",
             label: "🚀 Local workflow",
-            className: "sb-dev-started",
             type: "doc",
         },
         {
-            collapsed: false,
             className: "sb-dev-typedoc",
+            collapsed: false,
             items: [
                 {
                     id: "typedoc-pipeline",
@@ -38,8 +38,8 @@ const sidebars = {
             type: "category",
         },
         {
-            collapsed: false,
             className: "sb-dev-tooling",
+            collapsed: false,
             items: [
                 {
                     id: "inspectors",
@@ -61,8 +61,8 @@ const sidebars = {
             type: "category",
         },
         {
-            collapsed: true,
             className: "sb-dev-api",
+            collapsed: true,
             items: [
                 {
                     dirName: "developer/api",

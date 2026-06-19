@@ -71,8 +71,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
         return {
             Program(program): void {
                 if (
-                    !program.body.some((statement) =>
-                        isExportStatement(statement)
+                    program.body.every(
+                        (statement) => !isExportStatement(statement)
                     )
                 ) {
                     return;

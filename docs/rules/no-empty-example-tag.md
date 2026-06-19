@@ -19,10 +19,9 @@ An empty example section creates noise in generated docs and suggests incomplete
 ```ts
 /**
  * Add two values.
- * @example
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -31,11 +30,12 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add two values.
+ *
  * @example
- * add(1, 2);
+ *  add(1, 2);
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -49,12 +49,12 @@ This rule does not autofix because meaningful examples are contextual and must b
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-empty-example-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-empty-example-tag": "error",
+  },
+ },
 ];
 ```
 

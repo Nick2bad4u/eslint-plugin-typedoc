@@ -18,7 +18,7 @@ Without package-level docs, generated TypeDoc module pages often lack context ab
 
 ```ts
 export function parseValue(value: string): number {
-    return Number.parseInt(value, 10);
+ return Number.parseInt(value, 10);
 }
 ```
 
@@ -30,7 +30,7 @@ export function parseValue(value: string): number {
  */
 
 export function parseValue(value: string): number {
-    return Number.parseInt(value, 10);
+ return Number.parseInt(value, 10);
 }
 ```
 
@@ -53,10 +53,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -66,12 +66,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-package-documentation": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-package-documentation": "error",
+  },
+ },
 ];
 ```
 

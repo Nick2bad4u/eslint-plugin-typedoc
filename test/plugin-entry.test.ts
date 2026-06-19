@@ -92,7 +92,7 @@ describe("plugin entry", () => {
             expect(
                 VALID_RULE_TYPES.has(rule.meta?.type as string),
                 `meta.type must be one of: ${[...VALID_RULE_TYPES].join(", ")}`
-            ).toBeTruthy();
+            ).toBe(true);
         });
 
         it.each(rules)('"%s" has at least one message', (_name, rule) => {
@@ -106,7 +106,7 @@ describe("plugin entry", () => {
         it.each(rules)('"%s" has an array schema', (_name, rule) => {
             expect.hasAssertions();
 
-            expect(Array.isArray(rule.meta?.schema)).toBeTruthy();
+            expect(Array.isArray(rule.meta?.schema)).toBe(true);
         });
 
         it.each(rules)('"%s" has a non-empty docs.url', (_name, rule) => {
@@ -187,7 +187,7 @@ describe("plugin entry", () => {
                     | Record<string, unknown>
                     | undefined;
 
-                expect(Array.isArray(docs?.["typedocConfigs"])).toBeTruthy();
+                expect(Array.isArray(docs?.["typedocConfigs"])).toBe(true);
             }
         );
     });
@@ -204,7 +204,7 @@ describe("plugin entry", () => {
                         config !== null &&
                         !Array.isArray(config),
                     `preset "${name}" should be a Linter.Config object`
-                ).toBeTruthy();
+                ).toBe(true);
             }
         });
 

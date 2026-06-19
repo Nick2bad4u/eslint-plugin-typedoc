@@ -6,11 +6,13 @@ describe("preset configs", () => {
     it("uses typedoc namespace rule IDs", () => {
         expect.hasAssertions();
 
-        for (const preset of Object.values(typedocPlugin.configs ?? {})) {
+        const presets = Object.values(typedocPlugin.configs ?? {});
+
+        for (const preset of presets) {
             const ruleIds = Object.keys(preset.rules ?? {});
 
             for (const ruleId of ruleIds) {
-                expect(ruleId.startsWith("typedoc/")).toBeTruthy();
+                expect(ruleId.startsWith("typedoc/")).toBe(true);
             }
         }
     });

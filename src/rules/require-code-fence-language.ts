@@ -70,7 +70,7 @@ const findMissingFenceLanguageRanges = (
     const commentText = sourceCode.getText(comment);
     const lines = splitTextIntoLinesWithOffsets(commentText);
     const ranges: [number, number][] = [];
-    let insideFence = false;
+    let isInsideFence = false;
 
     for (const line of lines) {
         const fenceOffset = line.text.indexOf("```");
@@ -87,7 +87,7 @@ const findMissingFenceLanguageRanges = (
 
         const fenceSuffix = line.text.slice(fenceOffset + 3).trim();
 
-        if (!insideFence) {
+        if (!isInsideFence) {
             if (fenceSuffix.length === 0) {
                 const absoluteStart =
                     arrayFirst(comment.range) +
@@ -97,12 +97,12 @@ const findMissingFenceLanguageRanges = (
                 ranges.push([absoluteStart, absoluteStart + 3]);
             }
 
-            insideFence = true;
+            isInsideFence = true;
             continue;
         }
 
         if (fenceSuffix.length === 0) {
-            insideFence = false;
+            isInsideFence = false;
         }
     }
 

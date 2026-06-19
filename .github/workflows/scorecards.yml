@@ -2,12 +2,12 @@
 # by a third-party and are governed by separate terms of service, privacy
 # policy, and support documentation.
 
-name: Scorecard Supply Chain Security
+name: "Scorecard Supply Chain Security"
 
-run-name: Scorecard Supply-Chain Security • ${{ github.ref_name }} @${{ github.actor }}
+run-name: "Scorecard Supply-Chain Security • ${{ github.ref_name }} @${{ github.actor }}"
 
 concurrency:
-    group: scorecards-${{ github.workflow }}-${{ github.ref }}
+    group: "scorecards-${{ github.workflow }}-${{ github.ref }}"
     cancel-in-progress: true
 
 on:
@@ -15,9 +15,9 @@ on:
     # https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
     branch_protection_rule:
         types:
-            - created
-            - edited
-            - deleted
+            - "created"
+            - "edited"
+            - "deleted"
     # To guarantee Maintained check is occasionally updated. See
     # https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained
     schedule:
@@ -27,38 +27,38 @@ on:
 
 jobs:
     analysis:
-        name: Scorecard analysis
-        runs-on: ubuntu-latest
+        name: "Scorecard analysis"
+        runs-on: "ubuntu-latest"
         timeout-minutes: 30
         permissions:
             # Needed to upload the results to code-scanning dashboard.
-            security-events: write
+            security-events: "write"
             # Needed to publish results and get a badge (see publish_results below).
-            id-token: write
-            contents: read
-            actions: read
+            id-token: "write"
+            contents: "read"
+            actions: "read"
             # To allow GraphQL ListCommits to work
-            issues: read
-            pull-requests: read
+            issues: "read"
+            pull-requests: "read"
             # To detect SAST tools
-            checks: read
+            checks: "read"
 
         steps:
-            - name: Harden the runner (Audit all outbound calls)
-              uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+            - name: "Harden the runner (Audit all outbound calls)"
+              uses: "step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411" # v2.19.4
               with:
-                  egress-policy: audit
+                  egress-policy: "audit"
 
             - name: "Checkout code"
-              uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+              uses: "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0" # v7.0.0
               with:
                   persist-credentials: false
 
             - name: "Run analysis"
-              uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
+              uses: "ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a" # v2.4.3
               with:
-                  results_file: results.sarif
-                  results_format: sarif
+                  results_file: "results.sarif"
+                  results_format: "sarif"
                   # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
                   # - you want to enable the Branch-Protection check on a *public* repository, or
                   # - you are installing Scorecards on a *private* repository
@@ -77,14 +77,14 @@ jobs:
             # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
             # format to the repository Actions tab.
             - name: "Upload artifact"
-              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
               with:
-                  name: SARIF file
-                  path: results.sarif
+                  name: "SARIF file"
+                  path: "results.sarif"
                   retention-days: 5
 
             # Upload the results to GitHub's code scanning dashboard.
             - name: "Upload to code-scanning"
-              uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+              uses: "github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e" # v4.36.2
               with:
-                  sarif_file: results.sarif
+                  sarif_file: "results.sarif"

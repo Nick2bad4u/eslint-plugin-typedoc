@@ -26,10 +26,10 @@ This is especially important for JSDoc-oriented codebases, because TypeDoc inten
 
 ```ts
 /**
- * @return The normalized output.
+ * @returns The normalized output.
  */
 export function normalize(value: string): string {
-    return value.trim();
+ return value.trim();
 }
 ```
 
@@ -47,7 +47,7 @@ export function run(): void {}
  * @returns The normalized output.
  */
 export function normalize(value: string): string {
-    return value.trim();
+ return value.trim();
 }
 ```
 
@@ -62,10 +62,10 @@ You can extend the built-in allowed tag set with the `additionalTags` option. Th
 ```jsonc
 // eslint.config.mjs
 {
-    "typedoc/no-unknown-tags": [
-        "error",
-        { "additionalTags": ["customTag", "myPluginTag"] }
-    ]
+ "typedoc/no-unknown-tags": [
+  "error",
+  { "additionalTags": ["customTag", "myPluginTag"] },
+ ],
 }
 ```
 
@@ -75,15 +75,15 @@ In TypeScript flat config:
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-unknown-tags": [
-                "error",
-                { additionalTags: ["customTag", "myPluginTag"] },
-            ],
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-unknown-tags": [
+    "error",
+    { additionalTags: ["customTag", "myPluginTag"] },
+   ],
+  },
+ },
 ];
 ```
 
@@ -93,12 +93,12 @@ export default [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-unknown-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-unknown-tags": "error",
+  },
+ },
 ];
 ```
 

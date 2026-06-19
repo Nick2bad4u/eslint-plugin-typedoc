@@ -19,12 +19,15 @@ TypeDoc supports `@template`, but `@typeParam` is the canonical tag form in mode
 ```ts
 /**
  * Identity helper.
+ *
  * @template TValue Value type.
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -33,12 +36,15 @@ export function identity<TValue>(value: TValue): TValue {
 ```ts
 /**
  * Identity helper.
+ *
  * @typeParam TValue Value type.
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -52,12 +58,12 @@ Autofix is safe and textual: only the tag identifier is rewritten.
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/prefer-type-param-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/prefer-type-param-tag": "error",
+  },
+ },
 ];
 ```
 

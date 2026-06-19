@@ -21,10 +21,11 @@ Empty or accidental `@see` entries often arise from incomplete edits or copy-pas
 ```ts
 /**
  * Normalize user-provided input.
+ *
  * @see
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -33,16 +34,18 @@ export function normalize(input: string): string {
 ```ts
 /**
  * Normalize user-provided input.
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
 ```ts
 /**
  * Widget component.
+ *
  * @see {@link WidgetFactory} for the preferred construction pattern.
  */
 export class Widget {}
@@ -61,12 +64,12 @@ export class Widget {}
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-empty-see-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-empty-see-tag": "error",
+  },
+ },
 ];
 ```
 

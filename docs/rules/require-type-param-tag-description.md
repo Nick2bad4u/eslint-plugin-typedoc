@@ -19,12 +19,15 @@ Generic APIs are difficult to use without clear type-parameter intent. This rule
 ```ts
 /**
  * Identity helper.
+ *
  * @typeParam TValue
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -33,12 +36,15 @@ export function identity<TValue>(value: TValue): TValue {
 ```ts
 /**
  * Identity helper.
+ *
  * @typeParam TValue Value type.
+ *
  * @param value Input value.
+ *
  * @returns Same value.
  */
 export function identity<TValue>(value: TValue): TValue {
-    return value;
+ return value;
 }
 ```
 
@@ -52,12 +58,12 @@ The rule reports missing generic prose without autofix, because meaningful descr
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-type-param-tag-description": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-type-param-tag-description": "error",
+  },
+ },
 ];
 ```
 

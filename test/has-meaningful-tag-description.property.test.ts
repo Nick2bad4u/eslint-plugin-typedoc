@@ -22,7 +22,7 @@ describe(hasMeaningfulTagDescription, () => {
 
         fc.assert(
             fc.property(whitespaceTextArbitrary, (whitespaceOnly) => {
-                expect(hasMeaningfulTagDescription(whitespaceOnly)).toBeFalsy();
+                expect(hasMeaningfulTagDescription(whitespaceOnly)).toBe(false);
             })
         );
 
@@ -35,7 +35,7 @@ describe(hasMeaningfulTagDescription, () => {
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}-${trailingWhitespace}`
                         )
-                    ).toBeFalsy();
+                    ).toBe(false);
                 }
             )
         );
@@ -50,7 +50,7 @@ describe(hasMeaningfulTagDescription, () => {
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}{${tagTypeName}}${trailingWhitespace}`
                         )
-                    ).toBeFalsy();
+                    ).toBe(false);
                 }
             )
         );
@@ -69,13 +69,13 @@ describe(hasMeaningfulTagDescription, () => {
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}{${tagTypeName}} ${content}`
                         )
-                    ).toBeTruthy();
+                    ).toBe(true);
 
                     expect(
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}- ${content}`
                         )
-                    ).toBeTruthy();
+                    ).toBe(true);
                 }
             )
         );

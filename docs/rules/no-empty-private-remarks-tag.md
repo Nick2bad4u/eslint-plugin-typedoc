@@ -21,22 +21,20 @@ An empty `@privateRemarks` tag is misleading: it implies there are internal note
 ```ts
 /**
  * Normalize user-provided input.
- * @privateRemarks
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
 ````ts
 /**
  * Normalize user-provided input.
+ *
  * @privateRemarks
- * ```md
- * ```
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ````
 
@@ -45,22 +43,25 @@ export function normalize(input: string): string {
 ```ts
 /**
  * Normalize user-provided input.
- * @privateRemarks Internal-only: do not expose in generated docs.
+ *
+ * @privateRemarks
+ *   Internal-only: do not expose in generated docs.
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
 ```ts
 /**
  * Normalize user-provided input.
+ *
  * @privateRemarks
- * This function has a known edge case when input contains only
- * non-breaking spaces — tracked in issue #42.
+ *   This function has a known edge case when input contains only non-breaking
+ *   spaces — tracked in issue #42.
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
@@ -76,12 +77,12 @@ export function normalize(input: string): string {
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-empty-private-remarks-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-empty-private-remarks-tag": "error",
+  },
+ },
 ];
 ```
 

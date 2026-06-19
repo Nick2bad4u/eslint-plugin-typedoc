@@ -21,7 +21,7 @@ TypeDoc supports both forms, but canonicalizing package-level tags improves cons
  * @module
  */
 export function parseValue(value: string): number {
-    return Number.parseInt(value, 10);
+ return Number.parseInt(value, 10);
 }
 ```
 
@@ -32,7 +32,7 @@ export function parseValue(value: string): number {
  * @packageDocumentation
  */
 export function parseValue(value: string): number {
-    return Number.parseInt(value, 10);
+ return Number.parseInt(value, 10);
 }
 ```
 
@@ -46,12 +46,12 @@ Autofix is safe and textual: only the tag identifier is changed.
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/prefer-package-documentation-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/prefer-package-documentation-tag": "error",
+  },
+ },
 ];
 ```
 

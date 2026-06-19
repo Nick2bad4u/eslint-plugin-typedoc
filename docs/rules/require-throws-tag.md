@@ -19,15 +19,17 @@ Exception behavior is critical API contract information. Missing `@throws` tags 
 ```ts
 /**
  * Parse JSON content.
+ *
  * @param input JSON source.
+ *
  * @returns Parsed object.
  */
 export function parseJson(input: string): unknown {
-    if (input.length === 0) {
-        throw new TypeError("Input must not be empty.");
-    }
+ if (input.length === 0) {
+  throw new TypeError("Input must not be empty.");
+ }
 
-    return JSON.parse(input);
+ return JSON.parse(input);
 }
 ```
 
@@ -36,16 +38,19 @@ export function parseJson(input: string): unknown {
 ```ts
 /**
  * Parse JSON content.
+ *
  * @param input JSON source.
+ *
  * @returns Parsed object.
+ *
  * @throws {TypeError} When the input is empty.
  */
 export function parseJson(input: string): unknown {
-    if (input.length === 0) {
-        throw new TypeError("Input must not be empty.");
-    }
+ if (input.length === 0) {
+  throw new TypeError("Input must not be empty.");
+ }
 
-    return JSON.parse(input);
+ return JSON.parse(input);
 }
 ```
 
@@ -68,10 +73,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -81,12 +86,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-throws-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-throws-tag": "error",
+  },
+ },
 ];
 ```
 

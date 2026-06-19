@@ -23,16 +23,18 @@ Enforcing that `@see` contains a URL or `{@link}` expression keeps generated doc
 ```ts
 /**
  * Normalize user-provided input.
+ *
  * @see String trimming documentation
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
 ```ts
 /**
  * Widget component.
+ *
  * @see
  * Related widget factory.
  */
@@ -44,16 +46,18 @@ export class Widget {}
 ```ts
 /**
  * Normalize user-provided input.
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim
  */
 export function normalize(input: string): string {
-    return input.trim();
+ return input.trim();
 }
 ```
 
 ```ts
 /**
  * Widget component.
+ *
  * @see {@link WidgetFactory} for the preferred construction pattern.
  */
 export class Widget {}
@@ -73,12 +77,12 @@ export class Widget {}
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-see-tag-link": "warn",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-see-tag-link": "warn",
+  },
+ },
 ];
 ```
 

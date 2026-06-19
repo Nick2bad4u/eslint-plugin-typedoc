@@ -25,15 +25,21 @@ Generic signatures change frequently. Stale generic tags are hard to spot manual
 ```ts
 /**
  * Build a pair.
+ *
  * @typeParam TLeft Left type.
  * @typeParam TRight Right type.
  * @typeParam TExtra Stale generic.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Pair tuple.
  */
-export function pair<TLeft, TRight>(left: TLeft, right: TRight): [TLeft, TRight] {
-    return [left, right];
+export function pair<TLeft, TRight>(
+ left: TLeft,
+ right: TRight
+): [TLeft, TRight] {
+ return [left, right];
 }
 ```
 
@@ -42,14 +48,20 @@ export function pair<TLeft, TRight>(left: TLeft, right: TRight): [TLeft, TRight]
 ```ts
 /**
  * Build a pair.
+ *
  * @typeParam TLeft Left type.
  * @typeParam TRight Right type.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Pair tuple.
  */
-export function pair<TLeft, TRight>(left: TLeft, right: TRight): [TLeft, TRight] {
-    return [left, right];
+export function pair<TLeft, TRight>(
+ left: TLeft,
+ right: TRight
+): [TLeft, TRight] {
+ return [left, right];
 }
 ```
 
@@ -63,12 +75,12 @@ This rule accepts both `@typeParam` and `@template` as generic tags, and only va
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-extra-type-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-extra-type-param-tags": "error",
+  },
+ },
 ];
 ```
 

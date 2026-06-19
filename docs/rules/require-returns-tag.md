@@ -21,7 +21,7 @@ Return value documentation is part of API usability. Missing `@returns` tags mak
  * Build a cache key for a user id.
  */
 export function toCacheKey(userId: string): string {
-    return `user:${userId}`;
+ return `user:${userId}`;
 }
 ```
 
@@ -30,10 +30,11 @@ export function toCacheKey(userId: string): string {
 ```ts
 /**
  * Build a cache key for a user id.
+ *
  * @returns Stable cache key for storage lookups.
  */
 export function toCacheKey(userId: string): string {
-    return `user:${userId}`;
+ return `user:${userId}`;
 }
 ```
 
@@ -56,10 +57,10 @@ Rule options:
 
 ```ts
 type RuleOptions = [
-    {
-        ignoreDeclarationFiles?: boolean;
-        ignorePatterns?: string[];
-    }?
+ {
+  ignoreDeclarationFiles?: boolean;
+  ignorePatterns?: string[];
+ }?,
 ];
 ```
 
@@ -69,12 +70,12 @@ type RuleOptions = [
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-returns-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-returns-tag": "error",
+  },
+ },
 ];
 ```
 

@@ -38,7 +38,7 @@ const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
         return null;
     }
 
-    const firstTagCharacter = line[1];
+    const firstTagCharacter = line.at(1);
 
     if (!isDefined(firstTagCharacter) || !isAsciiLetter(firstTagCharacter)) {
         return null;
@@ -79,7 +79,7 @@ const isMarkdownDividerLine = (line: string): boolean => {
         return false;
     }
 
-    const dividerCharacter = condensedLine[0];
+    const dividerCharacter = condensedLine.at(0);
 
     if (
         !isDefined(dividerCharacter) ||

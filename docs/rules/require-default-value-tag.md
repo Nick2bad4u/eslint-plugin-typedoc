@@ -33,6 +33,7 @@ export const themeColor = "#2B134E";
 ```ts
 /**
  * Default theme color used by the docs site.
+ *
  * @defaultValue `"#2B134E"`
  */
 export const themeColor = "#2B134E";
@@ -48,12 +49,12 @@ Autofix inserts a canonical `@defaultValue` tag containing the initializer sourc
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-default-value-tag": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-default-value-tag": "error",
+  },
+ },
 ];
 ```
 

@@ -24,8 +24,8 @@ fixes.
 
 | Version | Supported |
 | ------- | --------- |
-| Latest  | ✅         |
-| Older   | ❌         |
+| Latest  | ✅        |
+| Older   | ❌        |
 
 ## Response Expectations
 

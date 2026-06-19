@@ -3,6 +3,8 @@
  * sync.
  */
 
+import type { ArrayValues } from "type-fest";
+
 import { arrayIncludes, objectHasOwn } from "ts-extras";
 
 import { createSortedCopy } from "./sorted-copy.js";
@@ -19,7 +21,7 @@ export const typedocConfigNames = [
 ] as const;
 
 /** Supported preset-name union exported by the plugin. */
-export type TypedocConfigName = (typeof typedocConfigNames)[number];
+export type TypedocConfigName = ArrayValues<typeof typedocConfigNames>;
 
 const typedocConfigReferenceToNameValue: Readonly<{
     "typedoc.configs.all": "all";

@@ -1,22 +1,22 @@
 import Head from "@docusaurus/Head";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import Layout from "@theme/Layout";
 import Heading from "@theme/Heading";
+import Layout from "@theme/Layout";
 
 import GitHubStats from "../components/GitHubStats";
 import styles from "./index.module.css";
+
+type HeroStat = Readonly<{
+    description: string;
+    title: string;
+}>;
 
 type SurfaceCard = Readonly<{
     description: string;
     icon: string;
     title: string;
     to: string;
-}>;
-
-type HeroStat = Readonly<{
-    description: string;
-    title: string;
 }>;
 
 const homepageDescription =
@@ -42,49 +42,49 @@ const homepageStructuredData = {
 
 const homeCards = [
     {
-        icon: "\uf135",
         description:
             "Install the plugin, enable a preset, and start surfacing TypeDoc issues directly in ESLint.",
+        icon: "\u{F135}",
         title: "Get Started",
         to: "/docs/rules/getting-started",
     },
     {
-        icon: "\ue690",
         description:
             "Compare minimal, recommended, strict, and all presets for gradual documentation policy adoption.",
+        icon: "\u{E690}",
         title: "Presets",
         to: "/docs/rules/presets",
     },
     {
-        icon: "\uf02d",
         description:
             "Browse the full TypeDoc-focused rule catalog with examples, migration notes, and autofix behavior.",
+        icon: "\u{F02D}",
         title: "Rule Reference",
         to: "/docs/rules",
     },
 ] as const satisfies readonly SurfaceCard[];
 
 const qualityPillars = [
-    "TypeDoc-native lint rules",
     "Autofix-first rule ergonomics",
     "Generated API docs",
+    "TypeDoc-native lint rules",
 ] as const;
 
 const heroStats = [
     {
         description:
             "Coverage for tag hygiene, generic docs, examples, package docs, and markdown snippets.",
-        title: "\uf0ca 20+ Documentation Rules",
+        title: "\u{F0CA} 20+ Documentation Rules",
     },
     {
         description:
             "Start with recommended, tighten with strict, or enable the full rule catalog.",
-        title: "\ue690 4 Presets",
+        title: "\u{E690} 4 Presets",
     },
     {
         description:
             "Safe autofixes and suggestions keep docs cleanup practical in normal lint workflows.",
-        title: "\udb80\udc68 DX-first Autofix",
+        title: "\u{F0068} DX-first Autofix",
     },
 ] as const satisfies readonly HeroStat[];
 
@@ -98,8 +98,8 @@ export default function Home() {
 
     return (
         <Layout
-            title="TypeDoc validation in ESLint"
             description={homepageDescription}
+            title="TypeDoc validation in ESLint"
         >
             <Head>
                 <meta content={homepageKeywords} name="keywords" />
@@ -169,8 +169,8 @@ export default function Home() {
                     <div className={styles.heroStats}>
                         {heroStats.map((stat) => (
                             <article
-                                key={stat.title}
                                 className={styles.heroStatCard}
+                                key={stat.title}
                             >
                                 <p className={styles.heroStatHeading}>
                                     {stat.title}
@@ -188,7 +188,7 @@ export default function Home() {
                 <section className="container">
                     <div className={styles.cardGrid}>
                         {homeCards.map((card) => (
-                            <article key={card.title} className={styles.card}>
+                            <article className={styles.card} key={card.title}>
                                 <div className={styles.cardHeader}>
                                     <p className={styles.cardIcon}>
                                         {card.icon}

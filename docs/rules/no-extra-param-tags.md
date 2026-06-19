@@ -19,13 +19,15 @@ Refactors often remove or rename parameters without updating docs. Stale `@param
 ```ts
 /**
  * Add two numbers.
+ *
  * @param left Left value.
  * @param right Right value.
  * @param extra Stale parameter.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -34,12 +36,14 @@ export function add(left: number, right: number): number {
 ```ts
 /**
  * Add two numbers.
+ *
  * @param left Left value.
  * @param right Right value.
+ *
  * @returns Sum.
  */
 export function add(left: number, right: number): number {
-    return left + right;
+ return left + right;
 }
 ```
 
@@ -53,12 +57,12 @@ The rule intentionally skips ambiguous destructuring signatures where exact name
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/no-extra-param-tags": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/no-extra-param-tags": "error",
+  },
+ },
 ];
 ```
 

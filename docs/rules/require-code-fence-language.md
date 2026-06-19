@@ -19,13 +19,14 @@ Language-less fences reduce syntax highlighting quality and readability in gener
 ````ts
 /**
  * Render value.
+ *
  * @example
- * ```
- * renderValue(1);
- * ```
+ *  ```
+ *  renderValue(1);
+ *  ```;
  */
 export function renderValue(value: number): string {
-    return String(value);
+ return String(value);
 }
 ````
 
@@ -34,13 +35,14 @@ export function renderValue(value: number): string {
 ````ts
 /**
  * Render value.
+ *
  * @example
- * ```ts
- * renderValue(1);
- * ```
+ *  ```ts
+ *  renderValue(1);
+ *  ```;
  */
 export function renderValue(value: number): string {
-    return String(value);
+ return String(value);
 }
 ````
 
@@ -54,12 +56,12 @@ Autofix adds `ts` as the default language to missing opening fences.
 import typedocPlugin from "eslint-plugin-typedoc";
 
 export default [
-    {
-        plugins: { typedoc: typedocPlugin },
-        rules: {
-            "typedoc/require-code-fence-language": "error",
-        },
-    },
+ {
+  plugins: { typedoc: typedocPlugin },
+  rules: {
+   "typedoc/require-code-fence-language": "error",
+  },
+ },
 ];
 ```
 
