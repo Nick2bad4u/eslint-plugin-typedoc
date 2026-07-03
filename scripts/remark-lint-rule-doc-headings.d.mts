@@ -21,8 +21,7 @@ export type RuleDocPrimaryHeadingKey =
 export type RuleDocDetailHeadingKey = "matchedPatterns" | "detectionBoundaries";
 
 export type RuleDocHeadingKey =
-    | RuleDocPrimaryHeadingKey
-    | RuleDocDetailHeadingKey;
+    RuleDocPrimaryHeadingKey | RuleDocDetailHeadingKey;
 
 export interface RemarkLintRuleDocHeadingsOptions {
     /**

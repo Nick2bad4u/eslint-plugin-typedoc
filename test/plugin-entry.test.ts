@@ -184,8 +184,7 @@ describe("plugin entry", () => {
                 // must always be present so the docs site can render it
                 // consistently.
                 const docs = rule.meta?.docs as
-                    | Record<string, unknown>
-                    | undefined;
+                    Record<string, unknown> | undefined;
 
                 expect(Array.isArray(docs?.["typedocConfigs"])).toBe(true);
             }

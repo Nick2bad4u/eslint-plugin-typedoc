@@ -27,16 +27,14 @@ export function normalize(input: string): string {
 }
 ```
 
-````ts
+```ts
 /**
  * Normalize user-provided input.
- *
- * @privateRemarks
  */
 export function normalize(input: string): string {
  return input.trim();
 }
-````
+```
 
 ## ✅ Correct
 

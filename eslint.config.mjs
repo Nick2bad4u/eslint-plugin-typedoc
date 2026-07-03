@@ -112,6 +112,17 @@ const config = [
     },
     {
         files: [
+            "docs/docusaurus/blog/**/*.md",
+            "docs/docusaurus/site-docs/**/*.md",
+            "docs/rules/**/*.md",
+        ],
+        name: "Docusaurus Markdown frontmatter titles",
+        rules: {
+            "markdown/no-multiple-h1": "off",
+        },
+    },
+    {
+        files: [
             "docs/docusaurus/src/components/GitHubStats.tsx",
             "docs/docusaurus/src/js/modernEnhancements.ts",
             "docs/docusaurus/src/pages/index.tsx",

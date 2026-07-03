@@ -15,8 +15,7 @@ import {
 import { createTypedRule } from "../_internal/typed-rule.js";
 
 type MessageIds =
-    | "addPackageDocumentationSuggestion"
-    | "missingPackageDocumentation";
+    "addPackageDocumentationSuggestion" | "missingPackageDocumentation";
 type Options = readonly [RequireCommentFileOptions?];
 
 const packageDocumentationTagPattern = /@(?:module|packageDocumentation)\b/v;

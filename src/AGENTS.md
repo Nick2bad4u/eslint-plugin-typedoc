@@ -181,4 +181,5 @@ Do not add a rule file without finishing the surrounding registry/docs/tests/syn
 - Do not duplicate rule registry entries, preset membership, or docs URLs in multiple competing places when the template already derives them from one canonical source.
 
   </donts>
+
 </instructions>
