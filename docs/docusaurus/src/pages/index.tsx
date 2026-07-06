@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 import Head from "@docusaurus/Head";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
@@ -93,7 +95,7 @@ const heroStats = [
  *
  * @returns The docs landing page layout.
  */
-export default function Home() {
+export default function Home(): ReactElement {
     const logoSrc = useBaseUrl("/img/logo_512x512.png");
 
     return (

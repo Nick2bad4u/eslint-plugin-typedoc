@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 import Link from "@docusaurus/Link";
 
 import styles from "./GitHubStats.module.css";
@@ -57,7 +59,9 @@ const liveBadges = [
  *
  * @returns Badge strip with links to package/repository metadata.
  */
-export default function GitHubStats({ className = "" }: GitHubStatsProps) {
+export default function GitHubStats({
+    className = "",
+}: GitHubStatsProps): ReactElement {
     const liveBadgeAnchorClassName = styles["liveBadgeAnchor"] ?? "";
     const liveBadgeImageClassName = styles["liveBadgeImage"] ?? "";
     const liveBadgeListClassName = [styles["liveBadgeList"] ?? "", className]

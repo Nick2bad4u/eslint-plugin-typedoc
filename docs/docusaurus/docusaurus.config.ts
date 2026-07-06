@@ -102,15 +102,17 @@ const suppressKnownWebpackWarningsPlugin: PluginModule = () => ({
                  * site-level problem.
                  */
                 (warning: unknown) => {
-                    const warningRecord = warning as
-                        Readonly<Record<string, unknown>> | undefined;
-                    const warningMessage = warningRecord?.["message"];
+                    if (
+                        typeof warning !== "object" ||
+                        warning === null ||
+                        !("message" in warning) ||
+                        typeof warning.message !== "string"
+                    ) {
+                        return false;
+                    }
 
-                    return (
-                        typeof warningMessage === "string" &&
-                        warningMessage.includes(
-                            "Critical dependency: require function is used in a way in which dependencies cannot be statically extracted"
-                        )
+                    return warning.message.includes(
+                        "Critical dependency: require function is used in a way in which dependencies cannot be statically extracted"
                     );
                 },
             ],

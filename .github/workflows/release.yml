@@ -195,11 +195,13 @@ jobs:
                   npm_release_url="https://www.npmjs.com/package/${package_name}/v/${version}"
                   github_release_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${tag}"
 
-                  echo "version=$version" >> "$GITHUB_OUTPUT"
-                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
-                  echo "package_name=$package_name" >> "$GITHUB_OUTPUT"
-                  echo "npm_release_url=$npm_release_url" >> "$GITHUB_OUTPUT"
-                  echo "github_release_url=$github_release_url" >> "$GITHUB_OUTPUT"
+                  {
+                    echo "version=$version"
+                    echo "tag=$tag"
+                    echo "package_name=$package_name"
+                    echo "npm_release_url=$npm_release_url"
+                    echo "github_release_url=$github_release_url"
+                  } >> "$GITHUB_OUTPUT"
 
             - name: "Check whether version is already published"
               id: "npm_check"
