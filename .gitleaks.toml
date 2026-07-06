@@ -1,8 +1,8 @@
 title = "eslint-plugin-typedoc secret detection"
 
 [extend]
-    path = "node_modules/gitleaks-config-nick2bad4u/gitleaks.toml"
+path = "node_modules/gitleaks-config-nick2bad4u/gitleaks.toml"
 
 [[allowlists]]
-    description = "Ignore generated TypeDoc JSON output"
-    paths = [ '''^docs/typedoc\.json$''' ]
+description = "Ignore generated TypeDoc JSON output"
+paths = ['''^docs/typedoc\.json$''']
