@@ -871,3 +871,5 @@ docs/docusaurus/static/.well-known/appspecific/com.chrome.devtools.json
 # Ignore generated doc coverage badges
 docs/docusaurus/static/img/coverage.json
 docs/docusaurus/static/img/coverage.svg
+.lychee.report.md
+.lycheecache
