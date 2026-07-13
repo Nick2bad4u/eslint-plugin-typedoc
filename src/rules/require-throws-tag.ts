@@ -20,7 +20,10 @@ import {
 } from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type FunctionLikeBody = null | TSESTree.BlockStatement | TSESTree.Expression;
+type FunctionLikeBody =
+    | null
+    | TSESTree.BlockStatement
+    | TSESTree.Expression;
 type MessageIds = "addThrowsTagSuggestion" | "missingThrowsTag";
 
 type Options = readonly [RequireCommentFileOptions?];

@@ -35,6 +35,8 @@ electron-app/package-lock.json
 sonar-project.properties
 
 # covered by remark lint / remark
+docs/rules/presets/jsdoc.md
+docs/rules/presets/tsdoc.md
 .gitleaks.toml
 .taplo.toml
 cliff.toml
