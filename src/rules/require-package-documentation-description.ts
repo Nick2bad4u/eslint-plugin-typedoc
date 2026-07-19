@@ -6,7 +6,11 @@ import {
 } from "@typescript-eslint/utils";
 import { arrayFirst } from "ts-extras";
 
-import { normalizeDocCommentLines } from "../_internal/doc-comments.js";
+import { hasMeaningfulDocCommentSummary } from "../_internal/doc-comment-summary.js";
+import {
+    getDocCommentTagBlocks,
+    hasMeaningfulTagBlockContent,
+} from "../_internal/doc-tag-blocks.js";
 import {
     type RequireCommentFileOptions,
     requireCommentFileOptionsSchemaProperties,
@@ -17,7 +21,8 @@ import { createTypedRule } from "../_internal/typed-rule.js";
 type MessageIds = "missingPackageDocumentationDescription";
 type Options = readonly [RequireCommentFileOptions?];
 
-const packageDocumentationSearchPattern = /@(?:module|packageDocumentation)\b/v;
+const isPackageDocumentationTagName = (tagName: string): boolean =>
+    tagName === "module" || tagName === "packageDocumentation";
 const isExportStatement = (
     statement: Readonly<TSESTree.ProgramStatement>
 ): boolean =>
@@ -41,7 +46,9 @@ const getPackageDocumentationComment = (
         if (
             comment.type === AST_TOKEN_TYPES.Block &&
             comment.value.startsWith("*") &&
-            packageDocumentationSearchPattern.test(comment.value)
+            getDocCommentTagBlocks(comment).some((block) =>
+                isPackageDocumentationTagName(block.tagName)
+            )
         ) {
             return comment;
         }
@@ -53,14 +60,27 @@ const getPackageDocumentationComment = (
 const hasMeaningfulPackageDocumentationDescription = (
     comment: Readonly<TSESTree.Comment>
 ): boolean => {
-    const remainingLines = normalizeDocCommentLines(comment)
-        .map((line) => line.trim())
-        .filter(
-            (line) =>
-                line.length > 0 && !packageDocumentationSearchPattern.test(line)
-        );
+    if (hasMeaningfulDocCommentSummary(comment)) {
+        return true;
+    }
 
-    return remainingLines.length > 0;
+    for (const block of getDocCommentTagBlocks(comment)) {
+        if (
+            block.tagName === "packageDocumentation" &&
+            hasMeaningfulTagBlockContent(block.blockText)
+        ) {
+            return true;
+        }
+
+        if (
+            block.tagName === "module" &&
+            hasMeaningfulTagBlockContent(block.continuationText)
+        ) {
+            return true;
+        }
+    }
+
+    return false;
 };
 
 /** Rule implementation for package-documentation description requirements. */

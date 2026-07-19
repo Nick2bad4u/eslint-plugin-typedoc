@@ -1,6 +1,6 @@
 import type { TSESTree } from "@typescript-eslint/utils";
 
-import { arrayJoin, isDefined, stringSplit } from "ts-extras";
+import { arrayIncludes, arrayJoin, isDefined, stringSplit } from "ts-extras";
 
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
@@ -31,6 +31,101 @@ const isDocTagNameCharacter = (character: string): boolean => {
             character === "_" ||
             character === "-")
     );
+};
+
+type QuoteCharacter = "'" | "`" | '"';
+
+const quoteCharacters = [
+    '"',
+    "'",
+    "`",
+] as const;
+
+const isQuoteCharacter = (character: string): character is QuoteCharacter =>
+    arrayIncludes(quoteCharacters, character);
+
+/**
+ * Remove one optional leading JSDoc type annotation from tag text.
+ *
+ * The scanner balances nested braces and ignores braces inside quoted type
+ * fragments. Unbalanced annotations are preserved so malformed input fails
+ * gracefully instead of discarding potential prose.
+ */
+export const stripOptionalJSDocTypeAnnotation = (text: string): string => {
+    const annotationStart = text.search(/\S/v);
+
+    if (
+        annotationStart === -1 ||
+        text[annotationStart] !== "{" ||
+        text[annotationStart + 1] === "@"
+    ) {
+        return text;
+    }
+
+    let braceDepth = 0;
+    let isEscaped = false;
+    let quoteCharacter: null | QuoteCharacter = null;
+
+    for (let index = annotationStart; index < text.length; index += 1) {
+        const character = text[index];
+
+        if (!isDefined(character)) {
+            break;
+        }
+
+        if (quoteCharacter !== null) {
+            if (isEscaped) {
+                isEscaped = false;
+            } else if (character === "\\") {
+                isEscaped = true;
+            } else if (character === quoteCharacter) {
+                quoteCharacter = null;
+            }
+
+            continue;
+        }
+
+        if (isQuoteCharacter(character)) {
+            quoteCharacter = character;
+            continue;
+        }
+
+        if (character === "{") {
+            braceDepth += 1;
+            continue;
+        }
+
+        if (character !== "}") {
+            continue;
+        }
+
+        braceDepth -= 1;
+
+        if (braceDepth === 0) {
+            return text.slice(index + 1);
+        }
+    }
+
+    // Preserve the permissive behavior of classic JSDoc type annotations when
+    // a quote is malformed: braces still delimit the annotation if they can be
+    // balanced without quote awareness.
+    braceDepth = 0;
+
+    for (let index = annotationStart; index < text.length; index += 1) {
+        const character = text[index];
+
+        if (character === "{") {
+            braceDepth += 1;
+        } else if (character === "}") {
+            braceDepth -= 1;
+
+            if (braceDepth === 0) {
+                return text.slice(index + 1);
+            }
+        }
+    }
+
+    return text;
 };
 
 const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
@@ -168,9 +263,10 @@ export const getDocCommentTagBlocks = (
 export const hasMeaningfulTagDescription = (
     descriptionText: string
 ): boolean => {
-    const normalizedDescription = descriptionText
+    const normalizedDescription = stripOptionalJSDocTypeAnnotation(
+        descriptionText.replace(/^\s*-\s*/v, "")
+    )
         .replace(/^\s*-\s*/v, "")
-        .replace(/^\s*\{[^\{\}]+\}\s*/v, "")
         .trim();
 
     return normalizedDescription.length > 0;

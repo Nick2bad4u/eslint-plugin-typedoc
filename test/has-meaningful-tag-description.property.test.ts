@@ -14,9 +14,37 @@ const nonEmptyContentArbitrary = fc
 
 const tagTypeNameArbitrary = fc
     .string({ maxLength: 20, minLength: 1 })
-    .filter((text) => text.trim().length > 0 && !/[\{\}]/v.test(text));
+    .filter(
+        (text) =>
+            text.trim().length > 0 &&
+            !text.trimStart().startsWith("@") &&
+            !/[\{\}]/v.test(text)
+    );
 
 describe(hasMeaningfulTagDescription, () => {
+    it("balances nested JSDoc type annotations", () => {
+        expect.hasAssertions();
+
+        expect(hasMeaningfulTagDescription("{Array<{ id: string }>}")).toBe(
+            false
+        );
+        expect(
+            hasMeaningfulTagDescription(
+                "{Promise<{ id: string }>} Loaded value."
+            )
+        ).toBe(true);
+        expect(
+            hasMeaningfulTagDescription('{Record<"}", { id: string }>}')
+        ).toBe(false);
+        expect(
+            hasMeaningfulTagDescription(
+                String.raw`{Record<"\"", { id: string }>}`
+            )
+        ).toBe(false);
+        expect(hasMeaningfulTagDescription("{`unterminated }")).toBe(false);
+        expect(hasMeaningfulTagDescription("{@link Result}")).toBe(true);
+    });
+
     it("treats formatting-only descriptions as non-meaningful", () => {
         expect.hasAssertions();
 

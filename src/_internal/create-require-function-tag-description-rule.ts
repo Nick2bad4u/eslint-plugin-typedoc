@@ -4,16 +4,12 @@
  * descriptions.
  */
 
-import {
-    AST_NODE_TYPES,
-    type ESLintUtils,
-    type TSESLint,
-    type TSESTree,
-} from "@typescript-eslint/utils";
+import type { ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+
 import { arrayIncludes } from "ts-extras";
 
 import {
-    getDocCommentAnchorNode,
+    getFunctionDocCommentTarget,
     getLeadingDocComment,
 } from "./doc-comments.js";
 import {
@@ -61,8 +57,9 @@ type Options = readonly [];
  * - `ArrowFunctionExpression`
  * - `FunctionDeclaration`
  * - `FunctionExpression`
- * - `MethodDefinition` (only when the value is a function expression)
  * - `TSDeclareFunction`
+ * - `TSEmptyBodyFunctionExpression`
+ * - TypeScript method, call, and construct signatures
  */
 export function createRequireFunctionTagDescriptionRule<
     TMessageId extends string,
@@ -73,6 +70,7 @@ export function createRequireFunctionTagDescriptionRule<
 
     return createTypedRule<Options, TMessageId>({
         create(context) {
+            const checkedComments = new WeakSet<TSESTree.Comment>();
             const sourceCode = context.sourceCode;
 
             const checkNode = (
@@ -84,6 +82,12 @@ export function createRequireFunctionTagDescriptionRule<
                 if (docComment === null) {
                     return;
                 }
+
+                if (checkedComments.has(docComment)) {
+                    return;
+                }
+
+                checkedComments.add(docComment);
 
                 let hasTag = false;
                 let hasMissingDescription = false;
@@ -110,25 +114,37 @@ export function createRequireFunctionTagDescriptionRule<
                 });
             };
 
+            const checkFunctionNode = (node: TSESTree.Node): void => {
+                const { docNode, reportNode } =
+                    getFunctionDocCommentTarget(node);
+
+                checkNode(reportNode, docNode);
+            };
+
             return {
                 ArrowFunctionExpression: (node): void => {
-                    checkNode(node, node);
+                    checkFunctionNode(node);
                 },
                 FunctionDeclaration: (node): void => {
-                    checkNode(node, getDocCommentAnchorNode(node));
+                    checkFunctionNode(node);
                 },
                 FunctionExpression: (node): void => {
-                    checkNode(node, node);
+                    checkFunctionNode(node);
                 },
-                MethodDefinition: (node): void => {
-                    if (node.value.type !== AST_NODE_TYPES.FunctionExpression) {
-                        return;
-                    }
-
-                    checkNode(node, node);
+                TSCallSignatureDeclaration: (node): void => {
+                    checkFunctionNode(node);
+                },
+                TSConstructSignatureDeclaration: (node): void => {
+                    checkFunctionNode(node);
                 },
                 TSDeclareFunction: (node): void => {
-                    checkNode(node, getDocCommentAnchorNode(node));
+                    checkFunctionNode(node);
+                },
+                TSEmptyBodyFunctionExpression: (node): void => {
+                    checkFunctionNode(node);
+                },
+                TSMethodSignature: (node): void => {
+                    checkFunctionNode(node);
                 },
             };
         },

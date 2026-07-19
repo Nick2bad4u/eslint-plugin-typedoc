@@ -9,7 +9,13 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
-import { arrayFirst, arrayJoin, isDefined, stringSplit } from "ts-extras";
+import {
+    arrayFirst,
+    arrayIncludes,
+    arrayJoin,
+    isDefined,
+    stringSplit,
+} from "ts-extras";
 
 const inlineTagPattern =
     /\{@(?<tagName>\p{Letter}[\p{Letter}\p{Number}\-_]*)\b/gv;
@@ -283,6 +289,62 @@ export const getDocCommentAnchorNode = (node: TSESTree.Node): TSESTree.Node => {
     }
 
     return node;
+};
+
+const functionExpressionNodeTypes = [
+    AST_NODE_TYPES.ArrowFunctionExpression,
+    AST_NODE_TYPES.FunctionExpression,
+    AST_NODE_TYPES.TSEmptyBodyFunctionExpression,
+] as const;
+
+const isFunctionExpressionNode = (node: Readonly<TSESTree.Node>): boolean =>
+    arrayIncludes(functionExpressionNodeTypes, node.type);
+
+/**
+ * Resolve the declaration that owns documentation for a function-like node.
+ *
+ * Function expressions used as variable initializers are documented on the
+ * variable declaration. Class methods and function-valued class properties are
+ * documented on the class member. All other function-like declarations and
+ * TypeScript signatures document themselves. Export wrappers are resolved last
+ * so comments placed before an exported declaration remain attached correctly.
+ */
+export const getFunctionDocCommentTarget = (
+    node: TSESTree.Node
+): Readonly<{ docNode: TSESTree.Node; reportNode: TSESTree.Node }> => {
+    if (!isFunctionExpressionNode(node)) {
+        return {
+            docNode: getDocCommentAnchorNode(node),
+            reportNode: node,
+        };
+    }
+
+    const { parent } = node;
+
+    if (parent?.type === AST_NODE_TYPES.VariableDeclarator) {
+        const variableDeclaration = parent.parent;
+
+        return {
+            docNode: getDocCommentAnchorNode(variableDeclaration),
+            reportNode: variableDeclaration,
+        };
+    }
+
+    if (
+        parent?.type === AST_NODE_TYPES.MethodDefinition ||
+        parent?.type === AST_NODE_TYPES.PropertyDefinition ||
+        parent?.type === AST_NODE_TYPES.TSAbstractMethodDefinition
+    ) {
+        return {
+            docNode: getDocCommentAnchorNode(parent),
+            reportNode: parent,
+        };
+    }
+
+    return {
+        docNode: getDocCommentAnchorNode(node),
+        reportNode: node,
+    };
 };
 
 /** Normalize raw comment lines for lightweight parsing. */

@@ -4,11 +4,11 @@ Require each `@typeParam` / `@template` tag to include a human-readable descript
 
 ## Targeted pattern scope
 
-This rule checks generic TypeDoc comments on classes, interfaces, functions, methods, and type aliases.
+This rule checks generic TypeDoc comments on classes, interfaces, functions, methods, signatures, and type aliases. Function comments may be attached to exports, local variable declarations, class members, declared functions, or TypeScript method/call/construct signatures.
 
 ## What this rule reports
 
-This rule reports generic tags that include a type parameter name but no explanatory description.
+This rule reports generic tags that include a type parameter name but no explanatory description. JSDoc-style constraints are parsed before the type-parameter name, including balanced nested types.
 
 ## Why this rule exists
 
@@ -20,15 +20,13 @@ Generic APIs are difficult to use without clear type-parameter intent. This rule
 /**
  * Identity helper.
  *
- * @typeParam TValue
+ * @template {object} TValue
  *
  * @param value Input value.
  *
  * @returns Same value.
  */
-export function identity<TValue>(value: TValue): TValue {
- return value;
-}
+export const identity = <TValue extends object>(value: TValue): TValue => value;
 ```
 
 ## ✅ Correct
@@ -37,20 +35,18 @@ export function identity<TValue>(value: TValue): TValue {
 /**
  * Identity helper.
  *
- * @typeParam TValue Value type.
+ * @template {object} TValue Value type.
  *
  * @param value Input value.
  *
  * @returns Same value.
  */
-export function identity<TValue>(value: TValue): TValue {
- return value;
-}
+export const identity = <TValue extends object>(value: TValue): TValue => value;
 ```
 
 ## Behavior and migration notes
 
-The rule reports missing generic prose without autofix, because meaningful descriptions are project-specific.
+The rule reports missing generic prose without autofix, because meaningful descriptions are project-specific. Each attached documentation comment is checked once, including shared multi-declarator comments.
 
 ## ESLint flat config example
 

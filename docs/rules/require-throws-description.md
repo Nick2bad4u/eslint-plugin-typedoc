@@ -4,11 +4,13 @@ Require `@throws` tags to include a human-readable description.
 
 ## Targeted pattern scope
 
-This rule checks TypeDoc comments on function-like declarations and methods that include a `@throws` (or `@throw`) tag.
+This rule checks TypeDoc comments on function-like declarations and signatures that include a `@throws` (or `@throw`) tag.
+
+Supported anchors include exported and local arrow functions and function expressions, concrete/abstract/ambient class methods, function-valued class properties, declared functions, and TypeScript method/call/construct signatures.
 
 ## What this rule reports
 
-This rule reports throws tags that contain no prose description (for example only `{TypeError}`).
+This rule reports throws tags that contain no prose description. A balanced nested JSDoc type such as `{Error & { code: string }}` is still only a type annotation, not explanatory prose.
 
 ## Why this rule exists
 
@@ -22,7 +24,7 @@ Error type names alone are not enough for consumers. API docs should explain whe
  *
  * @param input Input value.
  *
- * @throws {TypeError}
+ * @throws {Error & { code: string }}
  */
 export function parseValue(input: string): number {
  if (input.length === 0) {
@@ -41,7 +43,7 @@ export function parseValue(input: string): number {
  *
  * @param input Input value.
  *
- * @throws {TypeError} When input is empty.
+ * @throws {Error & { code: string }} When input is empty.
  */
 export function parseValue(input: string): number {
  if (input.length === 0) {
@@ -54,7 +56,7 @@ export function parseValue(input: string): number {
 
 ## Behavior and migration notes
 
-No autofix is provided because generated throw descriptions would be guesswork.
+No autofix is provided because generated throw descriptions would be guesswork. Each attached documentation comment reports at most once.
 
 ## ESLint flat config example
 

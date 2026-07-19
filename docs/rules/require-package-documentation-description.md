@@ -8,7 +8,7 @@ This rule checks exporting modules that already have a package-level TypeDoc com
 
 ## What this rule reports
 
-This rule reports package documentation blocks that contain only the tag and no meaningful description text.
+This rule reports package documentation blocks that contain only the package marker and no meaningful summary prose. Unrelated tags such as `@public` and `@remarks` do not satisfy the requirement.
 
 ## Why this rule exists
 
@@ -19,6 +19,8 @@ A bare package tag without explanatory prose adds little value to generated docs
 ```ts
 /**
  * @packageDocumentation
+ *
+ * @public
  */
 
 export function add(left: number, right: number): number {
@@ -32,6 +34,8 @@ export function add(left: number, right: number): number {
 /**
  * @packageDocumentation
  * Public API helpers for parsing values.
+ *
+ * @public
  */
 
 export function add(left: number, right: number): number {
@@ -40,6 +44,8 @@ export function add(left: number, right: number): number {
 ```
 
 ## Behavior and migration notes
+
+Summary prose may appear before `@packageDocumentation` or directly in its tag block before the next block tag. For the legacy `@module` form, a module rename alone is not a description; prose on a continuation line is required.
 
 This rule intentionally does not autofix because module descriptions should be written intentionally.
 

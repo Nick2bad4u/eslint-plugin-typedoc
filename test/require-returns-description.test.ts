@@ -51,6 +51,70 @@ ruleTester.run(
                 errors: [{ messageId: "missingReturnsDescription" }],
                 name: "reports missingReturnsDescription when @returns tag has only a type annotation on a TSDeclareFunction",
             },
+            {
+                code: [
+                    "/** @returns {Promise<{ id: string }>} */",
+                    'export const load = async (): Promise<{ id: string }> => ({ id: "value" });',
+                ].join("\n"),
+                errors: [{ messageId: "missingReturnsDescription" }],
+                name: "reports a nested JSDoc return type without prose on an exported arrow exactly once",
+            },
+            {
+                code: [
+                    "class Loader {",
+                    "    /** @returns {Promise<{ id: string }>} */",
+                    '    load = async (): Promise<{ id: string }> => ({ id: "value" });',
+                    "    /** @returns {string} */",
+                    '    format = function (): string { return "value"; };',
+                    "}",
+                ].join("\n"),
+                errors: [
+                    { messageId: "missingReturnsDescription" },
+                    { messageId: "missingReturnsDescription" },
+                ],
+                name: "reports function-valued class property comments exactly once",
+            },
+            {
+                code: [
+                    "interface Loader {",
+                    "    /** @returns {string} */",
+                    "    load(): string;",
+                    "    /** @returns {Promise<{ id: string }>} */",
+                    "    (): Promise<{ id: string }>;",
+                    "}",
+                ].join("\n"),
+                errors: [
+                    { messageId: "missingReturnsDescription" },
+                    { messageId: "missingReturnsDescription" },
+                ],
+                name: "reports TypeScript method and call signature comments exactly once",
+            },
+            {
+                code: [
+                    "abstract class AbstractLoader {",
+                    "    /** @returns {string} */",
+                    "    abstract load(): string;",
+                    "}",
+                    "declare class AmbientLoader {",
+                    "    /** @returns {string} */",
+                    "    load(): string;",
+                    "}",
+                ].join("\n"),
+                errors: [
+                    { messageId: "missingReturnsDescription" },
+                    { messageId: "missingReturnsDescription" },
+                ],
+                name: "reports abstract and ambient class method comments exactly once",
+            },
+            {
+                code: [
+                    "/** @returns {number} */",
+                    "export const first = (): number => 1,",
+                    "    second = (): number => 2;",
+                ].join("\n"),
+                errors: [{ messageId: "missingReturnsDescription" }],
+                name: "reports an exported shared multi-declarator comment exactly once",
+            },
         ],
         valid: [
             // FunctionDeclaration with description (baseline)
@@ -124,6 +188,20 @@ ruleTester.run(
                     "declare function load(): Promise<void>;",
                 ].join("\n"),
                 name: "is valid when TSDeclareFunction @returns tag includes a description",
+            },
+            {
+                code: [
+                    "/** @returns {Promise<{ id: string }>} Loaded record. */",
+                    'const load = async (): Promise<{ id: string }> => ({ id: "value" });',
+                ].join("\n"),
+                name: "is valid when prose follows a nested JSDoc return type",
+            },
+            {
+                code: [
+                    "/** @returns {() => number} Creates a number reader. */",
+                    "const createReader = (): (() => number) => (): number => 1;",
+                ].join("\n"),
+                name: "does not attach an outer function comment to a nested returned arrow",
             },
         ],
     }
