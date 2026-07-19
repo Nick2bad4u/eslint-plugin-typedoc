@@ -36,10 +36,7 @@ type MessageIds = "addReturnsTagSuggestion" | "missingReturnsTag";
 type Options = readonly [RequireCommentFileOptions?];
 
 const isVoidLikeTypeAnnotation = (
-    typeAnnotation:
-        | null
-        | Readonly<TSESTree.TypeNode>
-        | undefined
+    typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
 ): boolean => {
     if (!isPresent(typeAnnotation)) {
         return false;
