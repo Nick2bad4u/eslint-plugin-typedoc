@@ -46,10 +46,10 @@
 *.zsh text eol=lf
 *.fish text eol=lf
 
-# PowerShell scripts (Windows line endings)
-*.ps1 text eol=crlf
-*.psm1 text eol=crlf
-*.psd1 text eol=crlf
+# PowerShell scripts (portable line endings)
+*.ps1 text eol=lf
+*.psm1 text eol=lf
+*.psd1 text eol=lf
 
 # Batch files (Windows line endings)
 *.bat text eol=crlf
