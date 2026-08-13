@@ -114,6 +114,19 @@ const scanTypeAnnotationCharacter = (
         : { kind: "scanning", state: { ...state, braceDepth } };
 };
 
+/** Calculate the next brace nesting depth for one annotation character. */
+const getNextBraceDepth = (character: string, braceDepth: number): number => {
+    if (character === "{") {
+        return braceDepth + 1;
+    }
+
+    if (character === "}") {
+        return braceDepth - 1;
+    }
+
+    return braceDepth;
+};
+
 /** Find a balanced closing brace without applying quote semantics. */
 const findBalancedClosingBrace = (
     text: string,
@@ -123,12 +136,9 @@ const findBalancedClosingBrace = (
 
     for (let index = annotationStart; index < text.length; index += 1) {
         const character = text[index];
-        const nextBraceDepth =
-            character === "{"
-                ? braceDepth + 1
-                : character === "}"
-                  ? braceDepth - 1
-                  : braceDepth;
+        const nextBraceDepth = isDefined(character)
+            ? getNextBraceDepth(character, braceDepth)
+            : braceDepth;
 
         if (character === "}" && nextBraceDepth === 0) {
             return index;
@@ -257,6 +267,40 @@ const isMarkdownDividerLine = (line: string): boolean => {
     return true;
 };
 
+type ContinuationLines = Readonly<{
+    lines: readonly string[];
+    nextLineIndex: number;
+}>;
+
+const collectContinuationLines = (
+    lines: readonly string[],
+    startIndex: number
+): ContinuationLines => {
+    const continuationLines: string[] = [];
+    let continuationIndex = startIndex;
+
+    while (continuationIndex < lines.length) {
+        const continuationLine = lines[continuationIndex];
+
+        if (
+            isDefined(continuationLine) &&
+            nextTagLinePattern.test(continuationLine.trimStart())
+        ) {
+            break;
+        }
+
+        if (isDefined(continuationLine)) {
+            continuationLines.push(continuationLine);
+        }
+        continuationIndex += 1;
+    }
+
+    return {
+        lines: continuationLines,
+        nextLineIndex: continuationIndex,
+    };
+};
+
 /**
  * Parse ordered `@tag` blocks from a normalized TypeDoc block comment.
  */
@@ -281,26 +325,8 @@ export const getDocCommentTagBlocks = (
         }
 
         const { tagName, tagText } = parsedTagLine;
-        const continuationLines: string[] = [];
-        let continuationIndex = lineIndex + 1;
-
-        while (continuationIndex < lines.length) {
-            const continuationLine = lines[continuationIndex];
-
-            if (
-                isDefined(continuationLine) &&
-                nextTagLinePattern.test(continuationLine.trimStart())
-            ) {
-                break;
-            }
-
-            if (isDefined(continuationLine)) {
-                continuationLines.push(continuationLine);
-            }
-            continuationIndex += 1;
-        }
-
-        const continuationText = arrayJoin(continuationLines, "\n");
+        const continuation = collectContinuationLines(lines, lineIndex + 1);
+        const continuationText = arrayJoin(continuation.lines, "\n");
 
         blocks.push({
             blockText:
@@ -312,7 +338,7 @@ export const getDocCommentTagBlocks = (
             tagText,
         });
 
-        lineIndex = continuationIndex;
+        lineIndex = continuation.nextLineIndex;
     }
 
     return blocks;
