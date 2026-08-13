@@ -172,6 +172,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-param-tags",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addParamTagsSuggestion:
                 "Insert missing `@param` tags into this documentation block.",

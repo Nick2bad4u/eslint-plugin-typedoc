@@ -21,6 +21,7 @@ const rule: TSESLint.RuleModule<"missingSinceDescription", readonly []> =
                 ],
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-since-tag-description",
             },
+            languages: ["js/js"],
             messages: {
                 missingSinceDescription:
                     "`@since` tags must specify a version string or introductory context (e.g. `@since 1.4.0`).",

@@ -116,6 +116,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-malformed-inline-links",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             malformedInlineLink:
                 "Inline link '{{link}}' is malformed. Provide a non-empty target and optional label (for example `{@link Symbol}` or `{@link Symbol|Label}`).",

@@ -4,7 +4,10 @@ import { isPresent } from "ts-extras";
 
 /** Node contract for declarations that may carry generic type parameters. */
 export type TypeParameterizedNode = Readonly<{
-    typeParameters: null | TSESTree.TSTypeParameterDeclaration | undefined;
+    typeParameters:
+        | null
+        | TSESTree.TSTypeParameterDeclaration
+        | undefined;
 }>;
 
 /** Read declared generic type-parameter names from a supported node. */

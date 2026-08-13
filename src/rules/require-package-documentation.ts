@@ -128,6 +128,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-package-documentation",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addPackageDocumentationSuggestion:
                 "Add a top-level `@packageDocumentation` comment block.",

@@ -79,6 +79,35 @@ const config = [
         },
     },
     {
+        files: ["package.json"],
+        name: "Temporary npm-package-json-lint compatibility pin",
+        rules: {
+            "node-dependencies/absolute-version": [
+                "error",
+                {
+                    dependencies: "never",
+                    devDependencies: "never",
+                    optionalDependencies: "never",
+                    overridePackages: {
+                        "npm-package-json-lint": {
+                            devDependencies: "always",
+                        },
+                    },
+                    peerDependencies: "never",
+                },
+            ],
+        },
+    },
+    {
+        files: [".github/labeler.yml"],
+        name: "Actions Labeler v7 configuration",
+        rules: {
+            // SchemaStore still models the pre-v7 shape and rejects v7's
+            // documented limit keys and any/all match-object syntax.
+            "json-schema-validator-2/no-invalid": "off",
+        },
+    },
+    {
         files: ["docs/docusaurus/docusaurus.config.ts"],
         name: "Docusaurus runtime config",
         rules: {
@@ -132,6 +161,20 @@ const config = [
             "canonical/filename-no-index": "off",
             "runtime-cleanup/no-unmanaged-event-listeners": "off",
             "unicorn/filename-case": "off",
+        },
+    },
+    {
+        files: [
+            "src/_internal/create-prefer-tag-rule.ts",
+            "src/_internal/create-require-comment-tag-description-rule.ts",
+            "src/_internal/create-require-function-tag-description-rule.ts",
+            "src/rules/**/*.ts",
+        ],
+        name: "ESLint AST listener selectors",
+        rules: {
+            // Listener keys such as Program and FunctionDeclaration are ESLint selectors,
+            // so their API-defined casing cannot follow ordinary function-name conventions.
+            "sonarjs/function-name": "off",
         },
     },
     {

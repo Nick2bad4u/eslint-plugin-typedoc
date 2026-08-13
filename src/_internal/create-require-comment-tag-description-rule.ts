@@ -1,14 +1,10 @@
-import {
-    AST_TOKEN_TYPES,
-    type ESLintUtils,
-    type TSESLint,
-} from "@typescript-eslint/utils";
+import { AST_TOKEN_TYPES, type TSESLint } from "@typescript-eslint/utils";
 
 import {
     getDocCommentTagBlocks,
     hasMeaningfulTagBlockContent,
 } from "./doc-tag-blocks.js";
-import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
+import { createTypedRule, type TypedRuleMeta } from "./typed-rule.js";
 
 /** Configuration for a generated tag-description rule. */
 export type RequireCommentTagDescriptionRuleConfig<TMessageId extends string> =
@@ -17,11 +13,7 @@ export type RequireCommentTagDescriptionRuleConfig<TMessageId extends string> =
         messageId: TMessageId;
 
         /** Full rule metadata including messages, docs, and schema. */
-        meta: ESLintUtils.RuleWithMetaAndName<
-            Options,
-            TMessageId,
-            TypedocRuleDocs
-        >["meta"];
+        meta: TypedRuleMeta<Options, TMessageId>;
 
         /** Canonical ESLint rule name. */
         name: string;
@@ -58,19 +50,16 @@ export function createRequireCommentTagDescriptionRule<
                         }
 
                         for (const block of getDocCommentTagBlocks(comment)) {
-                            if (block.tagName !== tagName) {
-                                continue;
+                            if (
+                                block.tagName === tagName &&
+                                !hasMeaningfulTagBlockContent(block.blockText)
+                            ) {
+                                context.report({
+                                    loc: comment.loc,
+                                    messageId,
+                                    node: sourceCode.ast,
+                                });
                             }
-
-                            if (hasMeaningfulTagBlockContent(block.blockText)) {
-                                continue;
-                            }
-
-                            context.report({
-                                loc: comment.loc,
-                                messageId,
-                                node: sourceCode.ast,
-                            });
                         }
                     }
                 },

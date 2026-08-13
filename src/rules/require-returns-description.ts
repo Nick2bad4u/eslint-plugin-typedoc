@@ -20,6 +20,7 @@ const rule: TSESLint.RuleModule<"missingReturnsDescription", readonly []> =
                 ],
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-returns-description",
             },
+            languages: ["js/js"],
             messages: {
                 missingReturnsDescription:
                     "`@returns` tags must include a description (not just a type annotation).",

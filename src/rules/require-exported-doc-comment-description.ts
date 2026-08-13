@@ -100,6 +100,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment-description",
         },
+        languages: ["js/js"],
         messages: {
             missingExportedDocCommentDescription:
                 "Documented exported declaration '{{declarationName}}' must include a summary paragraph before TypeDoc block tags.",

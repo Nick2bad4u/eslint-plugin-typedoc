@@ -2,6 +2,12 @@
     "$schema": "https://www.schemastore.org/npmpackagejsonlintrc.json",
     "extends": "npm-package-json-lint-config-nick2bad4u",
     "rules": {
+        "prefer-caret-version-devDependencies": [
+            "error",
+            {
+                "exceptions": ["npm-package-json-lint"]
+            }
+        ],
         "require-type": "off",
         "require-types": "off"
     }

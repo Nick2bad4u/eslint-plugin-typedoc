@@ -4,7 +4,9 @@ export interface PresetsRuleModule {
               readonly docs?:
                   | {
                         readonly typedocConfigs?:
-                            readonly string[] | string | undefined;
+                            | readonly string[]
+                            | string
+                            | undefined;
                         readonly url?: string | undefined;
                     }
                   | undefined;

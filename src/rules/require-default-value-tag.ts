@@ -140,6 +140,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-default-value-tag",
         },
         fixable: "code",
+        languages: ["js/js"],
         messages: {
             missingDefaultValueTag:
                 "Documented exported constant '{{declarationName}}' should include an `@defaultValue` tag.",

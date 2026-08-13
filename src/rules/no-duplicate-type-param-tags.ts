@@ -113,6 +113,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-duplicate-type-param-tags",
         },
+        languages: ["js/js"],
         messages: {
             duplicateTypeParamTags:
                 "Duplicate generic tags found for: {{params}}. Keep one tag per type parameter.",

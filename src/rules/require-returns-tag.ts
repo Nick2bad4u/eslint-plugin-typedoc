@@ -36,7 +36,10 @@ type MessageIds = "addReturnsTagSuggestion" | "missingReturnsTag";
 type Options = readonly [RequireCommentFileOptions?];
 
 const isVoidLikeTypeAnnotation = (
-    typeAnnotation: null | Readonly<TSESTree.TypeNode> | undefined
+    typeAnnotation:
+        | null
+        | Readonly<TSESTree.TypeNode>
+        | undefined
 ): boolean => {
     if (!isPresent(typeAnnotation)) {
         return false;
@@ -170,6 +173,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-returns-tag",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addReturnsTagSuggestion: "Insert a bare `@returns` tag.",
             missingReturnsTag:

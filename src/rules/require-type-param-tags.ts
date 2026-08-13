@@ -155,6 +155,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-type-param-tags",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addTypeParamTagsSuggestion:
                 "Insert missing `@typeParam` tags into this documentation block.",

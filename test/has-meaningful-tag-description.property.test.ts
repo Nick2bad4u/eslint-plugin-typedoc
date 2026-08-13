@@ -48,64 +48,58 @@ describe(hasMeaningfulTagDescription, () => {
     it("treats formatting-only descriptions as non-meaningful", () => {
         expect.hasAssertions();
 
-        fc.assert(
-            fc.property(whitespaceTextArbitrary, (whitespaceOnly) => {
-                expect(hasMeaningfulTagDescription(whitespaceOnly)).toBe(false);
-            })
-        );
+        expect(() => {
+            fc.assert(
+                fc.property(
+                    whitespaceTextArbitrary,
+                    (whitespaceOnly) =>
+                        !hasMeaningfulTagDescription(whitespaceOnly)
+                )
+            );
 
-        fc.assert(
-            fc.property(
-                whitespaceTextArbitrary,
-                whitespaceTextArbitrary,
-                (leadingWhitespace, trailingWhitespace) => {
-                    expect(
-                        hasMeaningfulTagDescription(
+            fc.assert(
+                fc.property(
+                    whitespaceTextArbitrary,
+                    whitespaceTextArbitrary,
+                    (leadingWhitespace, trailingWhitespace) =>
+                        !hasMeaningfulTagDescription(
                             `${leadingWhitespace}-${trailingWhitespace}`
                         )
-                    ).toBe(false);
-                }
-            )
-        );
+                )
+            );
 
-        fc.assert(
-            fc.property(
-                whitespaceTextArbitrary,
-                tagTypeNameArbitrary,
-                whitespaceTextArbitrary,
-                (leadingWhitespace, tagTypeName, trailingWhitespace) => {
-                    expect(
-                        hasMeaningfulTagDescription(
+            fc.assert(
+                fc.property(
+                    whitespaceTextArbitrary,
+                    tagTypeNameArbitrary,
+                    whitespaceTextArbitrary,
+                    (leadingWhitespace, tagTypeName, trailingWhitespace) =>
+                        !hasMeaningfulTagDescription(
                             `${leadingWhitespace}{${tagTypeName}}${trailingWhitespace}`
                         )
-                    ).toBe(false);
-                }
-            )
-        );
+                )
+            );
+        }).not.toThrow();
     });
 
     it("keeps meaningful prose after optional prefix normalization", () => {
         expect.hasAssertions();
 
-        fc.assert(
-            fc.property(
-                whitespaceTextArbitrary,
-                tagTypeNameArbitrary,
-                nonEmptyContentArbitrary,
-                (leadingWhitespace, tagTypeName, content) => {
-                    expect(
+        expect(() => {
+            fc.assert(
+                fc.property(
+                    whitespaceTextArbitrary,
+                    tagTypeNameArbitrary,
+                    nonEmptyContentArbitrary,
+                    (leadingWhitespace, tagTypeName, content) =>
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}{${tagTypeName}} ${content}`
-                        )
-                    ).toBe(true);
-
-                    expect(
+                        ) &&
                         hasMeaningfulTagDescription(
                             `${leadingWhitespace}- ${content}`
                         )
-                    ).toBe(true);
-                }
-            )
-        );
+                )
+            );
+        }).not.toThrow();
     });
 });

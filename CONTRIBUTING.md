@@ -8,17 +8,19 @@ quality, validation, and autofix workflows for TypeScript codebases.
 ## Prerequisites
 
 - Node.js `>=22.0.0` (see `package.json#engines`)
-- npm `>=11`
+- npm `12.0.2` (the exact version enforced by `package.json#devEngines`)
 - Git
 
 ## Local setup
 
 1. Fork and clone the repository.
 
-2. Install dependencies from the repository root:
+2. Install the repository's required npm version, then install dependencies
+   from the repository root:
 
    ```bash
-   npm ci --force
+   npm install --global npm@12.0.2
+   npm ci
    ```
 
 3. Run the main quality gate:

@@ -11,5 +11,3 @@ const RULE_DOCS_BASE_URL =
  */
 export const createRuleDocsUrl = (ruleName: string): string =>
     `${RULE_DOCS_BASE_URL}/${ruleName}`;
-
-export default createRuleDocsUrl;

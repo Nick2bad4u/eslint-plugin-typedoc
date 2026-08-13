@@ -139,6 +139,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-exported-doc-comment",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addDocCommentSuggestion:
                 "Add a documentation comment stub for this export.",

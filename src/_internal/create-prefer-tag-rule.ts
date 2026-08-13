@@ -3,14 +3,10 @@
  * Factory for rules that enforce a canonical tag name over a deprecated alias.
  */
 
-import {
-    AST_TOKEN_TYPES,
-    type ESLintUtils,
-    type TSESLint,
-} from "@typescript-eslint/utils";
+import { AST_TOKEN_TYPES, type TSESLint } from "@typescript-eslint/utils";
 
 import { getDocCommentTagMatches } from "./doc-comments.js";
-import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
+import { createTypedRule, type TypedRuleMeta } from "./typed-rule.js";
 
 /** Configuration for a prefer-tag rule created by this helper. */
 export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
@@ -26,11 +22,7 @@ export type PreferTagRuleConfig<TMessageId extends string> = Readonly<{
     messageId: TMessageId;
 
     /** Full rule metadata including messages, docs, and schema. */
-    meta: ESLintUtils.RuleWithMetaAndName<
-        Options,
-        TMessageId,
-        TypedocRuleDocs
-    >["meta"];
+    meta: TypedRuleMeta<Options, TMessageId>;
 
     /** Canonical ESLint rule name (e.g. `"prefer-package-documentation-tag"`). */
     name: string;

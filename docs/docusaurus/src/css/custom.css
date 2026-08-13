@@ -103,7 +103,10 @@
 .theme-doc-sidebar-item-category.sb-rules-group-no
     > .menu__list-item-collapsible,
 .theme-doc-sidebar-item-category.sb-rules-group-prefer
-    > .menu__list-item-collapsible,
+    > .menu__list-item-collapsible {
+    border-inline-start: 3px solid transparent;
+}
+
 .theme-doc-sidebar-item-category.sb-rules-group-require
     > .menu__list-item-collapsible,
 .theme-doc-sidebar-item-category.sb-rules-group-config

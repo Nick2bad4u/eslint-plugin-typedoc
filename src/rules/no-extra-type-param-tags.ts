@@ -104,6 +104,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-extra-type-param-tags",
         },
+        languages: ["js/js"],
         messages: {
             extraTypeParamTags:
                 "Type-parameter tags must match real generic type parameters. Remove stale tags: {{params}}.",

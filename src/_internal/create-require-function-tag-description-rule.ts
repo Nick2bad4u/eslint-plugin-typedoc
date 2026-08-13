@@ -4,7 +4,7 @@
  * descriptions.
  */
 
-import type { ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { arrayIncludes } from "ts-extras";
 
@@ -16,7 +16,7 @@ import {
     getDocCommentTagBlocks,
     hasMeaningfulTagDescription,
 } from "./doc-tag-blocks.js";
-import { createTypedRule, type TypedocRuleDocs } from "./typed-rule.js";
+import { createTypedRule, type TypedRuleMeta } from "./typed-rule.js";
 
 /** Configuration for a generated function-tag description rule. */
 export type RequireFunctionTagDescriptionRuleConfig<TMessageId extends string> =
@@ -25,11 +25,7 @@ export type RequireFunctionTagDescriptionRuleConfig<TMessageId extends string> =
         messageId: TMessageId;
 
         /** Full rule metadata including messages, docs, and schema. */
-        meta: ESLintUtils.RuleWithMetaAndName<
-            Options,
-            TMessageId,
-            TypedocRuleDocs
-        >["meta"];
+        meta: TypedRuleMeta<Options, TMessageId>;
 
         /** Canonical ESLint rule name. */
         name: string;

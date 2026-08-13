@@ -28,19 +28,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "example") {
-                            continue;
+                        if (
+                            block.tagName === "example" &&
+                            !hasMeaningfulTagBlockContent(block.blockText)
+                        ) {
+                            context.report({
+                                loc: comment.loc,
+                                messageId: "emptyExampleTag",
+                                node: sourceCode.ast,
+                            });
                         }
-
-                        if (hasMeaningfulTagBlockContent(block.blockText)) {
-                            continue;
-                        }
-
-                        context.report({
-                            loc: comment.loc,
-                            messageId: "emptyExampleTag",
-                            node: sourceCode.ast,
-                        });
                     }
                 }
             },
@@ -63,6 +60,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-example-tag",
         },
+        languages: ["js/js"],
         messages: {
             emptyExampleTag:
                 "`@example` tags must contain example content, not just an empty block.",

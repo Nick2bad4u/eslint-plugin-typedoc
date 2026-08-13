@@ -28,19 +28,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "see") {
-                            continue;
+                        if (
+                            block.tagName === "see" &&
+                            !hasMeaningfulTagBlockContent(block.blockText)
+                        ) {
+                            context.report({
+                                loc: comment.loc,
+                                messageId: "emptySeeTag",
+                                node: sourceCode.ast,
+                            });
                         }
-
-                        if (hasMeaningfulTagBlockContent(block.blockText)) {
-                            continue;
-                        }
-
-                        context.report({
-                            loc: comment.loc,
-                            messageId: "emptySeeTag",
-                            node: sourceCode.ast,
-                        });
                     }
                 }
             },
@@ -62,6 +59,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-see-tag",
         },
+        languages: ["js/js"],
         messages: {
             emptySeeTag:
                 "`@see` tags must reference something — a URL, a symbol, or a `{@link}` expression. Remove the tag or add a reference.",

@@ -33,7 +33,20 @@ const isDocTagNameCharacter = (character: string): boolean => {
     );
 };
 
-type QuoteCharacter = "'" | "`" | '"';
+type QuoteCharacter =
+    | "'"
+    | "`"
+    | '"';
+
+type TypeAnnotationScanResult =
+    | Readonly<{ kind: "closed" }>
+    | Readonly<{ kind: "scanning"; state: TypeAnnotationScanState }>;
+
+type TypeAnnotationScanState = Readonly<{
+    braceDepth: number;
+    isEscaped: boolean;
+    quoteCharacter: null | QuoteCharacter;
+}>;
 
 const quoteCharacters = [
     '"',
@@ -43,6 +56,99 @@ const quoteCharacters = [
 
 const isQuoteCharacter = (character: string): character is QuoteCharacter =>
     arrayIncludes(quoteCharacters, character);
+
+/** Advance the quote-aware JSDoc type-annotation scanner by one character. */
+const scanTypeAnnotationCharacter = (
+    character: string,
+    state: Readonly<TypeAnnotationScanState>
+): TypeAnnotationScanResult => {
+    if (state.quoteCharacter !== null) {
+        if (state.isEscaped) {
+            return {
+                kind: "scanning",
+                state: { ...state, isEscaped: false },
+            };
+        }
+
+        if (character === "\\") {
+            return {
+                kind: "scanning",
+                state: { ...state, isEscaped: true },
+            };
+        }
+
+        return {
+            kind: "scanning",
+            state: {
+                ...state,
+                quoteCharacter:
+                    character === state.quoteCharacter
+                        ? null
+                        : state.quoteCharacter,
+            },
+        };
+    }
+
+    if (isQuoteCharacter(character)) {
+        return {
+            kind: "scanning",
+            state: { ...state, quoteCharacter: character },
+        };
+    }
+
+    if (character === "{") {
+        return {
+            kind: "scanning",
+            state: { ...state, braceDepth: state.braceDepth + 1 },
+        };
+    }
+
+    if (character !== "}") {
+        return { kind: "scanning", state };
+    }
+
+    const braceDepth = state.braceDepth - 1;
+
+    return braceDepth === 0
+        ? { kind: "closed" }
+        : { kind: "scanning", state: { ...state, braceDepth } };
+};
+
+/** Calculate the next brace nesting depth for one annotation character. */
+const getNextBraceDepth = (character: string, braceDepth: number): number => {
+    if (character === "{") {
+        return braceDepth + 1;
+    }
+
+    if (character === "}") {
+        return braceDepth - 1;
+    }
+
+    return braceDepth;
+};
+
+/** Find a balanced closing brace without applying quote semantics. */
+const findBalancedClosingBrace = (
+    text: string,
+    annotationStart: number
+): null | number => {
+    let braceDepth = 0;
+
+    for (let index = annotationStart; index < text.length; index += 1) {
+        const character = text[index];
+        const nextBraceDepth = isDefined(character)
+            ? getNextBraceDepth(character, braceDepth)
+            : braceDepth;
+
+        if (character === "}" && nextBraceDepth === 0) {
+            return index;
+        }
+
+        braceDepth = nextBraceDepth;
+    }
+
+    return null;
+};
 
 /**
  * Remove one optional leading JSDoc type annotation from tag text.
@@ -62,70 +168,37 @@ export const stripOptionalJSDocTypeAnnotation = (text: string): string => {
         return text;
     }
 
-    let braceDepth = 0;
-    let isEscaped = false;
-    let quoteCharacter: null | QuoteCharacter = null;
+    let state: TypeAnnotationScanState = {
+        braceDepth: 0,
+        isEscaped: false,
+        quoteCharacter: null,
+    };
 
     for (let index = annotationStart; index < text.length; index += 1) {
         const character = text[index];
 
-        if (!isDefined(character)) {
-            break;
-        }
+        if (isDefined(character)) {
+            const scan = scanTypeAnnotationCharacter(character, state);
 
-        if (quoteCharacter !== null) {
-            if (isEscaped) {
-                isEscaped = false;
-            } else if (character === "\\") {
-                isEscaped = true;
-            } else if (character === quoteCharacter) {
-                quoteCharacter = null;
+            if (scan.kind === "closed") {
+                return text.slice(index + 1);
             }
 
-            continue;
-        }
-
-        if (isQuoteCharacter(character)) {
-            quoteCharacter = character;
-            continue;
-        }
-
-        if (character === "{") {
-            braceDepth += 1;
-            continue;
-        }
-
-        if (character !== "}") {
-            continue;
-        }
-
-        braceDepth -= 1;
-
-        if (braceDepth === 0) {
-            return text.slice(index + 1);
+            state = scan.state;
         }
     }
 
     // Preserve the permissive behavior of classic JSDoc type annotations when
     // a quote is malformed: braces still delimit the annotation if they can be
     // balanced without quote awareness.
-    braceDepth = 0;
+    const fallbackClosingIndex = findBalancedClosingBrace(
+        text,
+        annotationStart
+    );
 
-    for (let index = annotationStart; index < text.length; index += 1) {
-        const character = text[index];
-
-        if (character === "{") {
-            braceDepth += 1;
-        } else if (character === "}") {
-            braceDepth -= 1;
-
-            if (braceDepth === 0) {
-                return text.slice(index + 1);
-            }
-        }
-    }
-
-    return text;
+    return fallbackClosingIndex === null
+        ? text
+        : text.slice(fallbackClosingIndex + 1);
 };
 
 const parseDocTagLine = (line: string): null | ParsedDocTagLine => {
@@ -194,6 +267,40 @@ const isMarkdownDividerLine = (line: string): boolean => {
     return true;
 };
 
+type ContinuationLines = Readonly<{
+    lines: readonly string[];
+    nextLineIndex: number;
+}>;
+
+const collectContinuationLines = (
+    lines: readonly string[],
+    startIndex: number
+): ContinuationLines => {
+    const continuationLines: string[] = [];
+    let continuationIndex = startIndex;
+
+    while (continuationIndex < lines.length) {
+        const continuationLine = lines[continuationIndex];
+
+        if (
+            isDefined(continuationLine) &&
+            nextTagLinePattern.test(continuationLine.trimStart())
+        ) {
+            break;
+        }
+
+        if (isDefined(continuationLine)) {
+            continuationLines.push(continuationLine);
+        }
+        continuationIndex += 1;
+    }
+
+    return {
+        lines: continuationLines,
+        nextLineIndex: continuationIndex,
+    };
+};
+
 /**
  * Parse ordered `@tag` blocks from a normalized TypeDoc block comment.
  */
@@ -208,13 +315,9 @@ export const getDocCommentTagBlocks = (
     while (lineIndex < lines.length) {
         const line = lines[lineIndex];
 
-        if (!isDefined(line)) {
-            lineIndex += 1;
-            continue;
-        }
-
-        const trimmedLine = line.trimStart();
-        const parsedTagLine = parseDocTagLine(trimmedLine);
+        const parsedTagLine = isDefined(line)
+            ? parseDocTagLine(line.trimStart())
+            : null;
 
         if (parsedTagLine === null) {
             lineIndex += 1;
@@ -222,26 +325,8 @@ export const getDocCommentTagBlocks = (
         }
 
         const { tagName, tagText } = parsedTagLine;
-        const continuationLines: string[] = [];
-        let continuationIndex = lineIndex + 1;
-
-        while (continuationIndex < lines.length) {
-            const continuationLine = lines[continuationIndex];
-
-            if (!isDefined(continuationLine)) {
-                continuationIndex += 1;
-                continue;
-            }
-
-            if (nextTagLinePattern.test(continuationLine.trimStart())) {
-                break;
-            }
-
-            continuationLines.push(continuationLine);
-            continuationIndex += 1;
-        }
-
-        const continuationText = arrayJoin(continuationLines, "\n");
+        const continuation = collectContinuationLines(lines, lineIndex + 1);
+        const continuationText = arrayJoin(continuation.lines, "\n");
 
         blocks.push({
             blockText:
@@ -253,7 +338,7 @@ export const getDocCommentTagBlocks = (
             tagText,
         });
 
-        lineIndex = continuationIndex;
+        lineIndex = continuation.nextLineIndex;
     }
 
     return blocks;

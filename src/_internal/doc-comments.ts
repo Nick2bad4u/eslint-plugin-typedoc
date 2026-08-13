@@ -248,15 +248,11 @@ export const getLeadingDocComment = (
     for (let index = comments.length - 1; index >= 0; index -= 1) {
         const comment = comments[index];
 
-        if (!isDefined(comment)) {
-            continue;
-        }
-
-        if (comment.type !== AST_TOKEN_TYPES.Block) {
-            continue;
-        }
-
-        if (!comment.value.startsWith("*")) {
+        if (
+            !isDefined(comment) ||
+            comment.type !== AST_TOKEN_TYPES.Block ||
+            !comment.value.startsWith("*")
+        ) {
             continue;
         }
 
@@ -421,19 +417,17 @@ export const getDocCommentParamTagNameList = (
         const isRestParameter = match.groups?.["restParameter"] === "...";
         const rawName = match.groups?.["rawName"];
 
-        if (typeof rawName !== "string") {
-            continue;
+        if (typeof rawName === "string") {
+            const nameWithoutDefault = normalizeTagNameToken(rawName);
+
+            if (nameWithoutDefault.length > 0) {
+                tagNames.push(
+                    isRestParameter
+                        ? `...${nameWithoutDefault}`
+                        : nameWithoutDefault
+                );
+            }
         }
-
-        const nameWithoutDefault = normalizeTagNameToken(rawName);
-
-        if (nameWithoutDefault.length === 0) {
-            continue;
-        }
-
-        tagNames.push(
-            isRestParameter ? `...${nameWithoutDefault}` : nameWithoutDefault
-        );
     }
 
     return tagNames;
@@ -456,17 +450,13 @@ export const getDocCommentTypeParamTagNameList = (
     for (const match of commentBody.matchAll(typeParamTagPattern)) {
         const rawName = match.groups?.["rawName"];
 
-        if (typeof rawName !== "string") {
-            continue;
+        if (typeof rawName === "string") {
+            const normalizedName = normalizeTagNameToken(rawName);
+
+            if (normalizedName.length > 0) {
+                tagNames.push(normalizedName);
+            }
         }
-
-        const normalizedName = normalizeTagNameToken(rawName);
-
-        if (normalizedName.length === 0) {
-            continue;
-        }
-
-        tagNames.push(normalizedName);
     }
 
     return tagNames;
@@ -529,39 +519,37 @@ export const getInlineLinkMatches = (
         );
 
         if (relativeStart === -1) {
-            break;
-        }
-
-        const cursorStart = relativeStart + inlineLinkPrefix.length;
-        const scan = scanForClosingBrace(commentText, cursorStart);
-
-        if (scan.kind === "exhausted") {
-            break;
-        }
-
-        if (scan.kind === "found") {
-            const fullMatch = commentText.slice(
-                relativeStart,
-                scan.closingIndex + 1
-            );
-            const content = commentText
-                .slice(cursorStart, scan.closingIndex)
-                .trimStart();
-            const absoluteStart = arrayFirst(comment.range) + relativeStart;
-
-            matches.push({
-                absoluteRange: [
-                    absoluteStart,
-                    absoluteStart + fullMatch.length,
-                ],
-                content,
-                fullText: fullMatch,
-            });
-
-            searchStartIndex = scan.closingIndex + 1;
+            searchStartIndex = commentText.length;
         } else {
-            // Linebreak encountered — skip past the link prefix and resume scanning.
-            searchStartIndex = cursorStart;
+            const cursorStart = relativeStart + inlineLinkPrefix.length;
+            const scan = scanForClosingBrace(commentText, cursorStart);
+
+            if (scan.kind === "exhausted") {
+                searchStartIndex = commentText.length;
+            } else if (scan.kind === "found") {
+                const fullMatch = commentText.slice(
+                    relativeStart,
+                    scan.closingIndex + 1
+                );
+                const content = commentText
+                    .slice(cursorStart, scan.closingIndex)
+                    .trimStart();
+                const absoluteStart = arrayFirst(comment.range) + relativeStart;
+
+                matches.push({
+                    absoluteRange: [
+                        absoluteStart,
+                        absoluteStart + fullMatch.length,
+                    ],
+                    content,
+                    fullText: fullMatch,
+                });
+
+                searchStartIndex = scan.closingIndex + 1;
+            } else {
+                // Linebreak encountered — skip the prefix and resume scanning.
+                searchStartIndex = cursorStart;
+            }
         }
     }
 
