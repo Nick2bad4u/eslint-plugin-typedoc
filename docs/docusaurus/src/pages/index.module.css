@@ -43,6 +43,7 @@
     display: grid;
     align-items: center;
     gap: 1.25rem;
+    /* stylelint-disable-next-line defensive-css/require-grid-minmax -- the flexible track is already bounded by this outer minmax; nesting minmax() is invalid CSS. */
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
 }
 
@@ -133,6 +134,7 @@
 .heroStats {
     display: grid;
     gap: 0.85rem;
+    /* stylelint-disable-next-line defensive-css/require-grid-minmax -- the flexible track is already bounded by this outer minmax; nesting minmax() is invalid CSS. */
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
     margin-block-start: 0.82rem;
 }

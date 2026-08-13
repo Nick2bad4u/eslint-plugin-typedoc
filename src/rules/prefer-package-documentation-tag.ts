@@ -25,6 +25,7 @@ const rule: TSESLint.RuleModule<"preferPackageDocumentationTag", readonly []> =
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-package-documentation-tag",
             },
             fixable: "code",
+            languages: ["js/js"],
             messages: {
                 preferPackageDocumentationTag:
                     "Use `@packageDocumentation` instead of {{tag}} for canonical TypeDoc package docs.",

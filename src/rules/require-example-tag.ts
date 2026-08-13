@@ -131,6 +131,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-example-tag",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addExampleTagSuggestion:
                 "Add an `@example` tag with starter example text.",

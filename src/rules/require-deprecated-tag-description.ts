@@ -24,6 +24,7 @@ const rule: TSESLint.RuleModule<"missingDeprecatedDescription", readonly []> =
                 ],
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-deprecated-tag-description",
             },
+            languages: ["js/js"],
             messages: {
                 missingDeprecatedDescription:
                     "`@deprecated` tags must explain why the API is deprecated or what to use instead.",

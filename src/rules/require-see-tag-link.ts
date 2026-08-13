@@ -38,25 +38,19 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "see") {
-                            continue;
-                        }
-
                         // Only flag tags that have content but no URL or link.
                         // Empty @see tags are handled by no-empty-see-tag.
-                        if (!hasMeaningfulTagBlockContent(block.blockText)) {
-                            continue;
+                        if (
+                            block.tagName === "see" &&
+                            hasMeaningfulTagBlockContent(block.blockText) &&
+                            !seeLinkOrUrlPattern.test(block.blockText)
+                        ) {
+                            context.report({
+                                loc: comment.loc,
+                                messageId: "missingSeeLinkOrUrl",
+                                node: sourceCode.ast,
+                            });
                         }
-
-                        if (seeLinkOrUrlPattern.test(block.blockText)) {
-                            continue;
-                        }
-
-                        context.report({
-                            loc: comment.loc,
-                            messageId: "missingSeeLinkOrUrl",
-                            node: sourceCode.ast,
-                        });
                     }
                 }
             },
@@ -73,6 +67,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-see-tag-link",
         },
+        languages: ["js/js"],
         messages: {
             missingSeeLinkOrUrl:
                 "`@see` tags must contain a URL (`https://...`) or a `{@link}` expression. Use `{@link SomeSymbol}` for TypeScript cross-references.",

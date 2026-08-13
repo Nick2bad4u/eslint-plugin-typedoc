@@ -24,6 +24,7 @@ const rule: TSESLint.RuleModule<"preferTypeParamTag", readonly []> =
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/prefer-type-param-tag",
             },
             fixable: "code",
+            languages: ["js/js"],
             messages: {
                 preferTypeParamTag:
                     "Use `@typeParam` instead of {{tag}} to match canonical TypeDoc style.",

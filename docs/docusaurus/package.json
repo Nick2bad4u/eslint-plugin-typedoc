@@ -51,27 +51,27 @@
         "write-translations": "npx docusaurus write-translations"
     },
     "dependencies": {
-        "@docusaurus/core": "^3.10.1",
-        "@docusaurus/faster": "^3.10.1",
-        "@docusaurus/plugin-content-docs": "^3.10.1",
-        "@docusaurus/plugin-pwa": "^3.10.1",
-        "@docusaurus/preset-classic": "^3.10.1",
-        "@docusaurus/theme-mermaid": "^3.10.1",
-        "@docusaurus/types": "^3.10.1",
-        "@easyops-cn/docusaurus-search-local": "^0.55.2",
+        "@docusaurus/core": "^3.10.2",
+        "@docusaurus/faster": "^3.10.2",
+        "@docusaurus/plugin-content-docs": "^3.10.2",
+        "@docusaurus/plugin-pwa": "^3.10.2",
+        "@docusaurus/preset-classic": "^3.10.2",
+        "@docusaurus/theme-mermaid": "^3.10.2",
+        "@docusaurus/types": "^3.10.2",
+        "@easyops-cn/docusaurus-search-local": "^0.55.3",
         "clsx": "^2.1.1",
         "prism-react-renderer": "^2.4.1"
     },
     "devDependencies": {
-        "@docusaurus/module-type-aliases": "^3.10.1",
-        "@docusaurus/tsconfig": "^3.10.1",
-        "@eslint/config-inspector": "^3.0.4",
+        "@docusaurus/module-type-aliases": "^3.10.2",
+        "@docusaurus/tsconfig": "^3.10.2",
+        "@eslint/config-inspector": "^3.2.0",
         "@mdx-js/react": "^3.1.1",
-        "@types/react": "^19.2.17",
-        "@types/react-dom": "^19.2.3",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
         "docusaurus-plugin-image-zoom": "^3.0.1",
-        "react": "^19.2.7",
-        "react-dom": "^19.2.7",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
         "react-github-btn": "^1.4.0",
         "typed-css-modules": "^0.9.1",
         "typedoc": "^0.28.20",
@@ -82,19 +82,19 @@
         "react": "^19.2.4",
         "react-dom": "^19.2.4"
     },
-    "packageManager": "npm@11.18.0",
+    "packageManager": "npm@12.0.2",
     "engines": {
         "node": ">=22.0.0"
     },
     "devEngines": {
         "runtime": {
             "name": "node",
-            "version": ">=22.0.0",
+            "version": "^24.15.0 || >=26.0.0",
             "onFail": "error"
         },
         "packageManager": {
             "name": "npm",
-            "version": ">=11.0.0",
+            "version": "12.0.2",
             "onFail": "error"
         }
     }

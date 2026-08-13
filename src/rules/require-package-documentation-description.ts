@@ -148,6 +148,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-package-documentation-description",
         },
+        languages: ["js/js"],
         messages: {
             missingPackageDocumentationDescription:
                 "`@packageDocumentation` comments must include a module-level description.",

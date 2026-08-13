@@ -133,6 +133,8 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             userTags.length > 0
                 ? new Set([...allowedTags, ...userTags])
                 : allowedTags;
+        const isAllowedTag = (tagName: string): boolean =>
+            setHas(effectiveAllowedTags, tagName);
 
         return {
             Program: (): void => {
@@ -144,11 +146,13 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                         continue;
                     }
 
-                    for (const tagMatch of getDocCommentTagMatches(
+                    const tagMatches = getDocCommentTagMatches(
                         sourceCode,
                         comment
-                    )) {
-                        if (setHas(effectiveAllowedTags, tagMatch.name)) {
+                    );
+
+                    for (const tagMatch of tagMatches) {
+                        if (isAllowedTag(tagMatch.name)) {
                             continue;
                         }
 
@@ -160,7 +164,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
 
                         const baseReportDescriptor = {
                             data: {
-                                tag: `@${String(tagMatch.name)}`,
+                                tag: `@${tagMatch.name}`,
                             },
                             loc: {
                                 end: sourceCode.getLocFromIndex(absoluteEnd),
@@ -172,25 +176,23 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                             node: sourceCode.ast,
                         };
 
-                        if (!isDefined(canonicalTagName)) {
+                        if (isDefined(canonicalTagName)) {
+                            context.report({
+                                ...baseReportDescriptor,
+                                fix: (fixer) =>
+                                    fixer.replaceTextRange(
+                                        [
+                                            absoluteStart + 1,
+                                            absoluteStart +
+                                                1 +
+                                                tagMatch.name.length,
+                                        ],
+                                        canonicalTagName
+                                    ),
+                            });
+                        } else {
                             context.report(baseReportDescriptor);
-
-                            continue;
                         }
-
-                        context.report({
-                            ...baseReportDescriptor,
-                            fix: (fixer) =>
-                                fixer.replaceTextRange(
-                                    [
-                                        absoluteStart + 1,
-                                        absoluteStart +
-                                            1 +
-                                            tagMatch.name.length,
-                                    ],
-                                    canonicalTagName
-                                ),
-                        });
                     }
                 }
             },
@@ -217,6 +219,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-unknown-tags",
         },
         fixable: "code",
+        languages: ["js/js"],
         messages: {
             unknownTag:
                 "Unknown TypeDoc tag '{{tag}}'. Replace it with a supported TypeDoc tag.",

@@ -20,10 +20,54 @@ import {
 } from "../_internal/require-comment-file-options.js";
 import { createTypedRule } from "../_internal/typed-rule.js";
 
-type FunctionLikeBody = null | TSESTree.BlockStatement | TSESTree.Expression;
+type FunctionLikeBody =
+    | null
+    | TSESTree.BlockStatement
+    | TSESTree.Expression;
 type MessageIds = "addThrowsTagSuggestion" | "missingThrowsTag";
 
 type Options = readonly [RequireCommentFileOptions?];
+
+/** Collect statement children that execute within a control-flow statement. */
+const getNestedStatements = (
+    statement: Readonly<TSESTree.Statement>
+): readonly TSESTree.Statement[] => {
+    if (statement.type === AST_NODE_TYPES.BlockStatement) {
+        return statement.body;
+    }
+
+    if (
+        statement.type === AST_NODE_TYPES.DoWhileStatement ||
+        statement.type === AST_NODE_TYPES.ForInStatement ||
+        statement.type === AST_NODE_TYPES.ForOfStatement ||
+        statement.type === AST_NODE_TYPES.ForStatement ||
+        statement.type === AST_NODE_TYPES.LabeledStatement ||
+        statement.type === AST_NODE_TYPES.WhileStatement ||
+        statement.type === AST_NODE_TYPES.WithStatement
+    ) {
+        return [statement.body];
+    }
+
+    if (statement.type === AST_NODE_TYPES.IfStatement) {
+        return statement.alternate === null
+            ? [statement.consequent]
+            : [statement.consequent, statement.alternate];
+    }
+
+    if (statement.type === AST_NODE_TYPES.SwitchStatement) {
+        return statement.cases.flatMap((switchCase) => switchCase.consequent);
+    }
+
+    if (statement.type === AST_NODE_TYPES.TryStatement) {
+        return [
+            ...statement.block.body,
+            ...(statement.handler?.body.body ?? []),
+            ...(statement.finalizer?.body ?? []),
+        ];
+    }
+
+    return [];
+};
 
 const functionBodyContainsThrow = (
     body: Readonly<FunctionLikeBody>
@@ -37,60 +81,12 @@ const functionBodyContainsThrow = (
     while (statementStack.length > 0) {
         const statement = statementStack.pop();
 
-        if (statement === undefined) {
-            continue;
-        }
-
-        if (statement.type === AST_NODE_TYPES.ThrowStatement) {
-            return true;
-        }
-
-        if (statement.type === AST_NODE_TYPES.BlockStatement) {
-            statementStack.push(...statement.body);
-            continue;
-        }
-
-        if (
-            statement.type === AST_NODE_TYPES.DoWhileStatement ||
-            statement.type === AST_NODE_TYPES.ForInStatement ||
-            statement.type === AST_NODE_TYPES.ForOfStatement ||
-            statement.type === AST_NODE_TYPES.ForStatement ||
-            statement.type === AST_NODE_TYPES.LabeledStatement ||
-            statement.type === AST_NODE_TYPES.WhileStatement ||
-            statement.type === AST_NODE_TYPES.WithStatement
-        ) {
-            statementStack.push(statement.body);
-            continue;
-        }
-
-        if (statement.type === AST_NODE_TYPES.IfStatement) {
-            statementStack.push(statement.consequent);
-
-            if (statement.alternate !== null) {
-                statementStack.push(statement.alternate);
+        if (statement !== undefined) {
+            if (statement.type === AST_NODE_TYPES.ThrowStatement) {
+                return true;
             }
 
-            continue;
-        }
-
-        if (statement.type === AST_NODE_TYPES.SwitchStatement) {
-            for (const switchCase of statement.cases) {
-                statementStack.push(...switchCase.consequent);
-            }
-
-            continue;
-        }
-
-        if (statement.type === AST_NODE_TYPES.TryStatement) {
-            statementStack.push(...statement.block.body);
-
-            if (statement.handler !== null) {
-                statementStack.push(...statement.handler.body.body);
-            }
-
-            if (statement.finalizer !== null) {
-                statementStack.push(...statement.finalizer.body);
-            }
+            statementStack.push(...getNestedStatements(statement));
         }
     }
 
@@ -197,6 +193,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-throws-tag",
         },
         hasSuggestions: true,
+        languages: ["js/js"],
         messages: {
             addThrowsTagSuggestion: "Insert a bare `@throws` tag.",
             missingThrowsTag:

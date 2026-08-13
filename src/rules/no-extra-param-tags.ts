@@ -137,6 +137,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-extra-param-tags",
         },
+        languages: ["js/js"],
         messages: {
             extraParamTags:
                 "`@param` tags must match real function parameters. Remove stale tags: {{params}}.",

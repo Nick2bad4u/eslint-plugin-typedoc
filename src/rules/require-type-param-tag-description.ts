@@ -8,6 +8,7 @@ import {
     getLeadingDocComment,
 } from "../_internal/doc-comments.js";
 import {
+    type DocTagBlock,
     getDocCommentTagBlocks,
     hasMeaningfulTagDescription,
     stripOptionalJSDocTypeAnnotation,
@@ -61,6 +62,30 @@ const normalizeTypeParamTagName = (rawName: string): string => {
         : bracketTrimmed.slice(0, equalsSignOffset);
 };
 
+/** Return a type-parameter name when its tag lacks a description. */
+const getTypeParamNameMissingDescription = (
+    block: Readonly<DocTagBlock>
+): null | string => {
+    if (block.tagName !== "typeParam" && block.tagName !== "template") {
+        return null;
+    }
+
+    const payload = parseTypeParamTagPayload(block.tagText);
+
+    if (payload === null) {
+        return null;
+    }
+
+    const { inlineDescription, rawName } = payload;
+    const normalizedName = normalizeTypeParamTagName(rawName);
+    const descriptionText =
+        block.continuationText.length === 0
+            ? inlineDescription
+            : `${inlineDescription}\n${block.continuationText}`;
+
+    return hasMeaningfulTagDescription(descriptionText) ? null : normalizedName;
+};
+
 /** Rule implementation for requiring generic-tag descriptions. */
 const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
     Options,
@@ -89,29 +114,10 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             const missingDescriptions: string[] = [];
 
             for (const block of getDocCommentTagBlocks(docComment)) {
-                if (
-                    block.tagName !== "typeParam" &&
-                    block.tagName !== "template"
-                ) {
-                    continue;
-                }
+                const missingName = getTypeParamNameMissingDescription(block);
 
-                const payload = parseTypeParamTagPayload(block.tagText);
-
-                if (payload === null) {
-                    continue;
-                }
-
-                const { inlineDescription, rawName } = payload;
-
-                const normalizedName = normalizeTypeParamTagName(rawName);
-                const descriptionText =
-                    block.continuationText.length === 0
-                        ? inlineDescription
-                        : `${inlineDescription}\n${block.continuationText}`;
-
-                if (!hasMeaningfulTagDescription(descriptionText)) {
-                    missingDescriptions.push(normalizedName);
+                if (missingName !== null) {
+                    missingDescriptions.push(missingName);
                 }
             }
 
@@ -186,6 +192,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-type-param-tag-description",
         },
+        languages: ["js/js"],
         messages: {
             missingTypeParamTagDescription:
                 "Generic tags must include descriptions. Missing description for: {{params}}.",

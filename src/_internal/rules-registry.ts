@@ -123,5 +123,3 @@ const typedocRuleRegistry = {
 export const typedocRules: Readonly<
     Record<TypedocRuleNamePattern, RuleWithDocs>
 > = typedocRuleRegistry;
-
-export default typedocRules;

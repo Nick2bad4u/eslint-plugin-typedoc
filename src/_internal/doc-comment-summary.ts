@@ -5,13 +5,13 @@ import { arrayJoin } from "ts-extras";
 import { normalizeDocCommentLines } from "./doc-comments.js";
 
 /** Collect the summary lines that appear before the first block tag. */
-export const getDocCommentSummaryLines = (
+const getDocCommentSummaryLines = (
     comment: Readonly<TSESTree.Comment>
 ): readonly string[] => {
     const summaryLines: string[] = [];
 
     for (const line of normalizeDocCommentLines(comment)) {
-        if (line.trim().startsWith("@")) {
+        if (line.trimStart().startsWith("@")) {
             break;
         }
 
@@ -22,7 +22,7 @@ export const getDocCommentSummaryLines = (
 };
 
 /** Get the leading summary text that appears before block tags. */
-export const getDocCommentSummaryText = (
+const getDocCommentSummaryText = (
     comment: Readonly<TSESTree.Comment>
 ): string => arrayJoin(getDocCommentSummaryLines(comment), "\n");
 

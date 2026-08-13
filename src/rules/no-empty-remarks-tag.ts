@@ -28,19 +28,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "remarks") {
-                            continue;
+                        if (
+                            block.tagName === "remarks" &&
+                            !hasMeaningfulTagBlockContent(block.blockText)
+                        ) {
+                            context.report({
+                                loc: comment.loc,
+                                messageId: "emptyRemarksTag",
+                                node: sourceCode.ast,
+                            });
                         }
-
-                        if (hasMeaningfulTagBlockContent(block.blockText)) {
-                            continue;
-                        }
-
-                        context.report({
-                            loc: comment.loc,
-                            messageId: "emptyRemarksTag",
-                            node: sourceCode.ast,
-                        });
                     }
                 }
             },
@@ -62,6 +59,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             ],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-remarks-tag",
         },
+        languages: ["js/js"],
         messages: {
             emptyRemarksTag:
                 "`@remarks` tags must contain meaningful explanatory content, not just an empty block.",

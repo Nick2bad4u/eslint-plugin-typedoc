@@ -1,3 +1,5 @@
+import jsonPlugin from "@eslint/json";
+import { ESLint } from "eslint";
 import { describe, expect, it } from "vitest";
 
 import typedocPlugin from "../src/plugin.js";
@@ -57,6 +59,33 @@ describe("plugin entry", () => {
             "require-type-param-tags",
             "typedoc-config-requires-options",
         ]);
+    });
+
+    it("rejects TypeDoc rules for non-JavaScript languages", async () => {
+        expect.hasAssertions();
+
+        const eslint = new ESLint({
+            overrideConfig: [
+                {
+                    files: ["**/*.json"],
+                    language: "json/json",
+                    plugins: {
+                        json: jsonPlugin,
+                        typedoc: typedocPlugin,
+                    },
+                    rules: {
+                        "typedoc/no-unknown-tags": "error",
+                    },
+                },
+            ],
+            overrideConfigFile: true,
+        });
+
+        await expect(
+            eslint.lintText("{}", { filePath: "fixture.json" })
+        ).rejects.toThrow(
+            'The following rules do not support the language "json/json"'
+        );
     });
 
     it("exports all expected presets", () => {
@@ -198,10 +227,12 @@ describe("plugin entry", () => {
             expect.hasAssertions();
 
             for (const [name, config] of configs) {
+                const unknownConfig: unknown = config;
+
                 expect(
-                    typeof config === "object" &&
-                        config !== null &&
-                        !Array.isArray(config),
+                    typeof unknownConfig === "object" &&
+                        unknownConfig !== null &&
+                        !Array.isArray(unknownConfig),
                     `preset "${name}" should be a Linter.Config object`
                 ).toBe(true);
             }

@@ -3,7 +3,7 @@
  * Shared rule creator for eslint-plugin-typedoc rules.
  */
 
-import type { UnknownArray } from "type-fest";
+import type { Merge, UnknownArray } from "type-fest";
 
 import { ESLintUtils } from "@typescript-eslint/utils";
 
@@ -19,6 +19,21 @@ export type TypedocRuleDocs = Readonly<{
     requiresTypeChecking: boolean;
     typedocConfigs: readonly TypedocConfigReference[];
 }>;
+
+/** ESLint 10 rule metadata, including the language compatibility contract. */
+export type TypedRuleMeta<
+    TOptions extends Readonly<UnknownArray>,
+    TMessageIds extends string,
+> = Merge<
+    ESLintUtils.RuleWithMetaAndName<
+        TOptions,
+        TMessageIds,
+        TypedocRuleDocs
+    >["meta"],
+    Readonly<{
+        languages: readonly string[];
+    }>
+>;
 
 type TypedRuleCreator = <
     TOptions extends Readonly<UnknownArray>,
@@ -37,7 +52,12 @@ type TypedRuleModule<
 type TypedRuleWithMetaAndName<
     TOptions extends Readonly<UnknownArray>,
     TMessageIds extends string,
-> = ESLintUtils.RuleWithMetaAndName<TOptions, TMessageIds, TypedocRuleDocs>;
+> = Merge<
+    ESLintUtils.RuleWithMetaAndName<TOptions, TMessageIds, TypedocRuleDocs>,
+    Readonly<{
+        meta: TypedRuleMeta<TOptions, TMessageIds>;
+    }>
+>;
 
 /**
  * Canonical rule creator that stamps `meta.docs.url` from rule names.
@@ -48,5 +68,3 @@ const typedRuleCreator: TypedRuleCreator = createRuleCreator(createRuleDocsUrl);
 
 /** Shared RuleCreator instance that stamps canonical docs URLs. */
 export const createTypedRule: TypedRuleCreator = typedRuleCreator;
-
-export default createTypedRule;

@@ -99,7 +99,11 @@ const typedocConfigMetadataByNameValue: Readonly<
 export const typedocConfigMetadataByName: typeof typedocConfigMetadataByNameValue =
     typedocConfigMetadataByNameValue;
 
-/** Preset keys sorted in the order they should appear in README/docs tables. */
+/**
+ * Preset keys sorted in the order they should appear in README/docs tables.
+ *
+ * @public Consumed by repository synchronization scripts from built output.
+ */
 export const typedocConfigNamesByReadmeOrder: readonly TypedocConfigName[] = [
     ...createSortedCopy(
         typedocConfigNames,

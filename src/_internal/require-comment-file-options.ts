@@ -10,7 +10,7 @@ const windowsPathSeparatorPattern = /\\/gv;
  *
  * Keep this scope narrow to comment-requirement rules, not the entire plugin.
  */
-export const requireCommentDefaultIgnorePatterns = [
+const requireCommentDefaultIgnorePatterns = [
     "**/benchmark/**",
     "**/benchmarks/**",
     "**/build/**",

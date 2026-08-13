@@ -28,19 +28,16 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
                     }
 
                     for (const block of getDocCommentTagBlocks(comment)) {
-                        if (block.tagName !== "privateRemarks") {
-                            continue;
+                        if (
+                            block.tagName === "privateRemarks" &&
+                            !hasMeaningfulTagBlockContent(block.blockText)
+                        ) {
+                            context.report({
+                                loc: comment.loc,
+                                messageId: "emptyPrivateRemarksTag",
+                                node: sourceCode.ast,
+                            });
                         }
-
-                        if (hasMeaningfulTagBlockContent(block.blockText)) {
-                            continue;
-                        }
-
-                        context.report({
-                            loc: comment.loc,
-                            messageId: "emptyPrivateRemarksTag",
-                            node: sourceCode.ast,
-                        });
                     }
                 }
             },
@@ -57,6 +54,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             typedocConfigs: ["typedoc.configs.all", "typedoc.configs.strict"],
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/no-empty-private-remarks-tag",
         },
+        languages: ["js/js"],
         messages: {
             emptyPrivateRemarksTag:
                 "`@privateRemarks` tags must contain meaningful content. Remove the tag if there are no internal notes to add.",

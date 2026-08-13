@@ -18,7 +18,7 @@ quality, validation, and autofix workflows for TypeScript codebases.
 2. Install dependencies from the repository root:
 
    ```bash
-   npm ci --force
+   npm ci
    ```
 
 3. Run the main quality gate:

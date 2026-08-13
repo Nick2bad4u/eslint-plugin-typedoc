@@ -3,10 +3,14 @@ import {
     type TSESLint,
     type TSESTree,
 } from "@typescript-eslint/utils";
-import { arrayFirst } from "ts-extras";
+import { arrayFirst, isDefined } from "ts-extras";
 
 import { createTypedRule } from "../_internal/typed-rule.js";
 
+type FenceLineScan = Readonly<{
+    isInsideFence: boolean;
+    missingLanguageRange?: readonly [number, number];
+}>;
 type LineWithOffset = Readonly<{
     text: string;
     textStartOffset: number;
@@ -63,6 +67,39 @@ const splitTextIntoLinesWithOffsets = (
 const isDocComment = (comment: Readonly<TSESTree.Comment>): boolean =>
     comment.type === AST_TOKEN_TYPES.Block && comment.value.startsWith("*");
 
+/** Scan one comment line and update fenced-code-block state. */
+const scanFenceLine = (
+    line: Readonly<LineWithOffset>,
+    isInsideFence: boolean,
+    commentStart: number
+): FenceLineScan => {
+    const fenceOffset = line.text.indexOf("```");
+
+    if (
+        fenceOffset === -1 ||
+        !hasDocFencePrefix(line.text.slice(0, fenceOffset))
+    ) {
+        return { isInsideFence };
+    }
+
+    const fenceSuffix = line.text.slice(fenceOffset + 3).trim();
+
+    if (isInsideFence) {
+        return { isInsideFence: fenceSuffix.length > 0 };
+    }
+
+    if (fenceSuffix.length > 0) {
+        return { isInsideFence: true };
+    }
+
+    const absoluteStart = commentStart + line.textStartOffset + fenceOffset;
+
+    return {
+        isInsideFence: true,
+        missingLanguageRange: [absoluteStart, absoluteStart + 3],
+    };
+};
+
 const findMissingFenceLanguageRanges = (
     sourceCode: TSESLint.SourceCode,
     comment: Readonly<TSESTree.Comment>
@@ -73,37 +110,17 @@ const findMissingFenceLanguageRanges = (
     let isInsideFence = false;
 
     for (const line of lines) {
-        const fenceOffset = line.text.indexOf("```");
+        const scan = scanFenceLine(
+            line,
+            isInsideFence,
+            arrayFirst(comment.range)
+        );
 
-        if (fenceOffset === -1) {
-            continue;
+        if (isDefined(scan.missingLanguageRange)) {
+            ranges.push([...scan.missingLanguageRange]);
         }
 
-        const prefix = line.text.slice(0, fenceOffset);
-
-        if (!hasDocFencePrefix(prefix)) {
-            continue;
-        }
-
-        const fenceSuffix = line.text.slice(fenceOffset + 3).trim();
-
-        if (!isInsideFence) {
-            if (fenceSuffix.length === 0) {
-                const absoluteStart =
-                    arrayFirst(comment.range) +
-                    line.textStartOffset +
-                    fenceOffset;
-
-                ranges.push([absoluteStart, absoluteStart + 3]);
-            }
-
-            isInsideFence = true;
-            continue;
-        }
-
-        if (fenceSuffix.length === 0) {
-            isInsideFence = false;
-        }
+        isInsideFence = scan.isInsideFence;
     }
 
     return ranges;
@@ -169,6 +186,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-code-fence-language",
         },
         fixable: "code",
+        languages: ["js/js"],
         messages: {
             missingFenceLanguage:
                 "Markdown fenced code blocks in TypeDoc comments should declare a language (for example: ```ts).",

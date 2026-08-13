@@ -36,5 +36,3 @@ export const createLocaleSortedStringCopy = (
     values: Iterable<string>
 ): readonly string[] =>
     createSortedCopy(values, (left, right) => left.localeCompare(right));
-
-export default createSortedCopy;

@@ -20,6 +20,7 @@ const rule: TSESLint.RuleModule<"missingThrowsDescription", readonly []> =
                 ],
                 url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/require-throws-description",
             },
+            languages: ["js/js"],
             messages: {
                 missingThrowsDescription:
                     "`@throws` tags must include a description (not just an error type).",

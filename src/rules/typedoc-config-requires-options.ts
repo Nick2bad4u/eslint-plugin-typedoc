@@ -77,43 +77,42 @@ const extractObjectExpression = (
         : null;
 };
 
+/** Extract a TypeDoc config object from one top-level module statement. */
+const getTypedocConfigObjectFromStatement = (
+    statement: Readonly<TSESTree.ProgramStatement>
+): null | TSESTree.ObjectExpression => {
+    if (statement.type === AST_NODE_TYPES.ExportDefaultDeclaration) {
+        const { declaration } = statement;
+
+        return declaration.type === AST_NODE_TYPES.ObjectExpression ||
+            declaration.type === AST_NODE_TYPES.CallExpression
+            ? extractObjectExpression(declaration)
+            : null;
+    }
+
+    if (statement.type !== AST_NODE_TYPES.ExpressionStatement) {
+        return null;
+    }
+
+    const { expression } = statement;
+
+    if (
+        expression.type !== AST_NODE_TYPES.AssignmentExpression ||
+        expression.operator !== "=" ||
+        expression.left.type !== AST_NODE_TYPES.MemberExpression ||
+        !isModuleExportsMemberExpression(expression.left)
+    ) {
+        return null;
+    }
+
+    return extractObjectExpression(expression.right);
+};
+
 const getTypedocConfigObjectFromProgram = (
     program: TSESTree.Program
 ): null | TSESTree.ObjectExpression => {
     for (const statement of program.body) {
-        if (statement.type === AST_NODE_TYPES.ExportDefaultDeclaration) {
-            const declaration = statement.declaration;
-
-            if (
-                declaration.type !== AST_NODE_TYPES.ObjectExpression &&
-                declaration.type !== AST_NODE_TYPES.CallExpression
-            ) {
-                continue;
-            }
-
-            const objectExpression = extractObjectExpression(declaration);
-
-            if (objectExpression !== null) {
-                return objectExpression;
-            }
-        }
-
-        if (statement.type !== AST_NODE_TYPES.ExpressionStatement) {
-            continue;
-        }
-
-        const { expression } = statement;
-
-        if (
-            expression.type !== AST_NODE_TYPES.AssignmentExpression ||
-            expression.operator !== "=" ||
-            expression.left.type !== AST_NODE_TYPES.MemberExpression ||
-            !isModuleExportsMemberExpression(expression.left)
-        ) {
-            continue;
-        }
-
-        const objectExpression = extractObjectExpression(expression.right);
+        const objectExpression = getTypedocConfigObjectFromStatement(statement);
 
         if (objectExpression !== null) {
             return objectExpression;
@@ -300,6 +299,7 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             url: "https://nick2bad4u.github.io/eslint-plugin-typedoc/docs/rules/typedoc-config-requires-options",
         },
         fixable: "code",
+        languages: ["js/js"],
         messages: {
             missingTypedocConfigOptions:
                 "TypeDoc config is missing required option(s): {{options}}.",
