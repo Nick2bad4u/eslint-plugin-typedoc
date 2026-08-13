@@ -108,6 +108,16 @@ const config = [
         },
     },
     {
+        files: [".gitleaks.toml"],
+        name: "Cross-platform Gitleaks configuration formatting",
+        rules: {
+            // Tombi 1.3.0 disagrees between Windows and Linux about table
+            // indentation and array spacing. Keep portable TOML style checks
+            // and the direct Gitleaks validation, but skip this formatter.
+            "tombi/tombi": "off",
+        },
+    },
+    {
         files: ["docs/docusaurus/docusaurus.config.ts"],
         name: "Docusaurus runtime config",
         rules: {
