@@ -7,9 +7,9 @@ import { arrayFirst, setHas } from "ts-extras";
 
 import {
     buildDocCommentTagInsertion,
-    getDocCommentAnchorNode,
     getDocCommentClosingLineStartIndex,
     getDocCommentTagNames,
+    getFunctionDocCommentTarget,
     getLeadingDocComment,
     getPreferredLineEnding,
 } from "../_internal/doc-comments.js";
@@ -161,22 +161,27 @@ const rule: TSESLint.RuleModule<MessageIds, Options> = createTypedRule<
             });
         };
 
+        const checkFunctionNode = (
+            node: Readonly<
+                | TSESTree.ArrowFunctionExpression
+                | TSESTree.FunctionDeclaration
+                | TSESTree.FunctionExpression
+            >
+        ): void => {
+            const { docNode, reportNode } = getFunctionDocCommentTarget(node);
+
+            checkFunctionLike(node, reportNode, docNode);
+        };
+
         return {
             ArrowFunctionExpression: (node): void => {
-                checkFunctionLike(node, node, node);
+                checkFunctionNode(node);
             },
             FunctionDeclaration: (node): void => {
-                checkFunctionLike(node, node, getDocCommentAnchorNode(node));
+                checkFunctionNode(node);
             },
             FunctionExpression: (node): void => {
-                checkFunctionLike(node, node, node);
-            },
-            MethodDefinition: (node): void => {
-                if (node.value.type !== AST_NODE_TYPES.FunctionExpression) {
-                    return;
-                }
-
-                checkFunctionLike(node.value, node, node);
+                checkFunctionNode(node);
             },
         };
     },

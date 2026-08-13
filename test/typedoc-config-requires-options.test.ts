@@ -48,6 +48,34 @@ ruleTester.run(
                 name: "is valid when typedoc.config.ts has both entryPoints and tsconfig options",
             },
             {
+                code: [
+                    'import { defineConfig } from "typedoc";',
+                    "export default defineConfig({",
+                    '    entryPoints: ["src/index.ts"],',
+                    '    tsconfig: "./tsconfig.json",',
+                    "});",
+                ].join("\n"),
+                filename: "typedoc.config.mjs",
+                name: "is valid when an exported defineConfig call contains both required options",
+            },
+            {
+                code: [
+                    "module.exports = {",
+                    '    entryPoints: ["src/index.ts"],',
+                    '    tsconfig: "./tsconfig.json",',
+                    "};",
+                ].join("\n"),
+                filename: "typedoc.js",
+                name: "is valid when a CommonJS config contains both required options",
+            },
+            {
+                code: ["const config = {};", "export default config;"].join(
+                    "\n"
+                ),
+                filename: "typedoc.config.ts",
+                name: "ignores config exports that cannot be analyzed statically",
+            },
+            {
                 code: "export default {};",
                 filename: "src/index.ts",
                 name: "is valid for non-typedoc config file (filename does not match the rule pattern)",
