@@ -273,9 +273,21 @@ jobs:
                     exit 1
                   fi
 
-                  git add -A
+                  git add -- package.json package-lock.json
                   if git diff --cached --quiet; then
                     echo "No staged changes found for release commit." >&2
+                    exit 1
+                  fi
+
+                  unexpected_staged_files=$(git diff --cached --name-only -- . ':(exclude)package.json' ':(exclude)package-lock.json')
+                  if [ -n "$unexpected_staged_files" ]; then
+                    echo "Refusing to create a release commit with files outside the staging allowlist:" >&2
+                    printf '%s\n' "$unexpected_staged_files" >&2
+                    exit 1
+                  fi
+
+                  if git diff --cached --quiet -- package.json || git diff --cached --quiet -- package-lock.json; then
+                    echo "The release commit must stage both package.json and package-lock.json." >&2
                     exit 1
                   fi
 
