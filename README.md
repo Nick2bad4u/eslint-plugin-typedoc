@@ -4,6 +4,8 @@
 
 ESLint rules for TypeDoc documentation quality, validation, and autofix workflows.
 
+> **Oxlint:** Compatible with Oxlint 1.80.0 across all 31 rules and seven presets; the [JavaScript plugin API remains alpha](https://oxc.rs/docs/guide/usage/linter/js-plugins.html), so the release gate reruns ESLint/Oxlint conformance coverage.
+
 ## Why this plugin
 
 `eslint-plugin-typedoc` integrates TypeDoc-focused checks directly into ESLint so API documentation issues appear in the same feedback loop as code quality issues.
