@@ -306,7 +306,7 @@
         "typesync": "^0.14.3",
         "vfile": "^6.0.3",
         "vite": "^8.2.1",
-        "vitest": "^4.1.10",
+        "vitest": "^5.0.1",
         "yamllint-config-nick2bad4u": "^1.1.1",
         "yamllint-js": "^0.2.4"
     },
